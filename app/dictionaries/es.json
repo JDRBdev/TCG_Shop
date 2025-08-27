@@ -1,0 +1,87 @@
+{
+  "header": {
+    "title": "TCG Store",
+    "nav": {
+      "newReleases": "Nuevos Lanzamientos",
+      "popularSets": "Sets Populares",
+      "offers": "Ofertas",
+      "accessories": "Accesorios"
+    },
+    "search": "Buscar cartas...",
+    "cart": "Carrito"
+  },
+  "hero": {
+    "title": "Las Mejores Cartas de Trading",
+    "subtitle": "Descubre cartas exclusivas, sets limitados y accesorios para coleccionistas y jugadores competitivos",
+    "exploreCatalog": "Explorar Catálogo",
+    "viewOffers": "Ver Ofertas"
+  },
+  "products": {
+    "title": "Productos Destacados",
+    "new": "Nuevo",
+    "add": "Agregar",
+    "items": {
+      "boosterPack": "Booster Pack Premium",
+      "competitiveDeck": "Deck Competitivo",
+      "holographicCard": "Carta Holográfica Rara",
+      "collectorSet": "Set Coleccionista"
+    }
+  },
+  "categories": {
+    "title": "Categorías Populares",
+    "boosterPacks": {
+      "title": "Booster Packs",
+      "description": "Sobres con cartas aleatorias para expandir tu colección",
+      "count": "150+ productos"
+    },
+    "constructedDecks": {
+      "title": "Decks Construidos",
+      "description": "Mazos listos para jugar en torneos competitivos",
+      "count": "80+ productos"
+    },
+    "accessories": {
+      "title": "Accesorios",
+      "description": "Protectores, carpetas y accesorios para cuidar tus cartas",
+      "count": "200+ productos"
+    }
+  },
+  "offers": {
+    "title": "Ofertas Especiales",
+    "subtitle": "Aprovecha estos descuentos por tiempo limitado",
+    "megaBundle": {
+      "title": "Bundle Mega Coleccionista",
+      "description": "3 Booster Boxes + Accesorios Premium",
+      "getOffer": "Obtener Oferta"
+    },
+    "tournament": {
+      "title": "Torneo Semanal",
+      "description": "Participa y gana cartas exclusivas",
+      "playersRegistered": "jugadores registrados",
+      "register": "Registrarse"
+    }
+  },
+  "footer": {
+    "description": "Tu tienda de confianza para Trading Card Games. Calidad garantizada y envíos rápidos.",
+    "products": {
+      "title": "Productos",
+      "boosterPacks": "Booster Packs",
+      "decks": "Decks",
+      "singleCards": "Cartas Individuales",
+      "accessories": "Accesorios"
+    },
+    "support": {
+      "title": "Soporte",
+      "helpCenter": "Centro de Ayuda",
+      "shipping": "Envíos y Devoluciones",
+      "contact": "Contacto",
+      "faq": "FAQ"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Recibe ofertas exclusivas y novedades",
+      "placeholder": "tu@email.com",
+      "subscribe": "Suscribir"
+    },
+    "copyright": "© 2024 TCG Store. Todos los derechos reservados."
+  }
+}

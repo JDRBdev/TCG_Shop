@@ -1,0 +1,87 @@
+{
+  "header": {
+    "title": "TCG Store",
+    "nav": {
+      "newReleases": "New Releases",
+      "popularSets": "Popular Sets",
+      "offers": "Offers",
+      "accessories": "Accessories"
+    },
+    "search": "Search cards...",
+    "cart": "Cart"
+  },
+  "hero": {
+    "title": "The Best Trading Cards",
+    "subtitle": "Discover exclusive cards, limited sets and accessories for collectors and competitive players",
+    "exploreCatalog": "Explore Catalog",
+    "viewOffers": "View Offers"
+  },
+  "products": {
+    "title": "Featured Products",
+    "new": "New",
+    "add": "Add",
+    "items": {
+      "boosterPack": "Premium Booster Pack",
+      "competitiveDeck": "Competitive Deck",
+      "holographicCard": "Rare Holographic Card",
+      "collectorSet": "Collector Set"
+    }
+  },
+  "categories": {
+    "title": "Popular Categories",
+    "boosterPacks": {
+      "title": "Booster Packs",
+      "description": "Packs with random cards to expand your collection",
+      "count": "150+ products"
+    },
+    "constructedDecks": {
+      "title": "Constructed Decks",
+      "description": "Ready-to-play decks for competitive tournaments",
+      "count": "80+ products"
+    },
+    "accessories": {
+      "title": "Accessories",
+      "description": "Sleeves, binders and accessories to protect your cards",
+      "count": "200+ products"
+    }
+  },
+  "offers": {
+    "title": "Special Offers",
+    "subtitle": "Take advantage of these limited-time discounts",
+    "megaBundle": {
+      "title": "Mega Collector Bundle",
+      "description": "3 Booster Boxes + Premium Accessories",
+      "getOffer": "Get Offer"
+    },
+    "tournament": {
+      "title": "Weekly Tournament",
+      "description": "Participate and win exclusive cards",
+      "playersRegistered": "players registered",
+      "register": "Register"
+    }
+  },
+  "footer": {
+    "description": "Your trusted store for Trading Card Games. Guaranteed quality and fast shipping.",
+    "products": {
+      "title": "Products",
+      "boosterPacks": "Booster Packs",
+      "decks": "Decks",
+      "singleCards": "Single Cards",
+      "accessories": "Accessories"
+    },
+    "support": {
+      "title": "Support",
+      "helpCenter": "Help Center",
+      "shipping": "Shipping & Returns",
+      "contact": "Contact",
+      "faq": "FAQ"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Receive exclusive offers and news",
+      "placeholder": "your@email.com",
+      "subscribe": "Subscribe"
+    },
+    "copyright": "© 2024 TCG Store. All rights reserved."
+  }
+}
