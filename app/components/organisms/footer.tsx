@@ -4,7 +4,7 @@ interface FooterProps {
 
 export default function Footer({ dict }: FooterProps) {
   return (
-    <footer className="bg-white border-t py-12">
+    <footer className="bg-white border-t py-12 text-gray-600">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo + descripción */}

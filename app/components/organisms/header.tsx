@@ -13,7 +13,7 @@ export default function Header({ dict, currentLang }: HeaderProps) {
 
   return (
     <>
-      <header className="border-b bg-slate-50/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo + Título */}
@@ -29,16 +29,16 @@ export default function Header({ dict, currentLang }: HeaderProps) {
             {/* Navegación Desktop */}
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.newReleases}
-              </a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.popularSets}
-              </a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.offers}
               </a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {dict.header.nav.products}
+              </a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.accessories}
+              </a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {dict.header.nav.tournaments}
               </a>
             </nav>
 
@@ -135,20 +135,6 @@ export default function Header({ dict, currentLang }: HeaderProps) {
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              {dict.header.nav.newReleases}
-            </a>
-            <a
-              href="#"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.popularSets}
-            </a>
-            <a
-              href="#"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
               {dict.header.nav.offers}
             </a>
             <a
@@ -156,7 +142,21 @@ export default function Header({ dict, currentLang }: HeaderProps) {
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
+              {dict.header.nav.products}
+            </a>
+            <a
+              href="#"
+              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               {dict.header.nav.accessories}
+            </a>
+            <a
+              href="#"
+              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {dict.header.nav.tournaments}
             </a>
 
             {/* Mobile cart button */}

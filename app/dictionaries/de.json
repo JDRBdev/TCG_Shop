@@ -2,8 +2,8 @@
   "header": {
     "title": "TCG Store",
     "nav": {
-      "newReleases": "Neue Veröffentlichungen",
-      "popularSets": "Beliebte Sets",
+      "tournaments": "Turniere",
+      "products": "Produkte",
       "offers": "Angebote",
       "accessories": "Zubehör"
     },
