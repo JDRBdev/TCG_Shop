@@ -169,16 +169,15 @@ async function handleUserCreated(user) {
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
-    // Generar username único
-    const username = generateUsername(user);
+    console.log('📧 Email a registrar:', primaryEmail);
+    console.log('🔄 Conectando a Supabase...');
 
-    // Insertar usuario en Supabase (con username)
+    // Insertar usuario en Supabase
     const { data, error } = await supabase
       .from('profiles')
       .insert({
         clerk_id: user.id,
         email: primaryEmail,
-        username: username, // ← NUEVO CAMPO
         full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
         avatar_url: user.image_url,
         created_at: new Date().toISOString(),
@@ -190,15 +189,12 @@ async function handleUserCreated(user) {
       console.error('❌ Error insertando en Supabase:');
       console.error('Código:', error.code);
       console.error('Mensaje:', error.message);
+      console.error('Detalles:', error.details);
       
-      // Si es error de duplicado de username, generar uno único
-      if (error.code === '23505' && error.message.includes('username')) {
-        console.log('🔄 Username ya existe, generando uno único...');
-        const uniqueUsername = `${username}_${Math.random().toString(36).substring(2, 8)}`;
-        await handleUserCreated({
-          ...user,
-          username: uniqueUsername
-        });
+      // Si es error de duplicado, intentar actualizar
+      if (error.code === '23505') {
+        console.log('🔄 Usuario ya existe, actualizando...');
+        await handleUserUpdated(user);
         return;
       }
       
@@ -222,14 +218,10 @@ async function handleUserUpdated(user) {
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
-    // Obtener username para actualización
-    const username = user.username;
-
     const { data, error } = await supabase
       .from('profiles')
       .update({
         email: primaryEmail,
-        username: username, // ← NUEVO CAMPO
         full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
         avatar_url: user.image_url,
         updated_at: new Date().toISOString()
@@ -277,32 +269,6 @@ async function handleUserDeleted(user) {
     console.error('💥 Error en handleUserDeleted:', error.message);
     throw error;
   }
-}
-
-// ==================== FUNCIONES AUXILIARES ====================
-
-function generateUsername(user, attempt = 0) {
-  // 1. Usar username de Clerk si existe
-  if (user.username) {
-    return attempt === 0 ? user.username : `${user.username}${attempt}`;
-  }
-  
-  // 2. Usar email sin dominio
-  if (user.email_addresses?.[0]?.email_address) {
-    const emailPrefix = user.email_addresses[0].email_address.split('@')[0];
-    // Limpiar caracteres especiales
-    const cleanUsername = emailPrefix.replace(/[^a-zA-Z0-9_]/g, '_');
-    return attempt === 0 ? cleanUsername : `${cleanUsername}${attempt}`;
-  }
-  
-  // 3. Usar nombre y apellido
-  if (user.first_name && user.last_name) {
-    const nameBased = `${user.first_name.toLowerCase()}_${user.last_name.toLowerCase()}`;
-    return attempt === 0 ? nameBased : `${nameBased}${attempt}`;
-  }
-  
-  // 4. Fallback: usar ID de Clerk
-  return `user_${user.id.substring(0, 8)}${attempt > 0 ? attempt : ''}`;
 }
 
 // Configuración de Next.js
