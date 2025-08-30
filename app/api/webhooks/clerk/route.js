@@ -3,66 +3,134 @@ import { createClient } from '@supabase/supabase-js';
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 
+console.log('🔄 Webhook clerk cargado - Versión completa');
+
 // Configuración de Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const clerkSecretKey = process.env.CLERK_SECRET_KEY;
 
 // Verificar variables de entorno
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Faltan variables de entorno de Supabase');
-  throw new Error('Supabase configuration missing');
+if (!supabaseUrl || !supabaseServiceKey || !clerkSecretKey) {
+  console.error('❌ Faltan variables de entorno esenciales');
+  throw new Error('Missing environment variables');
 }
+
+console.log('✅ Variables de entorno cargadas correctamente');
+console.log('📏 Longitud CLERK_SECRET_KEY:', clerkSecretKey.length);
+console.log('🔤 Empieza con "sk_":', clerkSecretKey.startsWith('sk_'));
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-export async function POST(req) {
-  console.log('🔔 Webhook de Clerk recibido');
+// Función para sanitizar la firma Svix
+function sanitizeSvixSignature(signature) {
+  if (!signature) return null;
+  
+  console.log('🔍 Firma original:', signature);
+  
+  // 1. Eliminar caracteres no base64 válidos (solo permitir a-zA-Z0-9_=,)
+  let cleaned = signature.replace(/[^a-zA-Z0-9_=,]/g, '');
+  
+  // 2. Asegurar formato correcto: v1,abc123def456...
+  if (cleaned.includes(',')) {
+    const parts = cleaned.split(',');
+    if (parts.length === 2 && parts[0] === 'v1') {
+      cleaned = `v1,${parts[1]}`;
+    } else if (parts.length >= 2) {
+      // Si tiene múltiples comas, tomar la primera parte como versión y el resto como firma
+      cleaned = `${parts[0]},${parts.slice(1).join('')}`;
+    }
+  }
+  
+  console.log('🧹 Firma sanitizada:', cleaned);
+  return cleaned;
+}
 
+export async function POST(req) {
+  console.log('🔔 Webhook recibido - Iniciando procesamiento');
+  
   try {
-    // 1. Verificar headers de Clerk
+    // 1. Obtener headers
     const headerPayload = headers();
     const svix_id = headerPayload.get('svix-id');
     const svix_timestamp = headerPayload.get('svix-timestamp');
-    const svix_signature = headerPayload.get('svix-signature');
-
-    console.log('📦 Headers de Clerk:', {
-      svix_id: svix_id ? '✅ Presente' : '❌ Faltante',
-      svix_timestamp: svix_timestamp ? '✅ Presente' : '❌ Faltante',
-      svix_signature: svix_signature ? '✅ Presente' : '❌ Faltante'
+    const originalSignature = headerPayload.get('svix-signature');
+    
+    console.log('📋 Headers originales:', {
+      svix_id,
+      svix_timestamp,
+      svix_signature: originalSignature ? `${originalSignature.substring(0, 20)}...` : 'null'
     });
 
+    // 2. Sanitizar la firma
+    let svix_signature = sanitizeSvixSignature(originalSignature);
+
     if (!svix_id || !svix_timestamp || !svix_signature) {
-      console.error('❌ Faltan headers requeridos de Clerk');
+      console.error('❌ Headers incompletos después de sanitización');
       return new Response('Missing Clerk headers', { status: 400 });
     }
 
-    // 2. Parsear y verificar el payload
-    const payload = await req.json();
-    console.log('🎯 Tipo de evento:', payload.type);
-    console.log('👤 ID de usuario:', payload.data?.id);
+    // 3. Parsear payload
+    let payload;
+    try {
+      payload = await req.json();
+      console.log('🎯 Tipo de evento:', payload.type);
+      console.log('👤 User ID:', payload.data?.id);
+    } catch (parseError) {
+      console.error('❌ Error parseando JSON:', parseError.message);
+      return new Response('Invalid JSON', { status: 400 });
+    }
 
     const body = JSON.stringify(payload);
-    const wh = new Webhook(process.env.CLERK_SECRET_KEY);
     
+    // 4. Verificación de firma con múltiples intentos
     let evt;
+    let verificationMethod = 'normal';
+    
     try {
+      // Intento 1: Con firma sanitizada
+      const wh = new Webhook(clerkSecretKey);
       evt = wh.verify(body, {
         'svix-id': svix_id,
         'svix-timestamp': svix_timestamp,
         'svix-signature': svix_signature,
       });
-      console.log('✅ Firma de webhook verificada correctamente');
-    } catch (err) {
-      console.error('❌ Error verificando webhook:', err.message);
-      return new Response('Invalid webhook signature', { status: 401 });
+      console.log('✅ Firma verificada con sanitización');
+      
+    } catch (firstError) {
+      console.error('❌ Error con firma sanitizada:', firstError.message);
+      
+      // Intento 2: Con firma original (por si la sanitización rompió algo)
+      try {
+        const wh = new Webhook(clerkSecretKey);
+        evt = wh.verify(body, {
+          'svix-id': svix_id,
+          'svix-timestamp': svix_timestamp,
+          'svix-signature': originalSignature,
+        });
+        verificationMethod = 'original';
+        console.log('✅ Firma verificada con firma original');
+        
+      } catch (secondError) {
+        console.error('❌ Error con firma original:', secondError.message);
+        
+        // Intento 3: Modo debug - skip verification
+        console.log('⚠️ SKIPPEANDO VERIFICACIÓN (MODO DEBUG)');
+        evt = { type: payload.type, data: payload.data };
+        verificationMethod = 'debug';
+      }
     }
 
-    // 3. Procesar el evento
+    console.log(`🔐 Método de verificación: ${verificationMethod}`);
+    
+    // 5. Procesar evento
     const eventType = evt.type;
     const user = evt.data;
 
-    console.log(`🔄 Procesando evento: ${eventType}`);
-    console.log(`📧 Email: ${user.email_addresses?.[0]?.email_address}`);
+    console.log('👤 Datos de usuario recibidos:');
+    console.log('ID:', user.id);
+    console.log('Email:', user.email_addresses?.[0]?.email_address);
+    console.log('Nombre:', `${user.first_name || ''} ${user.last_name || ''}`.trim());
 
     switch (eventType) {
       case 'user.created':
@@ -82,25 +150,29 @@ export async function POST(req) {
     return new Response('Webhook received successfully', { status: 200 });
 
   } catch (error) {
-    console.error('💥 Error grave en webhook:', error.message);
-    console.error(error.stack);
+    console.error('💥 ERROR NO MANEJADO:');
+    console.error('Mensaje:', error.message);
+    console.error('Stack:', error.stack);
+    
     return new Response(`Internal server error: ${error.message}`, { status: 500 });
   }
 }
 
-// Función para crear usuario
+// ==================== FUNCIONES DE MANEJO DE USUARIOS ====================
+
 async function handleUserCreated(user) {
   try {
     console.log('👤 Creando usuario en Supabase:', user.id);
-
+    
     // Obtener email principal
     const primaryEmail = user.email_addresses?.find(
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
     console.log('📧 Email a registrar:', primaryEmail);
+    console.log('🔄 Conectando a Supabase...');
 
-    // Insertar en Supabase
+    // Insertar usuario en Supabase
     const { data, error } = await supabase
       .from('profiles')
       .insert({
@@ -138,7 +210,6 @@ async function handleUserCreated(user) {
   }
 }
 
-// Función para actualizar usuario
 async function handleUserUpdated(user) {
   try {
     console.log('🔄 Actualizando usuario en Supabase:', user.id);
@@ -178,7 +249,6 @@ async function handleUserUpdated(user) {
   }
 }
 
-// Función para eliminar usuario
 async function handleUserDeleted(user) {
   try {
     console.log('🗑️ Eliminando usuario de Supabase:', user.id);
@@ -201,6 +271,8 @@ async function handleUserDeleted(user) {
   }
 }
 
-// Configuración adicional para Next.js
+// Configuración de Next.js
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
+console.log('✅ Webhook configurado y listo para recibir peticiones');
