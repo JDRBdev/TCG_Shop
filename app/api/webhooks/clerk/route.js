@@ -169,15 +169,21 @@ async function handleUserCreated(user) {
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
-    console.log('📧 Email a registrar:', primaryEmail);
-    console.log('🔄 Conectando a Supabase...');
+    // Obtener username - ¡NUEVO!
+    const username = user.username || 
+                    primaryEmail?.split('@')[0] || 
+                    `user_${user.id.substring(0, 8)}`;
 
-    // Insertar usuario en Supabase
+    console.log('📧 Email a registrar:', primaryEmail);
+    console.log('👤 Username a registrar:', username); // ← Nuevo log
+
+    // Insertar usuario en Supabase (con username)
     const { data, error } = await supabase
       .from('profiles')
       .insert({
         clerk_id: user.id,
         email: primaryEmail,
+        username: username, // ← NUEVO CAMPO
         full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
         avatar_url: user.image_url,
         created_at: new Date().toISOString(),
@@ -189,12 +195,15 @@ async function handleUserCreated(user) {
       console.error('❌ Error insertando en Supabase:');
       console.error('Código:', error.code);
       console.error('Mensaje:', error.message);
-      console.error('Detalles:', error.details);
       
-      // Si es error de duplicado, intentar actualizar
-      if (error.code === '23505') {
-        console.log('🔄 Usuario ya existe, actualizando...');
-        await handleUserUpdated(user);
+      // Si es error de duplicado de username, generar uno único
+      if (error.code === '23505' && error.message.includes('username')) {
+        console.log('🔄 Username ya existe, generando uno único...');
+        const uniqueUsername = `${username}_${Math.random().toString(36).substring(2, 8)}`;
+        await handleUserCreated({
+          ...user,
+          username: uniqueUsername
+        });
         return;
       }
       
@@ -218,10 +227,14 @@ async function handleUserUpdated(user) {
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
+    // Obtener username para actualización
+    const username = user.username;
+
     const { data, error } = await supabase
       .from('profiles')
       .update({
         email: primaryEmail,
+        username: username, // ← NUEVO CAMPO
         full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
         avatar_url: user.image_url,
         updated_at: new Date().toISOString()
