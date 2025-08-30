@@ -8,8 +8,8 @@ type Locale = (typeof locales)[number]
 function getLocale(request: Request): Locale {
   const acceptLanguage = request.headers.get("accept-language")
   if (acceptLanguage) {
-    const preferred = acceptLanguage.split(",")[0] // "es-ES"
-    const baseLang = preferred.split("-")[0] as Locale // "es"
+    const preferred = acceptLanguage.split(",")[0]
+    const baseLang = preferred.split("-")[0] as Locale
     if (locales.includes(baseLang)) {
       return baseLang
     }
@@ -21,11 +21,18 @@ function getLocale(request: Request): Locale {
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/profile(.*)", "/admin(.*)"])
 
 export default clerkMiddleware((auth, req) => {
-  // Handle locale redirection first
   const { pathname } = req.nextUrl
-  const pathnameHasLocale = locales.some((locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`)
+  
+  // ←←← IMPORTANTE: NO redirigir API routes ←←←
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next() // Saltar redirección para APIs
+  }
 
-  // If no locale in pathname, redirect with locale
+  // Handle locale redirection for non-API routes
+  const pathnameHasLocale = locales.some((locale) => 
+    pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  )
+
   if (!pathnameHasLocale) {
     const locale = getLocale(req)
     req.nextUrl.pathname = `/${locale}${pathname}`
@@ -35,20 +42,19 @@ export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) {
     return auth().then((session) => {
       if (!session.userId) {
-        // Redirect to sign-in page if not authenticated
         const signInUrl = new URL("/sign-in", req.nextUrl.origin)
         return NextResponse.redirect(signInUrl)
       }
       return NextResponse.next()
     })
   }
+  
+  return NextResponse.next()
 })
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
+    // Incluir todo pero el middleware manejará la exclusión de APIs
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
   ],
 }
