@@ -20,7 +20,7 @@ export default async function OfertasPage({ params }: PageProps) {
       originalPrice: "$285.99",
       salePrice: "$199.99",
       discount: "-30%",
-      image: "/trading-card-booster-packs-collection.png",
+      image: "/images/trading-card-booster-packs-collection.png",
       badge: "Oferta Limitada",
       timeLeft: "2 días restantes",
     },
@@ -30,7 +30,7 @@ export default async function OfertasPage({ params }: PageProps) {
       originalPrice: "$129.99",
       salePrice: "$89.99",
       discount: "-31%",
-      image: "/competitive-trading-card-deck.png",
+      image: "/images/competitive-trading-card-deck.png",
       badge: "Más Popular",
       timeLeft: "5 días restantes",
     },
@@ -40,7 +40,7 @@ export default async function OfertasPage({ params }: PageProps) {
       originalPrice: "$199.99",
       salePrice: "$149.99",
       discount: "-25%",
-      image: "/holographic-rare-trading-card.png",
+      image: "/images/holographic-rare-trading-card.png",
       badge: "Nuevo",
       timeLeft: "1 semana restante",
     },
@@ -50,36 +50,9 @@ export default async function OfertasPage({ params }: PageProps) {
       originalPrice: "$89.99",
       salePrice: "$59.99",
       discount: "-33%",
-      image: "/trading-card-accessories-sleeves-binders.png",
+      image: "/images/trading-card-accessories-sleeves-binders.png",
       badge: "Mejor Valor",
       timeLeft: "3 días restantes",
-    },
-  ]
-
-  const flashDeals = [
-    {
-      title: "Booster Pack Diario",
-      description: "Pack aleatorio con garantía de carta rara",
-      price: "$12.99",
-      originalPrice: "$15.99",
-      discount: "-19%",
-      stock: "Solo 15 disponibles",
-    },
-    {
-      title: "Carta del Día",
-      description: "Carta holográfica seleccionada especialmente",
-      price: "$24.99",
-      originalPrice: "$34.99",
-      discount: "-29%",
-      stock: "Solo 8 disponibles",
-    },
-    {
-      title: "Deck Sorpresa",
-      description: "Deck construido aleatorio listo para jugar",
-      price: "$19.99",
-      originalPrice: "$29.99",
-      discount: "-33%",
-      stock: "Solo 12 disponibles",
     },
   ]
 
@@ -106,37 +79,6 @@ export default async function OfertasPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Flash Deals */}
-      <section className="py-12 bg-gradient-to-r from-red-600 to-orange-600 text-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold mb-2">⚡ Ofertas Flash</h3>
-            <p className="text-red-100">Disponibles solo por hoy - ¡Aprovéchalas antes de que se agoten!</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {flashDeals.map((deal, index) => (
-              <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-                <div className="flex justify-between items-start mb-3">
-                  <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-400 text-yellow-900 border-yellow-300">
-                    {deal.discount}
-                  </span>
-                  <span className="text-xs text-red-200">{deal.stock}</span>
-                </div>
-                <h4 className="text-xl font-bold mb-2">{deal.title}</h4>
-                <p className="text-red-100 mb-4 text-sm">{deal.description}</p>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl font-bold">{deal.price}</span>
-                  <span className="text-sm line-through text-red-200">{deal.originalPrice}</span>
-                </div>
-                <button className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-white bg-white text-red-600 hover:bg-red-50 h-10 px-4">
-                  Comprar Ahora
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Special Offers Grid */}
       <section className="py-16">
         <div className="container mx-auto px-4">
@@ -151,7 +93,7 @@ export default async function OfertasPage({ params }: PageProps) {
                   <img
                     src={offer.image || "/placeholder.svg"}
                     alt={offer.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-68 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
                     <span className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold bg-red-600 text-white border-red-500">
