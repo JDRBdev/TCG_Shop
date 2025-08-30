@@ -2,6 +2,7 @@
   "header": {
     "title": "TCG Store",
     "nav": {
+      "home": "Startseite",
       "tournaments": "Turniere",
       "products": "Produkte",
       "offers": "Angebote",

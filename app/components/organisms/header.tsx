@@ -29,16 +29,19 @@ export default function Header({ dict, currentLang }: HeaderProps) {
 
             {/* Navegación Desktop */}
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+              <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors">
+                {dict.header.nav.home}
+              </a>
+              <a href="/ofertas" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.offers}
               </a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+              <a href="/productos" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.products}
               </a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+              <a href="/accesorios" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.accessories}
               </a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">
+              <a href="/torneos" className="text-gray-700 hover:text-blue-600 transition-colors">
                 {dict.header.nav.tournaments}
               </a>
             </nav>
@@ -158,28 +161,35 @@ export default function Header({ dict, currentLang }: HeaderProps) {
           {/* Navigation links */}
           <nav className="flex flex-col p-6 space-y-6">
             <a
-              href="#"
+              href="/"
+              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {dict.header.nav.home}
+            </a>
+            <a
+              href="/ofertas"
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {dict.header.nav.offers}
             </a>
             <a
-              href="#"
+              href="/productos"
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {dict.header.nav.products}
             </a>
             <a
-              href="#"
+              href="/accesorios"
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {dict.header.nav.accessories}
             </a>
             <a
-              href="#"
+              href="/torneos"
               className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
