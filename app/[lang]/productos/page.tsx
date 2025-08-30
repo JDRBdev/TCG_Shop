@@ -1,18 +1,39 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 
 interface PageProps {
   params: Promise<{ lang: string }>
 }
 
 export default function ProductosPage({ params }: PageProps) {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedRarity, setSelectedRarity] = useState("all")
   const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
+
+  // Efecto para procesar parámetros de la URL al cargar el componente
+  useEffect(() => {
+    const categoryParam = searchParams?.get("category")
+    if (categoryParam) {
+      // Mapear parámetros de URL a valores de categoría
+      const categoryMapping: Record<string, string> = {
+        "constructed-decks": "deck",
+        "booster-packs": "booster",
+        "single-cards": "single",
+        "collector-sets": "set"
+      }
+      
+      const mappedCategory = categoryMapping[categoryParam] || categoryParam
+      if (categories.some(cat => cat.value === mappedCategory)) {
+        setSelectedCategory(mappedCategory)
+      }
+    }
+  }, [searchParams])
 
   // Mock data - en una app real vendría de una API
   const products = [

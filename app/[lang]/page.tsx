@@ -30,23 +30,27 @@ export default async function Page({
           <h2 className="text-5xl font-bold text-gray-900 mb-6 text-balance">{dict.hero.title}</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto text-pretty">{dict.hero.subtitle}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-600 text-white hover:bg-blue-700 h-11 px-8 text-lg">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-              {dict.hero.exploreCatalog}
-            </button>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 bg-white hover:bg-gray-50 text-gray-900 h-11 px-8 text-lg">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-                />
-              </svg>
-              {dict.hero.viewOffers}
-            </button>
+            <a href="/productos">
+              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-600 text-white hover:bg-blue-700 h-11 px-8 text-lg">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                {dict.hero.exploreCatalog}
+              </button>
+            </a>
+            <a href="/ofertas">
+              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 bg-white hover:bg-gray-50 text-gray-900 h-11 px-8 text-lg">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                  />
+                </svg>
+                {dict.hero.viewOffers}
+              </button>
+            </a>
           </div>
         </div>
       </section>
@@ -147,39 +151,44 @@ export default async function Page({
                 description: dict.categories.boosterPacks.description,
                 image: "/images/trading-card-booster-packs-collection.png",
                 count: dict.categories.boosterPacks.count,
+                href: "/productos?category=booster-packs",
               },
               {
                 title: dict.categories.constructedDecks.title,
                 description: dict.categories.constructedDecks.description,
                 image: "/images/constructed-trading-card-decks-tournament.png",
                 count: dict.categories.constructedDecks.count,
+                href: "/productos?category=constructed-decks",
               },
               {
                 title: dict.categories.accessories.title,
                 description: dict.categories.accessories.description,
                 image: "/images/trading-card-accessories-sleeves-binders.png",
                 count: dict.categories.accessories.count,
+                href: "/accesorios",
               },
             ].map((category, index) => (
               <div
                 key={index}
                 className="rounded-lg border bg-white shadow-sm group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
-                <div className="relative">
-                  <img
-                    src={category.image || "/placeholder.svg"}
-                    alt={category.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <span className="mb-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-blue-600 text-white border-blue-500">
-                      {category.count}
-                    </span>
-                    <h4 className="text-xl font-bold mb-1">{category.title}</h4>
-                    <p className="text-sm opacity-90 text-pretty">{category.description}</p>
+                <a href={category.href} className="block">
+                  <div className="relative">
+                    <img
+                      src={category.image || "/placeholder.svg"}
+                      alt={category.title}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <span className="mb-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-blue-600 text-white border-blue-500">
+                        {category.count}
+                      </span>
+                      <h4 className="text-xl font-bold mb-1">{category.title}</h4>
+                      <p className="text-sm opacity-90 text-pretty">{category.description}</p>
+                    </div>
                   </div>
-                </div>
+                </a>
               </div>
             ))}
           </div>
