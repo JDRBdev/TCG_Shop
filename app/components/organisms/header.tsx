@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { UserButton, SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs"
 import LanguageSelector from "../molecules/language-selector"
 
 interface HeaderProps {
@@ -42,9 +43,35 @@ export default function Header({ dict, currentLang }: HeaderProps) {
               </a>
             </nav>
 
-            {/* Desktop: Selector de idioma + carrito */}
+            {/* Desktop: Selector de idioma + auth + carrito */}
             <div className="hidden md:flex items-center space-x-4">
               <LanguageSelector currentLang={currentLang} />
+
+              <SignedOut>
+                <div className="flex items-center space-x-2">
+                  <SignInButton mode="modal">
+                    <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 h-9 px-3">
+                        {dict.header.sign_in || "Iniciar sesión"}
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-600 text-white hover:bg-blue-700 h-9 px-3">
+                        {dict.header.sign_up || "Crear cuenta"}
+                    </button>
+                  </SignUpButton>
+                </div>
+              </SignedOut>
+
+              <SignedIn>
+                <UserButton
+                  afterSignOutUrl={`/${currentLang}`}
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-9 w-9",
+                    },
+                  }}
+                />
+              </SignedIn>
 
               {/* Botón carrito */}
               <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-600 text-white hover:bg-blue-700 h-9 px-3 relative">
@@ -158,6 +185,42 @@ export default function Header({ dict, currentLang }: HeaderProps) {
             >
               {dict.header.nav.tournaments}
             </a>
+
+            <div className="pt-6 border-t border-gray-200">
+              <SignedOut>
+                <div className="space-y-4">
+                  <SignInButton mode="modal">
+                    <button
+                      className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 h-12 px-6"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {dict.header.sign_in || "Iniciar sesión"}
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button
+                      className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-600 text-white hover:bg-blue-700 h-12 px-6"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {dict.header.sign_up || "Crear cuenta"}
+                    </button>
+                  </SignUpButton>
+                </div>
+              </SignedOut>
+
+              <SignedIn>
+                <div className="flex items-center justify-center py-4">
+                  <UserButton
+                    afterSignOutUrl={`/${currentLang}`}
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-12 w-12",
+                      },
+                    }}
+                  />
+                </div>
+              </SignedIn>
+            </div>
 
             {/* Mobile cart button */}
             <button

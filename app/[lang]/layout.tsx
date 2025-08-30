@@ -6,6 +6,10 @@ import { getDictionary } from "../[lang]/dictionaries"
 import Header from "../components/organisms/header"
 import Footer from "../components/organisms/footer"
 
+import {
+  ClerkProvider
+} from '@clerk/nextjs'
+
 interface RootLayoutProps {
   children: ReactNode
   className?: string
@@ -30,6 +34,7 @@ export default async function Layout({
   const dict = await getDictionary(safeLang)
 
   return (
+    <ClerkProvider>
     <html lang={safeLang}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -42,5 +47,6 @@ export default async function Layout({
         <Footer dict={dict} />
       </body>
     </html>
+    </ClerkProvider>
   )
 }
