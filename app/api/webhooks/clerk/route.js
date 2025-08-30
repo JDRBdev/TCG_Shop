@@ -1,3 +1,4 @@
+// app/api/webhooks/clerk/route.js
 import { createClient } from '@supabase/supabase-js';
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
@@ -7,20 +8,25 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(req) {
+  console.log('🔔 Webhook recibido de Clerk');
+  
   try {
-    // Verificar el webhook de Clerk
     const headerPayload = headers();
     const svix_id = headerPayload.get('svix-id');
     const svix_timestamp = headerPayload.get('svix-timestamp');
     const svix_signature = headerPayload.get('svix-signature');
 
+    console.log('📦 Headers recibidos:', { svix_id, svix_timestamp, svix_signature });
+
     if (!svix_id || !svix_timestamp || !svix_signature) {
+      console.error('❌ Faltan headers de Clerk');
       return new Response('Error de autenticación', { status: 400 });
     }
 
     const payload = await req.json();
-    const body = JSON.stringify(payload);
+    console.log('📨 Payload recibido:', JSON.stringify(payload, null, 2));
 
+    const body = JSON.stringify(payload);
     const wh = new Webhook(process.env.CLERK_SECRET_KEY);
     
     let evt;
@@ -30,13 +36,16 @@ export async function POST(req) {
         'svix-timestamp': svix_timestamp,
         'svix-signature': svix_signature,
       });
+      console.log('✅ Webhook verificado correctamente');
     } catch (err) {
-      console.error('Error verifying webhook:', err);
+      console.error('❌ Error verifying webhook:', err);
       return new Response('Error de verificación', { status: 400 });
     }
 
     const eventType = evt.type;
     const user = evt.data;
+
+    console.log(`🎯 Evento: ${eventType}, User ID: ${user.id}`);
 
     console.log('Evento recibido:', eventType, user.id);
 
