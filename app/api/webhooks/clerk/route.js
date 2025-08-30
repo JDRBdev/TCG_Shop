@@ -222,23 +222,52 @@ async function handleUserCreated(user) {
 async function handleUserUpdated(user) {
   try {
     console.log('🔄 Actualizando usuario en Supabase:', user.id);
+    console.log('📊 Datos recibidos para actualización:', {
+      username: user.username,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email_count: user.email_addresses?.length
+    });
 
+    // Obtener email principal
     const primaryEmail = user.email_addresses?.find(
       email => email.id === user.primary_email_address_id
     )?.email_address || user.email_addresses?.[0]?.email_address;
 
-    // Obtener username para actualización
-    const username = user.username;
+    // Para obtener el username ACTUAL, necesitamos hacer una query a la API de Clerk
+    // ya que el webhook no siempre incluye el username en user.updated
+    let currentUsername = user.username;
+    
+    if (!currentUsername) {
+      console.log('🔍 Username no viene en webhook, obteniendo de Clerk API...');
+      try {
+        currentUsername = await getUsernameFromClerkAPI(user.id);
+        console.log('✅ Username obtenido de Clerk API:', currentUsername);
+      } catch (apiError) {
+        console.error('❌ Error obteniendo username de Clerk API:', apiError.message);
+        // Si falla, mantener el username existente en Supabase
+        currentUsername = null;
+      }
+    }
+
+    // Preparar datos para actualizar
+    const updateData = {
+      email: primaryEmail,
+      full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+      avatar_url: user.image_url,
+      updated_at: new Date().toISOString()
+    };
+
+    // Solo actualizar username si se obtuvo uno nuevo
+    if (currentUsername) {
+      updateData.username = currentUsername;
+    }
+
+    console.log('📤 Datos a actualizar:', updateData);
 
     const { data, error } = await supabase
       .from('profiles')
-      .update({
-        email: primaryEmail,
-        username: username, // ← NUEVO CAMPO
-        full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-        avatar_url: user.image_url,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('clerk_id', user.id)
       .select();
 
@@ -250,7 +279,7 @@ async function handleUserUpdated(user) {
     if (data && data.length > 0) {
       console.log('✅ Usuario actualizado exitosamente:', data);
     } else {
-      console.log('⚠️ Usuario no encontrado, creando nuevo...');
+      console.log('⚠️ Usuario no encontrado en Supabase, creando nuevo...');
       await handleUserCreated(user);
     }
 
@@ -260,6 +289,29 @@ async function handleUserUpdated(user) {
     console.error('💥 Error en handleUserUpdated:', error.message);
     throw error;
   }
+}
+
+// Función para obtener username desde Clerk API
+async function getUsernameFromClerkAPI(userId) {
+  // Necesitas agregar CLERK_API_KEY a tus variables de entorno
+  const clerkApiKey = process.env.CLERK_SECRET_KEY;
+  const clerkApiUrl = `https://api.clerk.com/v1/users/${userId}`;
+  
+  console.log('🌐 Llamando a Clerk API:', clerkApiUrl);
+
+  const response = await fetch(clerkApiUrl, {
+    headers: {
+      'Authorization': `Bearer ${clerkApiKey}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Clerk API error: ${response.status} ${response.statusText}`);
+  }
+
+  const userData = await response.json();
+  return userData.username;
 }
 
 async function handleUserDeleted(user) {
