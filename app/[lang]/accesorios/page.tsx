@@ -1,5 +1,6 @@
 "use client"
 
+import AddToCartButton from "@/app/components/molecules/add-tocart-button"
 import { useState } from "react"
 
 interface PageProps {
@@ -15,7 +16,7 @@ export default function AccesoriosPage({ params }: PageProps) {
   const [showFilters, setShowFilters] = useState(false)
 
   // Mock data para accesorios
-  const accessories = [
+  const product = [
     {
       id: 1,
       name: "Protectores Premium Transparentes",
@@ -160,7 +161,7 @@ export default function AccesoriosPage({ params }: PageProps) {
   ]
 
   // Filtrar accesorios
-  const filteredAccessories = accessories.filter((accessory) => {
+  const filteredAccessories = product.filter((accessory) => {
     const matchesSearch =
       accessory.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       accessory.brand.toLowerCase().includes(searchTerm.toLowerCase())
@@ -218,7 +219,7 @@ export default function AccesoriosPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 py-12">
+      <section className="bg-gradient-to-br from-blue-50 via-blue-50 to-purple-50 py-12">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-4 text-balance">Accesorios para TCG</h2>
           <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto text-pretty">
@@ -376,7 +377,7 @@ export default function AccesoriosPage({ params }: PageProps) {
           <main className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600">
-                Mostrando {sortedAccessories.length} de {accessories.length} accesorios
+                Mostrando {sortedAccessories.length} de {product.length} accesorios
               </p>
             </div>
 
@@ -394,7 +395,7 @@ export default function AccesoriosPage({ params }: PageProps) {
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-2 left-2">
-                        <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 border-emerald-200">
+                        <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800 border-blue-200">
                           {getTypeIcon(accessory.type)} {types.find((t) => t.value === accessory.type)?.label}
                         </span>
                       </div>
@@ -437,29 +438,12 @@ export default function AccesoriosPage({ params }: PageProps) {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-emerald-600">${accessory.price}</span>
+                        <span className="text-2xl font-bold text-blue-600">${accessory.price}</span>
                         {accessory.originalPrice && (
                           <span className="text-sm line-through text-gray-400">${accessory.originalPrice}</span>
                         )}
                       </div>
-                      <button
-                        disabled={!accessory.inStock}
-                        className={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 h-9 px-3 ${
-                          accessory.inStock
-                            ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7M9.5 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm11 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
-                          />
-                        </svg>
-                        {accessory.inStock ? "Agregar" : "Agotado"}
-                      </button>
+                      <AddToCartButton inStock={accessory.inStock} />
                     </div>
                   </div>
                 </div>
