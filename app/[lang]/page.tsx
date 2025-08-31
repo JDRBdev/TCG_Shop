@@ -1,5 +1,6 @@
 import { getDictionary } from "./dictionaries";
-import AddToCartButton from "../components/molecules/add-tocart-button";
+import ProductCard from "../components/molecules/product-card";
+import { featuredProducts } from "../data/products";
 
 // You now have access to the current locale
 // e.g. /en-US/products -> `lang` is "en-US"
@@ -60,75 +61,8 @@ export default async function Page({
         <div className="container mx-auto px-4">
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">{dict.products.title}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                name: dict.products.items.boosterPack,
-                price: "$15.99",
-                rating: 4.8,
-                image: "/images/trading-card-booster-pack-premium.png",
-                inStock: true,
-              },
-              {
-                name: dict.products.items.competitiveDeck,
-                price: "$45.99",
-                rating: 4.9,
-                image: "/images/competitive-trading-card-deck.png",
-                inStock: true,
-              },
-              {
-                name: dict.products.items.holographicCard,
-                price: "$89.99",
-                rating: 5.0,
-                image: "/images/holographic-rare-trading-card.png",
-                inStock: true,
-              },
-              {
-                name: dict.products.items.collectorSet,
-                price: "$129.99",
-                rating: 4.7,
-                image: "/images/collector-trading-card-set.png",
-                inStock: true,
-              },
-            ].map((product, index) => (
-              <div
-                key={index}
-                className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="p-0">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <span className="absolute top-2 right-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 border-emerald-200">
-                      {dict.products.new}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h4 className="text-lg font-semibold leading-none tracking-tight mb-2">{product.name}</h4>
-                  <div className="flex items-center mb-3">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-500 ml-2">({product.rating})</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-blue-600">{product.price}</span>
-                    <AddToCartButton inStock={product.inStock} />
-                  </div>
-                </div>
-              </div>
+            {featuredProducts.map((p) => (
+              <ProductCard key={p.id} product={p} showBadge />
             ))}
           </div>
         </div>

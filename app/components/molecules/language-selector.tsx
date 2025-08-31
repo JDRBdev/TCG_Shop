@@ -2,10 +2,10 @@
 
 import { useMemo, useRef, useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import English from "../atoms/english"
-import Spanish from "../atoms/spanish"
-import Deutsch from "../atoms/deutsch"
-import French from "../atoms/french"
+import English from "../atoms/flags/english"
+import Spanish from "../atoms/flags/spanish"
+import Deutsch from "../atoms/flags/deutsch"
+import French from "../atoms/flags/french"
 
 const SUPPORTED = ["en", "es", "de", "fr"] as const
 type Lang = typeof SUPPORTED[number]

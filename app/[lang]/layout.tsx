@@ -9,6 +9,7 @@ import Footer from "../components/organisms/footer"
 import {
   ClerkProvider
 } from '@clerk/nextjs'
+import { CartProvider } from "../components/atoms/provider/cart-context"
 
 interface RootLayoutProps {
   children: ReactNode
@@ -35,18 +36,20 @@ export default async function Layout({
 
   return (
     <ClerkProvider>
-    <html lang={safeLang}>
-      <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body className={`h-full min-h-screen ${className}`}>
-        <Header dict={dict} currentLang={safeLang} />
-        {children}
-        <Footer dict={dict} />
-      </body>
-    </html>
+      <CartProvider>
+        <html lang={safeLang}>
+          <head>
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          </head>
+          <body className={`h-full min-h-screen ${className}`}>
+            <Header dict={dict} currentLang={safeLang} />
+            {children}
+            <Footer dict={dict} />
+          </body>
+        </html>
+      </CartProvider>
     </ClerkProvider>
   )
 }

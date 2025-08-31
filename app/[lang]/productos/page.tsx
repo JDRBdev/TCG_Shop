@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { useAuth, SignUpButton } from '@clerk/nextjs';
-import AddToCartButton from "@/app/components/molecules/add-tocart-button";
+import { products } from "@/app/data/products";
+import ProductCard from "@/app/components/molecules/product-card";
 
 interface PageProps {
   params: Promise<{ lang: string }>
@@ -17,8 +17,6 @@ export default function ProductosPage({ params }: PageProps) {
   const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
-
-  const { isLoaded, userId } = useAuth()
 
   // Efecto para procesar parámetros de la URL al cargar el componente
   useEffect(() => {
@@ -38,82 +36,6 @@ export default function ProductosPage({ params }: PageProps) {
       }
     }
   }, [searchParams])
-
-  // Mock data - en una app real vendría de una API
-  const products = [
-    {
-      id: 1,
-      name: "Booster Pack Premium",
-      category: "booster",
-      rarity: "common",
-      price: 15.99,
-      originalPrice: 18.99,
-      image: "/images/trading-card-booster-pack-premium.png",
-      rating: 4.8,
-      inStock: true,
-      description: "Pack con 15 cartas aleatorias incluyendo 1 rara garantizada",
-    },
-    {
-      id: 2,
-      name: "Deck Competitivo Dragón",
-      category: "deck",
-      rarity: "rare",
-      price: 45.99,
-      originalPrice: null,
-      image: "/images/competitive-trading-card-deck.png",
-      rating: 4.9,
-      inStock: true,
-      description: "Deck construido listo para torneos con estrategia de dragones",
-    },
-    {
-      id: 3,
-      name: "Carta Holográfica Legendaria",
-      category: "single",
-      rarity: "legendary",
-      price: 89.99,
-      originalPrice: 99.99,
-      image: "/images/holographic-rare-trading-card.png",
-      rating: 5.0,
-      inStock: false,
-      description: "Carta única con efectos holográficos y poder legendario",
-    },
-    {
-      id: 4,
-      name: "Set Coleccionista Edición Limitada",
-      category: "set",
-      rarity: "epic",
-      price: 129.99,
-      originalPrice: null,
-      image: "/images/collector-trading-card-set.png",
-      rating: 4.7,
-      inStock: true,
-      description: "Colección completa de 50 cartas con caja especial",
-    },
-    {
-      id: 5,
-      name: "Booster Box Completa",
-      category: "booster",
-      rarity: "rare",
-      price: 199.99,
-      originalPrice: 229.99,
-      image: "/images/trading-card-booster-packs-collection.png",
-      rating: 4.6,
-      inStock: true,
-      description: "36 packs en caja sellada con cartas exclusivas",
-    },
-    {
-      id: 6,
-      name: "Deck Starter Principiante",
-      category: "deck",
-      rarity: "common",
-      price: 24.99,
-      originalPrice: null,
-      image: "/images/competitive-trading-card-deck.png",
-      rating: 4.3,
-      inStock: true,
-      description: "Deck perfecto para comenzar a jugar con guía incluida",
-    },
-  ]
 
   const categories = [
     { value: "all", label: "Todas las Categorías" },
@@ -348,70 +270,12 @@ export default function ProductosPage({ params }: PageProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {sortedProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="p-0">
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute top-2 left-2">
-                        <span
-                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getRarityColor(product.rarity)}`}
-                        >
-                          {product.rarity}
-                        </span>
-                      </div>
-                      {product.originalPrice && (
-                        <div className="absolute top-2 right-2">
-                          <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-800 border-red-200">
-                            Oferta
-                          </span>
-                        </div>
-                      )}
-                      {!product.inStock && (
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <span className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                            Agotado
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="text-lg font-semibold leading-none tracking-tight mb-2">{product.name}</h4>
-                    <p className="text-sm text-gray-600 mb-3 text-pretty">{product.description}</p>
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className={`w-4 h-4 ${i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500 ml-2">({product.rating})</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-blue-600">${product.price}</span>
-                        {product.originalPrice && (
-                          <span className="text-sm line-through text-gray-400">${product.originalPrice}</span>
-                        )}
-                      </div>
-                      <AddToCartButton inStock={product.inStock} />
-                    </div>
-                  </div>
-                </div>
+              {sortedProducts.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  showBadge={!!p.price}   // mostrar "Oferta" si tiene precio original
+                />
               ))}
             </div>
 

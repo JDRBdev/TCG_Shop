@@ -1,4 +1,4 @@
-import type { IconInterface } from "../../interfaces/common";
+import type { IconInterface } from "../../../interfaces/common";
 
 export default function Spanish({ className }: IconInterface) {
   return (
