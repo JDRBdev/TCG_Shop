@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
         )}
       </div>
       <div className="p-4">
-        <h4 className="text-lg font-semibold mb-2">{product.name}</h4>
+        <h4 className="text-lg text-black font-semibold mb-2">{product.name}</h4>
         {product.description && (
           <p className="text-sm text-gray-600 mb-3">{product.description}</p>
         )}
