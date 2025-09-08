@@ -49,7 +49,6 @@ export default function AccesoriosPage({ params }: PageProps) {
     { value: "name", label: "Nombre A-Z" },
     { value: "price-low", label: "Precio: Menor a Mayor" },
     { value: "price-high", label: "Precio: Mayor a Menor" },
-    { value: "rating", label: "Mejor Valorados" },
     { value: "brand", label: "Marca A-Z" },
   ]
 
@@ -79,8 +78,6 @@ export default function AccesoriosPage({ params }: PageProps) {
         return a.price - b.price
       case "price-high":
         return b.price - a.price
-      case "rating":
-        return b.rating - a.rating
       case "brand":
         return (a.brand ?? "").localeCompare(b.brand ?? "")
       default:

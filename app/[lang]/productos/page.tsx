@@ -56,7 +56,6 @@ export default function ProductosPage({ params }: PageProps) {
     { value: "name", label: "Nombre A-Z" },
     { value: "price-low", label: "Precio: Menor a Mayor" },
     { value: "price-high", label: "Precio: Mayor a Menor" },
-    { value: "rating", label: "Mejor Valorados" },
   ]
 
   // Filtrar productos
@@ -82,8 +81,6 @@ export default function ProductosPage({ params }: PageProps) {
         return a.price - b.price
       case "price-high":
         return b.price - a.price
-      case "rating":
-        return b.rating - a.rating
       default:
         return 0
     }
