@@ -1,15 +1,16 @@
 "use client"
 
 import { use, useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import ProductCard from "@/app/components/molecules/product-card"
 import { fetchProducts, Product } from "@/app/data/products"
 
 export default function ProductosPage({ params }: { params: Promise<{ lang: string }> }) {
-  // 🔹 Unwrap de params
   const { lang } = use(params)
 
+  const router = useRouter()
   const searchParams = useSearchParams()
+
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [priceRange, setPriceRange] = useState("all")
@@ -18,38 +19,53 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
-  // 🔹 Cargar productos traducidos según idioma
+  // Cargar productos según idioma
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
       const data = await fetchProducts(lang)
+      console.log("Productos recibidos de Supabase:", data)
       setAllProducts(data)
       setLoading(false)
     }
-
     loadProducts()
   }, [lang])
 
-  // 🔹 Procesar parámetros de la URL
+  // Sincronizar estado con parámetros de la URL al cargar / recargar
   useEffect(() => {
-    const categoryParam = searchParams?.get("category")
-    if (categoryParam) {
-      const categoryMapping: Record<string, string> = {
-        "constructed-decks": "deck",
-        "booster-packs": "booster",
-        "single-cards": "single",
-        "collector-sets": "set",
-      }
-      const mappedCategory = categoryMapping[categoryParam] || categoryParam
-      if (categories.some((cat) => cat.value === mappedCategory)) {
-        setSelectedCategory(mappedCategory)
-      }
+    const catParam = searchParams.get("category") || "all"
+    const priceParam = searchParams.get("price") || "all"
+    const sortParam = searchParams.get("sort") || "name"
+
+    // Mapping URL → valor interno
+    const categoryMapping: Record<string, string> = {
+      "constructed-decks": "deck",
+      "booster-packs": "booster-packs",
+      "single-cards": "single",
+      "collector-sets": "set",
     }
+
+    const mappedCategory = categoryMapping[catParam] || catParam
+
+    setSelectedCategory(mappedCategory)
+    setPriceRange(priceParam)
+    setSortBy(sortParam)
   }, [searchParams])
+
+  // Función para actualizar la URL y estado al cambiar filtro
+  const updateFilter = (key: "category" | "price" | "sort", value: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set(key, value)
+    router.push(`/productos?${params.toString()}`)
+
+    if (key === "category") setSelectedCategory(value)
+    if (key === "price") setPriceRange(value)
+    if (key === "sort") setSortBy(value)
+  }
 
   const categories = [
     { value: "all", label: "Todas las Categorías" },
-    { value: "booster", label: "Booster Packs" },
+    { value: "booster-packs", label: "Booster Packs" },
     { value: "deck", label: "Decks Construidos" },
     { value: "single", label: "Cartas Individuales" },
     { value: "set", label: "Sets Coleccionista" },
@@ -57,10 +73,10 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
 
   const priceRanges = [
     { value: "all", label: "Todos los Precios" },
-    { value: "0-25", label: "$0 - $25" },
-    { value: "25-50", label: "$25 - $50" },
-    { value: "50-100", label: "$50 - $100" },
-    { value: "100+", label: "$100+" },
+    { value: "0-25", label: "€0 - €25" },
+    { value: "25-50", label: "€25 - €50" },
+    { value: "50-100", label: "€50 - €100" },
+    { value: "100+", label: "€100+" },
   ]
 
   const sortOptions = [
@@ -69,7 +85,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     { value: "price-high", label: "Precio: Mayor a Menor" },
   ]
 
-  // 🔹 Filtrar productos
+  // Filtrar productos
   const filteredProducts = allProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
@@ -79,9 +95,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
       if (priceRange === "100+") {
         matchesPrice = product.price >= 100
       } else {
-        const [minStr, maxStr] = priceRange.split("-")
-        const min = parseFloat(minStr)
-        const max = parseFloat(maxStr)
+        const [min, max] = priceRange.split("-").map(Number)
         matchesPrice = product.price >= min && product.price <= max
       }
     }
@@ -89,7 +103,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     return matchesSearch && matchesCategory && matchesPrice
   })
 
-  // 🔹 Ordenar productos
+  // Ordenar productos
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "name":
@@ -107,33 +121,28 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     <div className="min-h-screen bg-white">
       {/* Search y Filtros */}
       <section className="bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full h-12 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Sort Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="flex h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
+        <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-3 w-full h-12 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
+
+          {/* Sort */}
+          <select
+            value={sortBy}
+            onChange={(e) => updateFilter("sort", e.target.value)}
+            className="h-12 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
         </div>
       </section>
 
@@ -154,10 +163,30 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
                       name="category"
                       value={category.value}
                       checked={selectedCategory === category.value}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      onChange={() => updateFilter("category", category.value)}
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">{category.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Precio */}
+            <div className="mb-6">
+              <h4 className="font-medium mb-3">Precio</h4>
+              <div className="space-y-2">
+                {priceRanges.map((range) => (
+                  <label key={range.value} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="price"
+                      value={range.value}
+                      checked={priceRange === range.value}
+                      onChange={() => updateFilter("price", range.value)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{range.label}</span>
                   </label>
                 ))}
               </div>
@@ -176,6 +205,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
               ))}
             </div>
           )}
+
           {sortedProducts.length === 0 && !loading && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron productos</h3>
