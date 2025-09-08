@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { products } from "@/app/data/products";
 import ProductCard from "@/app/components/molecules/product-card";
+import { fetchProducts, Product } from "@/app/data/products";
 
 interface PageProps {
   params: Promise<{ lang: string }>
@@ -16,6 +17,20 @@ export default function ProductosPage({ params }: PageProps) {
   const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    async function loadProducts() {
+      setLoading(true);
+      const data = await fetchProducts();
+      setAllProducts(data);
+      setLoading(false);
+    }
+
+    loadProducts();
+  }, []);
+
 
   // Efecto para procesar parámetros de la URL al cargar el componente
   useEffect(() => {
@@ -59,18 +74,25 @@ export default function ProductosPage({ params }: PageProps) {
   ]
 
   // Filtrar productos
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = allProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
 
     let matchesPrice = true
     if (priceRange !== "all") {
-      const [min, max] = priceRange.split("-").map((p) => (p === "+" ? Number.POSITIVE_INFINITY : Number.parseInt(p)))
-      matchesPrice = product.price >= min && (max === undefined || product.price <= max)
+      if (priceRange === "100+") {
+        matchesPrice = product.price >= 100
+      } else {
+        const [minStr, maxStr] = priceRange.split("-")
+        const min = parseFloat(minStr)
+        const max = parseFloat(maxStr)
+        matchesPrice = product.price >= min && product.price <= max
+      }
     }
 
     return matchesSearch && matchesCategory && matchesPrice
   })
+
 
   // Ordenar productos
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -216,21 +238,25 @@ export default function ProductosPage({ params }: PageProps) {
           <main className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600">
-                Mostrando {sortedProducts.length} de {products.length} productos
+                Mostrando {sortedProducts.length} de {allProducts.length} productos
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {sortedProducts.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={p}
-                  showBadge={!!p.price}   // mostrar "Oferta" si tiene precio original
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="text-center py-12">Cargando productos...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {sortedProducts.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    showBadge={!!p.price}
+                  />
+                ))}
+              </div>
+            )}
 
-            {sortedProducts.length === 0 && (
+            {sortedProducts.length === 0 && !loading && (
               <div className="text-center py-12">
                 <svg
                   className="w-16 h-16 text-gray-400 mx-auto mb-4"

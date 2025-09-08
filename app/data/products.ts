@@ -1,10 +1,12 @@
 // app/data/products.ts
 
+import { createClient } from "@supabase/supabase-js";
+
 export interface Product {
   id: number;
   name: string;
   slug?: string;
-  category: "booster" | "deck" | "single" | "set" | "accessory";
+  category?: "booster" | "deck" | "single" | "set" | "accessory";
   type?: "sleeves" | "binder" | "playmat" | "dice" | "storage" | "counter" | "dividers";
   material?: string;
   brand?: string;
@@ -17,6 +19,33 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
   timeLeft?: string; // Ej: "2 días restantes" para ofertas especiales
+}
+
+// Inicializa Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Función para obtener productos desde Supabase
+export async function fetchProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('id, name, price, description, image, in_stock, category');
+
+  if (error) {
+    console.error('Error al obtener productos:', error);
+    return [];
+  }
+
+  return data.map((item: any, index: number) => ({
+    id: item.id ?? index, // si id es null/undefined, usar index como fallback
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    image: item.image,
+    inStock: item.in_stock,
+    category: item.category || "other",
+  }));
 }
 
 export const featuredProducts: Product[] = [
