@@ -44,7 +44,6 @@ export default function Header({ dict }: HeaderProps) {
     { href: "/", label: dict.header.nav.home },
     { href: "/ofertas", label: dict.header.nav.offers },
     { href: "/productos", label: dict.header.nav.products },
-    { href: "/accesorios", label: dict.header.nav.accessories },
     { href: "/torneos", label: dict.header.nav.tournaments },
   ]
 
