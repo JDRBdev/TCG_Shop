@@ -1,7 +1,6 @@
 import React from "react";
 import AddToCartButton from "./add-tocart-button";
 import { Product } from "../../data/products";
-import { getRarityColor } from "@/app/utils/get-rarity-colors";
 
 interface ProductCardProps {
   product: Product;
@@ -31,14 +30,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
             </span>
             )}
         </div>
-
-        {product.rarity && (
-            <span
-            className={`absolute top-2 left-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getRarityColor(product.rarity)}`}
-            >
-            {product.rarity}
-            </span>
-        )}
 
         {!product.inStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
