@@ -1,5 +1,3 @@
-// app/data/products.ts
-
 import { createClient } from "@supabase/supabase-js";
 
 export interface Product {
@@ -12,39 +10,61 @@ export interface Product {
   brand?: string;
   price: number;
   originalPrice?: number | null;
-  discount?: string;       // Ej: "-30%"
+  discount?: string;       
   inStock: boolean;
   description: string;
   image: string;
   createdAt?: string;
   updatedAt?: string;
-  timeLeft?: string; // Ej: "2 días restantes" para ofertas especiales
+  timeLeft?: string; 
 }
 
 // Inicializa Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(supabaseUrl, supabaseAnonKey!);
 
-// Función para obtener productos desde Supabase
-export async function fetchProducts(): Promise<Product[]> {
+// Función para obtener productos traducidos según idioma
+export async function fetchProducts(locale: string): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, price, description, image, in_stock, category');
+    .select(`
+      id,
+      price,
+      in_stock,
+      category,
+      image,
+      slug,
+      product_translations!inner (
+        lang,
+        name,
+        description
+      )
+    `)
+    .eq('product_translations.lang', locale);
 
   if (error) {
     console.error('Error al obtener productos:', error);
     return [];
   }
 
-  return data.map((item: any, index: number) => ({
-    id: item.id ?? index, // si id es null/undefined, usar index como fallback
-    name: item.name,
+  return (data ?? []).map((item: any) => ({
+    id: item.id,
+    name: item.product_translations[0]?.name ?? "", // traducción o vacío
     price: item.price,
-    description: item.description,
+    description: item.product_translations[0]?.description ?? "",
     image: item.image,
     inStock: item.in_stock,
     category: item.category || "other",
+    slug: item.slug,
+    type: item.type,
+    brand: item.brand,
+    originalPrice: item.original_price,
+    discount: item.discount,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+    timeLeft: item.time_left,
+    material: item.material,
   }));
 }
 

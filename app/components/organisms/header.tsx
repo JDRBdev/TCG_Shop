@@ -1,18 +1,52 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
+import { useParams, usePathname } from "next/navigation"
 import { UserButton, SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs"
 import LanguageSelector from "../molecules/language-selector"
 import CartButton from "../molecules/cart-button"
-import { useCart } from "../atoms/provider/cart-context"
 
 interface HeaderProps {
   dict: any
-  currentLang: string
+  // Eliminamos currentLang del prop porque lo obtenemos del URL
 }
 
-export default function Header({ dict, currentLang }: HeaderProps) {
+export default function Header({ dict }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const params = useParams()
+  const pathname = usePathname()
+
+  // Función para obtener el locale actual de forma consistente
+  const getCurrentLocale = (): string => {
+    // Primero intentar de params (más confiable)
+    if (params.locale) return params.locale as string
+    
+    // Fallback: extraer de pathname
+    const segments = pathname.split('/').filter(Boolean)
+    const possibleLocales = ['en', 'es', 'fr', 'de']
+    const localeFromPath = segments.find(seg => possibleLocales.includes(seg))
+    
+    return localeFromPath || 'es' // default
+  }
+
+  const currentLang = getCurrentLocale()
+
+  // Función para generar URLs con el locale
+  const localizedHref = (path: string) => {
+    // Si el path es la raíz, devolver solo el locale
+    if (path === '/') return `/${currentLang}`
+    // Sino, agregar el locale al path
+    return `/${currentLang}${path}`
+  }
+
+  const navigationItems = [
+    { href: "/", label: dict.header.nav.home },
+    { href: "/ofertas", label: dict.header.nav.offers },
+    { href: "/productos", label: dict.header.nav.products },
+    { href: "/accesorios", label: dict.header.nav.accessories },
+    { href: "/torneos", label: dict.header.nav.tournaments },
+  ]
 
   return (
     <>
@@ -21,31 +55,27 @@ export default function Header({ dict, currentLang }: HeaderProps) {
           <div className="flex items-center justify-between">
             {/* Logo + Título */}
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">{dict.header.title}</h1>
+              <Link href={localizedHref("/")} className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">{dict.header.title}</h1>
+              </Link>
             </div>
 
-            {/* Navegación Desktop */}
+            {/* Navegación Desktop - USANDO LINK */}
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.home}
-              </a>
-              <a href="/ofertas" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.offers}
-              </a>
-              <a href="/productos" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.products}
-              </a>
-              <a href="/accesorios" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.accessories}
-              </a>
-              <a href="/torneos" className="text-gray-700 hover:text-blue-600 transition-colors">
-                {dict.header.nav.tournaments}
-              </a>
+              {navigationItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={localizedHref(item.href)}
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </nav>
 
             {/* Desktop: Selector de idioma + auth + carrito */}
@@ -69,7 +99,7 @@ export default function Header({ dict, currentLang }: HeaderProps) {
 
               <SignedIn>
                 <UserButton
-                  afterSignOutUrl={`/${currentLang}`}
+                  afterSignOutUrl={localizedHref("/")}
                   appearance={{
                     elements: {
                       avatarBox: "h-9 w-9",
@@ -151,43 +181,18 @@ export default function Header({ dict, currentLang }: HeaderProps) {
             </button>
           </div>
 
-          {/* Navigation links */}
+          {/* Navigation links - USANDO LINK también en móvil */}
           <nav className="flex flex-col p-6 space-y-6">
-            <a
-              href="/"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.home}
-            </a>
-            <a
-              href="/ofertas"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.offers}
-            </a>
-            <a
-              href="/productos"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.products}
-            </a>
-            <a
-              href="/accesorios"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.accessories}
-            </a>
-            <a
-              href="/torneos"
-              className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {dict.header.nav.tournaments}
-            </a>
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                href={localizedHref(item.href)}
+                className="text-xl text-gray-700 hover:text-blue-600 transition-colors py-3 border-b border-gray-100 hover:border-blue-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
 
             <div className="pt-6 border-t border-gray-200">
               <SignedOut>
@@ -214,7 +219,7 @@ export default function Header({ dict, currentLang }: HeaderProps) {
               <SignedIn>
                 <div className="flex items-center justify-center py-4">
                   <UserButton
-                    afterSignOutUrl={`/${currentLang}`}
+                    afterSignOutUrl={localizedHref("/")}
                     appearance={{
                       elements: {
                         avatarBox: "h-12 w-12",
