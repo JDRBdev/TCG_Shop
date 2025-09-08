@@ -5,7 +5,6 @@ export interface Product {
   name: string;
   slug?: string;
   category: "booster" | "deck" | "single" | "set" | "accessory";
-  rarity?: "common" | "rare" | "epic" | "legendary";
   type?: "sleeves" | "binder" | "playmat" | "dice" | "storage" | "counter" | "dividers";
   material?: string;
   brand?: string;
@@ -27,7 +26,6 @@ export const featuredProducts: Product[] = [
     name: "Booster Pack Premium",
     slug: "booster-pack-premium",
     category: "booster",
-    rarity: "common",
     price: 15.99,
     rating: 4.8,
     inStock: true,
@@ -39,7 +37,6 @@ export const featuredProducts: Product[] = [
     name: "Deck Competitivo Dragón",
     slug: "deck-competitivo-dragon",
     category: "deck",
-    rarity: "rare",
     price: 45.99,
     rating: 4.9,
     inStock: true,
@@ -51,7 +48,6 @@ export const featuredProducts: Product[] = [
     name: "Carta Holográfica Legendaria",
     slug: "carta-holografica-legendaria",
     category: "single",
-    rarity: "legendary",
     price: 89.99,
     rating: 5.0,
     inStock: false,
@@ -63,7 +59,6 @@ export const featuredProducts: Product[] = [
     name: "Set Coleccionista Edición Limitada",
     slug: "set-coleccionista-edicion-limitada",
     category: "set",
-    rarity: "epic",
     price: 129.99,
     rating: 4.7,
     inStock: true,
@@ -133,7 +128,6 @@ export const products: Product[] = [
     name: "Booster Pack Premium",
     slug: "booster-pack-premium",
     category: "booster",
-    rarity: "common",
     price: 15.99,
     originalPrice: 18.99,
     rating: 4.8,
@@ -146,7 +140,6 @@ export const products: Product[] = [
     name: "Deck Competitivo Dragón",
     slug: "deck-competitivo-dragon",
     category: "deck",
-    rarity: "rare",
     price: 45.99,
     rating: 4.9,
     inStock: true,
@@ -158,7 +151,6 @@ export const products: Product[] = [
     name: "Carta Holográfica Legendaria",
     slug: "carta-holografica-legendaria",
     category: "single",
-    rarity: "legendary",
     price: 89.99,
     originalPrice: 99.99,
     rating: 5.0,
@@ -171,7 +163,6 @@ export const products: Product[] = [
     name: "Set Coleccionista Edición Limitada",
     slug: "set-coleccionista-edicion-limitada",
     category: "set",
-    rarity: "epic",
     price: 129.99,
     rating: 4.7,
     inStock: true,
@@ -183,7 +174,6 @@ export const products: Product[] = [
     name: "Booster Box Completa",
     slug: "booster-box-completa",
     category: "booster",
-    rarity: "rare",
     price: 199.99,
     originalPrice: 229.99,
     rating: 4.6,
@@ -196,7 +186,6 @@ export const products: Product[] = [
     name: "Deck Starter Principiante",
     slug: "deck-starter-principiante",
     category: "deck",
-    rarity: "common",
     price: 24.99,
     rating: 4.3,
     inStock: true,

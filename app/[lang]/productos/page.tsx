@@ -13,7 +13,6 @@ export default function ProductosPage({ params }: PageProps) {
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedRarity, setSelectedRarity] = useState("all")
   const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
@@ -45,14 +44,6 @@ export default function ProductosPage({ params }: PageProps) {
     { value: "set", label: "Sets Coleccionista" },
   ]
 
-  const rarities = [
-    { value: "all", label: "Todas las Rarezas" },
-    { value: "common", label: "Común" },
-    { value: "rare", label: "Rara" },
-    { value: "epic", label: "Épica" },
-    { value: "legendary", label: "Legendaria" },
-  ]
-
   const priceRanges = [
     { value: "all", label: "Todos los Precios" },
     { value: "0-25", label: "$0 - $25" },
@@ -72,7 +63,6 @@ export default function ProductosPage({ params }: PageProps) {
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
-    const matchesRarity = selectedRarity === "all" || product.rarity === selectedRarity
 
     let matchesPrice = true
     if (priceRange !== "all") {
@@ -80,7 +70,7 @@ export default function ProductosPage({ params }: PageProps) {
       matchesPrice = product.price >= min && (max === undefined || product.price <= max)
     }
 
-    return matchesSearch && matchesCategory && matchesRarity && matchesPrice
+    return matchesSearch && matchesCategory && matchesPrice
   })
 
   // Ordenar productos
@@ -98,21 +88,6 @@ export default function ProductosPage({ params }: PageProps) {
         return 0
     }
   })
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case "common":
-        return "bg-gray-100 text-gray-800 border-gray-200"
-      case "rare":
-        return "bg-blue-100 text-blue-800 border-blue-200"
-      case "epic":
-        return "bg-purple-100 text-purple-800 border-purple-200"
-      case "legendary":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -205,26 +180,6 @@ export default function ProductosPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Rarity Filter */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Rareza</h4>
-                <div className="space-y-2">
-                  {rarities.map((rarity) => (
-                    <label key={rarity.value} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="rarity"
-                        value={rarity.value}
-                        checked={selectedRarity === rarity.value}
-                        onChange={(e) => setSelectedRarity(e.target.value)}
-                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">{rarity.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
               {/* Price Filter */}
               <div className="mb-6">
                 <h4 className="font-medium mb-3">Precio</h4>
@@ -250,7 +205,6 @@ export default function ProductosPage({ params }: PageProps) {
                 onClick={() => {
                   setSearchTerm("")
                   setSelectedCategory("all")
-                  setSelectedRarity("all")
                   setPriceRange("all")
                   setSortBy("name")
                 }}
