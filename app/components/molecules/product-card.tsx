@@ -12,7 +12,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
     <div className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
       <div className="relative overflow-hidden rounded-t-lg">
         <img
-            src={product.image || "/placeholder.svg"}
+            src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
             alt={product.name}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
