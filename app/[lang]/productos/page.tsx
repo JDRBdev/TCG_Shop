@@ -13,6 +13,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedBrand, setSelectedBrand] = useState("all")
   const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
@@ -34,6 +35,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   // Sincronizar estado con parámetros de la URL al cargar / recargar
   useEffect(() => {
     const catParam = searchParams.get("category") || "all"
+    const brandParam = searchParams.get("brand") || "all"
     const priceParam = searchParams.get("price") || "all"
     const sortParam = searchParams.get("sort") || "name"
 
@@ -45,20 +47,32 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
       "collector-sets": "set",
     }
 
+    const brandMapping: Record<string, string> = {
+      "all": "all",
+      "pokemon": "pokemon",
+      "magic-the-gathering": "magic-the-gathering",
+      "yugioh": "yugioh",
+      "one-piece": "one-piece",
+      "digimon": "digimon",
+    }
+
     const mappedCategory = categoryMapping[catParam] || catParam
+    const mappedBrand = brandMapping[brandParam] || brandParam
 
     setSelectedCategory(mappedCategory)
+    setSelectedBrand(mappedBrand)
     setPriceRange(priceParam)
     setSortBy(sortParam)
   }, [searchParams])
 
   // Función para actualizar la URL y estado al cambiar filtro
-  const updateFilter = (key: "category" | "price" | "sort", value: string) => {
+  const updateFilter = (key: "category" | "brand" | "price" | "sort", value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set(key, value)
     router.push(`/productos?${params.toString()}`)
 
     if (key === "category") setSelectedCategory(value)
+    if (key === "brand") setSelectedBrand(value)
     if (key === "price") setPriceRange(value)
     if (key === "sort") setSortBy(value)
   }
@@ -69,6 +83,15 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     { value: "deck", label: "Decks Construidos" },
     { value: "single", label: "Cartas Individuales" },
     { value: "set", label: "Sets Coleccionista" },
+  ]
+
+  const brands = [
+    { value: "all", label: "Todas las Marcas" },
+    { value: "pokemon", label: "Pokémon" },
+    { value: "magic-the-gathering", label: "Magic: The Gathering" },
+    { value: "yugioh", label: "Yu-Gi-Oh!" },
+    { value: "one-piece", label: "One Piece" },
+    { value: "digimon", label: "Digimon" },
   ]
 
   const priceRanges = [
@@ -89,6 +112,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   const filteredProducts = allProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
+    const matchesBrand = selectedBrand === "all" || product.brand === selectedBrand
 
     let matchesPrice = true
     if (priceRange !== "all") {
@@ -100,7 +124,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
       }
     }
 
-    return matchesSearch && matchesCategory && matchesPrice
+    return matchesSearch && matchesCategory && matchesBrand && matchesPrice
   })
 
   // Ordenar productos
@@ -167,6 +191,26 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">{category.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Marca */}
+            <div className="mb-6">
+              <h4 className="font-medium mb-3">Categoría</h4>
+              <div className="space-y-2">
+                {brands.map((brand) => (
+                  <label key={brand.value} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="brand"
+                      value={brand.value}
+                      checked={selectedBrand === brand.value}
+                      onChange={() => updateFilter("brand", brand.value)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{brand.label}</span>
                   </label>
                 ))}
               </div>

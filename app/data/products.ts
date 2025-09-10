@@ -30,6 +30,7 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
       price,
       in_stock,
       category,
+      brand,
       image,
       slug,
       product_translations!inner (
@@ -56,12 +57,10 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
     slug: item.slug,
     type: item.type,
     brand: item.brand,
-    originalPrice: item.original_price,
     discount: item.discount,
     createdAt: item.created_at,
     updatedAt: item.updated_at,
     timeLeft: item.time_left,
-    material: item.material,
   }));
 }
 

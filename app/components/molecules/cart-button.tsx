@@ -237,7 +237,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   };
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left text-black">
       {!isSignedIn ? (
         <SignInButton mode="modal">
           <button
@@ -292,7 +292,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
                 </div>
               ))}
 
-              <div className="pt-3 border-t flex flex-col gap-2">
+              <div className="pt-3 border-t flex flex-col gap-2 text-black">
                 <p className="text-sm font-medium">
                   Total: ${cart
                     .filter(item => item.quantity > 0)
