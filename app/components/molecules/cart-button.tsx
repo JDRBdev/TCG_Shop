@@ -3,10 +3,17 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../atoms/provider/cart-context";
 import { createClient } from '@supabase/supabase-js';
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useUser, useAuth } from "@clerk/nextjs";
 
 interface CartButtonProps {
   label?: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,7 +23,20 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Faltan variables de entorno de Supabase');
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// ✅ CORRECCIÓN: Inicialización de Supabase con headers correctos
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    headers: {
+      'Accept': 'application/json',
+      'apikey': supabaseAnonKey,
+      'Content-Type': 'application/json'
+    }
+  },
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false
+  }
+});
 
 const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   const { cart, addToCart, removeFromCart, totalItems, clearCart } = useCart();
@@ -24,67 +44,95 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   const [loading, setLoading] = useState(false);
   const [supabaseUser, setSupabaseUser] = useState<any>(null);
   
-  // Obtener usuario de Clerk
   const { isSignedIn, user: clerkUser } = useUser();
+  const { getToken } = useAuth();
 
-  // Obtener usuario de Supabase (para sincronización del carrito)
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSupabaseUser(session?.user || null);
-    };
+    const syncUserWithSupabase = async () => {
+      if (isSignedIn && clerkUser) {
+        try {
+          console.log('Syncing user with Supabase:', clerkUser.id);
+          
+          // 1. Asegurar que el perfil existe en Supabase
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              clerk_id: clerkUser.id,
+              email: clerkUser.primaryEmailAddress?.emailAddress,
+              full_name: clerkUser.fullName,
+              avatar_url: clerkUser.imageUrl,
+              updated_at: new Date().toISOString()
+            }, { 
+              onConflict: 'clerk_id'
+            });
 
-    getSession();
+          if (profileError) {
+            if (profileError.code === '42501') {
+              console.warn('RLS policy error - continuing anyway');
+            } else {
+              console.error('Error creating profile:', profileError);
+            }
+          } else {
+            console.log('Profile upserted successfully');
+          }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSupabaseUser(session?.user || null);
-        if (event === 'SIGNED_OUT') clearCart();
-      }
-    );
+          // 2. Establecer el usuario como el clerk_id
+          setSupabaseUser({ id: clerkUser.id });
+          console.log('Supabase user set successfully');
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Cargar/guardar carrito
-  useEffect(() => {
-    if (!supabaseUser) return;
-
-    const handleCartSync = async () => {
-      if (cart.length > 0) {
-        await saveCartToSupabase();
+        } catch (error) {
+          console.error('Error syncing user:', error);
+          setSupabaseUser({ id: clerkUser.id });
+        }
       } else {
-        await clearCartFromSupabase();
+        console.log('User signed out');
+        setSupabaseUser(null);
       }
     };
 
-    const timeoutId = setTimeout(handleCartSync, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [cart, supabaseUser?.id]);
+    syncUserWithSupabase();
+  }, [isSignedIn, clerkUser]);
 
-  useEffect(() => {
-    if (supabaseUser) loadCartFromSupabase();
-  }, [supabaseUser?.id]);
-
-  const handleDecreaseQuantity = (item: any) => {
-    item.quantity === 1 ? removeFromCart(item.id) : addToCart({ ...item, quantity: -1 });
+  const handleDecreaseQuantity = (item: Product) => {
+    if (item.quantity === 1) {
+      removeFromCart(item.id);
+    } else {
+      addToCart({ ...item, quantity: -1 });
+    }
   };
 
   const loadCartFromSupabase = async () => {
-    if (!supabaseUser) return;
+    if (!clerkUser?.id) {
+      console.log('No clerk user ID, skipping cart load');
+      return;
+    }
     
     try {
       setLoading(true);
+      console.log('Loading cart from Supabase for user:', clerkUser.id);
+      
       const { data, error } = await supabase
         .from('user_carts')
         .select('cart_data')
-        .eq('user_id', supabaseUser.id)
+        .eq('clerk_id', clerkUser.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') return;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.log('No cart found for user');
+        } else if (error.code === '42P17') {
+          console.warn('RLS recursion error - skipping cart load');
+        } else {
+          console.error('Error loading cart:', error);
+          console.error('Error details:', error.details);
+        }
+        return;
+      }
+      
       if (data?.cart_data) {
+        console.log('Cart loaded successfully');
         clearCart();
-        data.cart_data.forEach((item: any) => addToCart(item));
+        data.cart_data.forEach((item: Product) => addToCart(item));
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -94,35 +142,88 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   };
 
   const saveCartToSupabase = async () => {
-    if (!supabaseUser) return;
+    if (!clerkUser?.id) {
+      console.log('No clerk user ID, skipping cart save');
+      return;
+    }
     
     try {
       const validCart = cart.filter(item => item.quantity > 0);
-      await supabase
+      console.log('Saving cart to Supabase for user:', clerkUser.id);
+      
+      const { error } = await supabase
         .from('user_carts')
         .upsert({
-          user_id: supabaseUser.id,
+          clerk_id: clerkUser.id,
           cart_data: validCart,
           updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id' });
+        }, { 
+          onConflict: 'clerk_id'
+        });
+
+      if (error) {
+        console.error('Error saving cart:', error);
+      } else {
+        console.log('Cart saved successfully');
+      }
     } catch (error) {
       console.error('Error saving cart:', error);
     }
   };
 
   const clearCartFromSupabase = async () => {
-    if (!supabaseUser) return;
-    await supabase.from('user_carts').delete().eq('user_id', supabaseUser.id);
+    if (!clerkUser?.id) return;
+    
+    try {
+      console.log('Clearing cart from Supabase for user:', clerkUser.id);
+      const { error } = await supabase
+        .from('user_carts')
+        .delete()
+        .eq('clerk_id', clerkUser.id);
+
+      if (error && error.code === '42P17') {
+        console.warn('RLS recursion error - skipping cart clear');
+      } else if (error) {
+        console.error('Error clearing cart:', error);
+      } else {
+        console.log('Cart cleared successfully');
+      }
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
   };
 
+  useEffect(() => {
+    if (!clerkUser?.id) return;
+
+    const handleCartSync = async () => {
+      console.log('Syncing cart with Supabase...');
+      if (cart.length > 0) {
+        await saveCartToSupabase();
+      } else {
+        await clearCartFromSupabase();
+      }
+    };
+
+    const timeoutId = setTimeout(handleCartSync, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [cart, clerkUser?.id]);
+
+  useEffect(() => {
+    if (clerkUser?.id) {
+      console.log('User changed, loading cart:', clerkUser.id);
+      loadCartFromSupabase();
+    }
+  }, [clerkUser?.id]);
+
   const handleClearCart = () => {
+    console.log('Clearing cart manually');
     clearCart();
-    if (supabaseUser) clearCartFromSupabase();
+    if (clerkUser?.id) clearCartFromSupabase();
   };
 
   const handleCheckout = async () => {
     if (!isSignedIn) {
-      // Clerk manejará la autenticación a través del SignInButton
       setOpen(false);
       return;
     }
@@ -130,14 +231,13 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
     setLoading(true);
     alert("Redirigiendo a la pasarela de pago...");
     clearCart();
-    if (supabaseUser) await clearCartFromSupabase();
+    if (clerkUser?.id) await clearCartFromSupabase();
     setLoading(false);
     setOpen(false);
   };
 
   return (
     <div className="relative inline-block text-left">
-      {/* Conditional rendering for SignInButton vs regular button */}
       {!isSignedIn ? (
         <SignInButton mode="modal">
           <button
@@ -169,7 +269,6 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
         </button>
       )}
 
-      {/* Solo mostrar el carrito si está abierto Y el usuario está autenticado con Clerk */}
       {open && isSignedIn && (
         <div className="absolute -left-40 mt-4 w-80 bg-white shadow-lg rounded-md p-4 z-50 border border-blue-600">
           <h3 className="text-sm font-semibold mb-2">Tu carrito</h3>
