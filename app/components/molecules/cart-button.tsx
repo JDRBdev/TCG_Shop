@@ -211,7 +211,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
       {buttonBase}
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50">
+        <div className="absolute -left-40 mt-4 w-80 bg-white shadow-lg rounded-md p-4 z-50 border border-blue-600">
           <h3 className="text-sm font-semibold mb-2">Tu carrito</h3>
 
           {cart.filter(item => item.quantity > 0).length === 0 ? (
