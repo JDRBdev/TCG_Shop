@@ -118,7 +118,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   })
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       {/* Search y Filtros */}
       <section className="bg-gray-50 py-8">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6">
@@ -129,7 +129,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-3 w-full h-12 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="pl-3 w-full h-12 rounded-md border border-gray-300 px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
