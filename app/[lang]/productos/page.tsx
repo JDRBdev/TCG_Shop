@@ -14,7 +14,6 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedBrand, setSelectedBrand] = useState("all")
-  const [priceRange, setPriceRange] = useState("all")
   const [sortBy, setSortBy] = useState("name")
   const [showFilters, setShowFilters] = useState(false)
   const [allProducts, setAllProducts] = useState<Product[]>([])
@@ -36,14 +35,13 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
   useEffect(() => {
     const catParam = searchParams.get("category") || "all"
     const brandParam = searchParams.get("brand") || "all"
-    const priceParam = searchParams.get("price") || "all"
     const sortParam = searchParams.get("sort") || "name"
 
     // Mapping URL → valor interno
     const categoryMapping: Record<string, string> = {
       "constructed-decks": "deck",
       "booster-packs": "booster-packs",
-      "single-cards": "single",
+      "booster-box": "booster-box",
       "collector-sets": "set",
     }
 
@@ -61,19 +59,17 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
 
     setSelectedCategory(mappedCategory)
     setSelectedBrand(mappedBrand)
-    setPriceRange(priceParam)
     setSortBy(sortParam)
   }, [searchParams])
 
   // Función para actualizar la URL y estado al cambiar filtro
-  const updateFilter = (key: "category" | "brand" | "price" | "sort", value: string) => {
+  const updateFilter = (key: "category" | "brand" | "sort", value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set(key, value)
     router.push(`/productos?${params.toString()}`)
 
     if (key === "category") setSelectedCategory(value)
     if (key === "brand") setSelectedBrand(value)
-    if (key === "price") setPriceRange(value)
     if (key === "sort") setSortBy(value)
   }
 
@@ -81,7 +77,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     { value: "all", label: "Todas las Categorías" },
     { value: "booster-packs", label: "Booster Packs" },
     { value: "deck", label: "Decks Construidos" },
-    { value: "single", label: "Cartas Individuales" },
+    { value: "booster-box", label: "Booster Box" },
     { value: "set", label: "Sets Coleccionista" },
   ]
 
@@ -92,14 +88,6 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     { value: "yugioh", label: "Yu-Gi-Oh!" },
     { value: "one-piece", label: "One Piece" },
     { value: "digimon", label: "Digimon" },
-  ]
-
-  const priceRanges = [
-    { value: "all", label: "Todos los Precios" },
-    { value: "0-25", label: "€0 - €25" },
-    { value: "25-50", label: "€25 - €50" },
-    { value: "50-100", label: "€50 - €100" },
-    { value: "100+", label: "€100+" },
   ]
 
   const sortOptions = [
@@ -114,17 +102,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
     const matchesBrand = selectedBrand === "all" || product.brand === selectedBrand
 
-    let matchesPrice = true
-    if (priceRange !== "all") {
-      if (priceRange === "100+") {
-        matchesPrice = product.price >= 100
-      } else {
-        const [min, max] = priceRange.split("-").map(Number)
-        matchesPrice = product.price >= min && product.price <= max
-      }
-    }
-
-    return matchesSearch && matchesCategory && matchesBrand && matchesPrice
+    return matchesSearch && matchesCategory && matchesBrand
   })
 
   // Ordenar productos
@@ -176,6 +154,26 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
           <div className="bg-white rounded-lg border p-6 sticky top-24">
             <h3 className="text-lg font-semibold mb-6">Filtros</h3>
 
+            {/* Idioma */}
+            <div className="mb-6">
+              <h4 className="font-medium mb-3">Idioma</h4>
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <label key={category.value} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="category"
+                      value={category.value}
+                      checked={selectedCategory === category.value}
+                      onChange={() => updateFilter("category", category.value)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{category.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             {/* Categoría */}
             <div className="mb-6">
               <h4 className="font-medium mb-3">Categoría</h4>
@@ -198,7 +196,7 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
 
             {/* Marca */}
             <div className="mb-6">
-              <h4 className="font-medium mb-3">Categoría</h4>
+              <h4 className="font-medium mb-3">Marca</h4>
               <div className="space-y-2">
                 {brands.map((brand) => (
                   <label key={brand.value} className="flex items-center">
@@ -211,26 +209,6 @@ export default function ProductosPage({ params }: { params: Promise<{ lang: stri
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">{brand.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Precio */}
-            <div className="mb-6">
-              <h4 className="font-medium mb-3">Precio</h4>
-              <div className="space-y-2">
-                {priceRanges.map((range) => (
-                  <label key={range.value} className="flex items-center">
-                    <input
-                      type="radio"
-                      name="price"
-                      value={range.value}
-                      checked={priceRange === range.value}
-                      onChange={() => updateFilter("price", range.value)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{range.label}</span>
                   </label>
                 ))}
               </div>

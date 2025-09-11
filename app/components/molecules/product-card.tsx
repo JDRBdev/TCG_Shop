@@ -1,6 +1,10 @@
-import React from "react";
+import React, { JSX } from "react";
 import AddToCartButton from "./add-tocart-button";
 import { Product } from "../../data/products";
+import Spanish from "../atoms/flags/spanish";
+import English from "../atoms/flags/english";
+import French from "../atoms/flags/french";
+import Deutsch from "../atoms/flags/deutsch";
 
 interface ProductCardProps {
   product: Product;
@@ -8,13 +12,21 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false }) => {
+  // Mapeo idioma -> componente bandera
+  const LanguageFlag: Record<string, JSX.Element> = {
+    es: <Spanish className="w-7 h-7 rounded-full border" />,
+    en: <English className="w-7 h-7 rounded-full border" />,
+    fr: <French className="w-7 h-7 rounded-full border" />,
+    de: <Deutsch className="w-7 h-7 rounded-full border" />,
+  };
+
   return (
     <div className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
       <div className="relative overflow-hidden rounded-t-lg">
         <img
-            src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
-            alt={product.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
+          alt={product.name}
+          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
         {/* Badges container */}
@@ -30,14 +42,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
               -{Math.round(product.discount * 100)}%
             </span>
           )}
+
+          {/* 👇 Bandera del idioma */}
+          {product.language && (
+            <span className="inline-flex items-center justify-center rounded-full p-1">
+              {LanguageFlag[product.language]}
+            </span>
+          )}
         </div>
 
         {!product.inStock && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                Agotado
+              Agotado
             </span>
-            </div>
+          </div>
         )}
       </div>
       <div className="p-4">

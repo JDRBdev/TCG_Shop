@@ -11,6 +11,7 @@ export interface Product {
   inStock: boolean;
   description: string;
   image: string;
+  language?: "es" | "en" | "fr" | "de";
   createdAt?: string;
   updatedAt?: string;
   timeLeft?: string; 
@@ -23,45 +24,77 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey!);
 
 // Función para obtener productos traducidos según idioma
 export async function fetchProducts(locale: string): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      id,
-      price,
-      in_stock,
-      category,
-      brand,
-      image,
-      slug,
-      product_translations!inner (
-        lang,
-        name,
-        description
-      )
-    `)
-    .eq('product_translations.lang', locale);
+  try {
+    // 1️⃣ Obtener todos los productos
+    const { data: products, error: productsError } = await supabase
+      .from('products')
+      .select('*');
 
-  if (error) {
-    console.error('Error al obtener productos:', error);
+    if (productsError) {
+      console.error('Error al obtener productos:', productsError);
+      return [];
+    }
+
+    if (!products?.length) return [];
+
+    const productIds = products.map((p: any) => p.id);
+
+    // 2️⃣ Obtener las relaciones en products_product_translations
+    const { data: mappings, error: mappingsError } = await supabase
+      .from('products_product_translations')
+      .select('products_id, product_translations_id')
+      .in('products_id', productIds);
+
+    if (mappingsError) {
+      console.error('Error al obtener relaciones de traducciones:', mappingsError);
+      return [];
+    }
+
+    const translationIds = mappings.map((m: any) => m.product_translations_id);
+
+    // 3️⃣ Obtener las traducciones reales
+    const { data: translations, error: translationsError } = await supabase
+      .from('product_translations')
+      .select('*')
+      .in('id', translationIds);
+
+    if (translationsError) {
+      console.error('Error al obtener traducciones:', translationsError);
+      return [];
+    }
+
+    // 4️⃣ Combinar productos con sus traducciones según locale
+    const result = products.map((p: any) => {
+      const mapItems = mappings.filter((m: any) => m.products_id === p.id);
+      const translation = translations.find(
+        (t: any) =>
+          mapItems.some((m) => m.product_translations_id === t.id) &&
+          t.lang === locale
+      );
+
+      return {
+        id: p.id,
+        name: translation?.name ?? '',
+        price: p.price,
+        description: translation?.description ?? '',
+        image: p.image,
+        inStock: p.in_stock,
+        category: p.category || 'other',
+        language: p.language,
+        slug: p.slug,
+        brand: p.brand,
+        discount: p.discount,
+        createdAt: p.created_at,
+        updatedAt: p.updated_at,
+        timeLeft: p.time_left,
+      };
+    });
+
+    return result;
+  } catch (err) {
+    console.error('Error inesperado al obtener productos:', err);
     return [];
   }
-
-  return (data ?? []).map((item: any) => ({
-    id: item.id,
-    name: item.product_translations[0]?.name ?? "", // traducción o vacío
-    price: item.price,
-    description: item.product_translations[0]?.description ?? "",
-    image: item.image,
-    inStock: item.in_stock,
-    category: item.category || "other",
-    slug: item.slug,
-    type: item.type,
-    brand: item.brand,
-    discount: item.discount,
-    createdAt: item.created_at,
-    updatedAt: item.updated_at,
-    timeLeft: item.time_left,
-  }));
 }
 
 export const featuredProducts: Product[] = [
