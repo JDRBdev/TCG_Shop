@@ -13,6 +13,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
+  discount: number;
   quantity: number;
 }
 
@@ -281,7 +282,9 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
                 <div key={item.id} className="flex justify-between items-center border-b pb-2">
                   <div>
                     <p className="text-sm font-medium">{item.name}</p>
-                    <p className="text-xs text-gray-500">€{item.price} x {item.quantity}</p>
+                    <p className="text-xs text-gray-500">
+                      €{(item.price * (1 - item.discount / 100)).toFixed(2)} x {item.quantity}
+                    </p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button onClick={() => handleDecreaseQuantity(item)} className="px-2 bg-gray-200 rounded">-</button>
@@ -296,7 +299,10 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
                 <p className="text-sm font-medium">
                   Total: €{cart
                     .filter(item => item.quantity > 0)
-                    .reduce((total, item) => total + (item.price * item.quantity), 0)
+                    .reduce(
+                      (total, item) => total + item.quantity * (item.price * (1 - item.discount / 100)),
+                      0
+                    )
                     .toFixed(2)}
                 </p>
                 

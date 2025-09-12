@@ -9,6 +9,7 @@ interface AddToCartButtonProps {
     id: string;
     name: string;
     price: number;
+    discount: number;
   };
 }
 

@@ -88,6 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
               id: product.id.toString(),
               name: product.name,
               price: product.price,
+              discount: product.discount || 0,
             }}
           />
         </div>
