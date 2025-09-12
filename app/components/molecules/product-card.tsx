@@ -39,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
 
           {product.discount && product.discount > 0 && (
             <span className="inline-flex items-center justify-center rounded-full w-14.5 border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-800 border-red-200">
-              -{Math.round(product.discount * 100)}%
+              -{Math.round(product.discount)}%
             </span>
           )}
 
@@ -64,20 +64,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
         {product.description && (
           <p className="text-sm text-gray-600 mb-3">{product.description}</p>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             {/* Precio final con descuento */}
             {product.discount ? (
               <>
                 <span className="text-2xl font-bold text-blue-600">
-                  €{(product.price * (1 - product.discount)).toFixed(2)}
+                  €{(product.price * (1 - product.discount / 100)).toFixed(2)}
                 </span>
                 <span className="text-sm line-through text-gray-400">
                   €{product.price.toFixed(2)}
                 </span>
               </>
             ) : (
-              <span className="text-2xl font-bold text-blue-600">€{product.price.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-blue-600">
+                €{product.price.toFixed(2)}
+              </span>
             )}
           </div>
           <AddToCartButton

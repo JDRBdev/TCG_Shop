@@ -7,7 +7,7 @@ export interface Product {
   category?: "booster" | "deck" | "single" | "set" | "accessory";
   brand?: string;
   price: number;
-  discount?: number;       
+  discount?: number;      
   inStock: boolean;
   description: string;
   image: string;
@@ -86,7 +86,6 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
         discount: p.discount,
         createdAt: p.created_at,
         updatedAt: p.updated_at,
-        timeLeft: p.time_left,
       };
     });
 
