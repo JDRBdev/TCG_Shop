@@ -99,7 +99,6 @@ export default function ProductosClientPage({
 
       setIsUpdating(true)
       try {
-        console.log('🔄 Actualizando datos de productos...')
         const updatedData = await fetchUpdatedProductData()
         
         if (isMountedRef.current && updatedData.length > 0) {
