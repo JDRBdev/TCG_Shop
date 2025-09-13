@@ -2,7 +2,14 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-interface Product {
+// Cambiamos la interfaz para no almacenar precios en el carrito
+interface CartItem {
+  id: string;
+  quantity: number;
+}
+
+// Nueva interfaz para productos con precios actualizados
+interface ProductWithPrice {
   id: string;
   name: string;
   price: number;
@@ -11,8 +18,8 @@ interface Product {
 }
 
 interface CartContextType {
-  cart: Product[];
-  addToCart: (product: Product) => void;
+  cart: CartItem[];
+  addToCart: (product: CartItem) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   totalItems: number;
@@ -21,9 +28,9 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: CartItem) => {
     setCart((prev) => {
       const existing = prev.find((p) => p.id === product.id);
       if (existing) {

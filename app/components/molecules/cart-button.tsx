@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../atoms/provider/cart-context";
 import { createClient } from '@supabase/supabase-js';
 import { SignInButton, useUser, useAuth } from "@clerk/nextjs";
@@ -14,6 +14,15 @@ interface Product {
   name: string;
   price: number;
   discount: number;
+  in_stock: boolean;
+}
+
+interface CartItem {
+  id: string;
+  quantity: number;
+}
+
+interface CartProduct extends Product {
   quantity: number;
 }
 
@@ -24,7 +33,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Faltan variables de entorno de Supabase');
 }
 
-// ✅ CORRECCIÓN: Inicialización de Supabase con headers correctos
 const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: {
@@ -39,22 +47,124 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
+// Función optimizada para obtener datos actualizados de productos
+async function fetchUpdatedProductData(productIds: string[]): Promise<Product[]> {
+  if (productIds.length === 0) return [];
+  
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, price, discount, in_stock')
+      .in('id', productIds);
+
+    if (error) {
+      console.error('Error fetching product data:', error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+    return [];
+  }
+}
+
 const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   const { cart, addToCart, removeFromCart, totalItems, clearCart } = useCart();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [supabaseUser, setSupabaseUser] = useState<any>(null);
+  const [products, setProducts] = useState<CartProduct[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
   
   const { isSignedIn, user: clerkUser } = useUser();
   const { getToken } = useAuth();
 
+  // Referencias para controlar el polling
+  const isMountedRef = useRef(true);
+  const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isTabVisibleRef = useRef(true);
+
+  // Función para actualizar datos de productos del carrito
+  const updateProductData = async () => {
+    if (cart.length === 0) {
+      setProducts([]);
+      return;
+    }
+    
+    const productIds = cart.map(item => item.id);
+    const productData = await fetchUpdatedProductData(productIds);
+    
+    const updatedProducts: CartProduct[] = cart.map(item => {
+      const productInfo = productData.find(p => p.id === item.id);
+      return {
+        id: item.id,
+        name: productInfo?.name || 'Producto no disponible',
+        price: productInfo?.price || 0,
+        discount: productInfo?.discount || 0,
+        in_stock: productInfo?.in_stock || false,
+        quantity: item.quantity
+      };
+    });
+    
+    setProducts(updatedProducts);
+    setLastUpdate(Date.now());
+  };
+
+  // Efecto para polling inteligente cuando el carrito está abierto
+  useEffect(() => {
+    isMountedRef.current = true;
+    isTabVisibleRef.current = document.visibilityState === 'visible';
+
+    const handleVisibilityChange = () => {
+      isTabVisibleRef.current = document.visibilityState === 'visible';
+      if (isTabVisibleRef.current && open && cart.length > 0) {
+        // Actualizar inmediatamente cuando la pestaña se vuelve visible
+        updateProductData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    if (open && cart.length > 0) {
+      // Polling adaptativo: más frecuente cuando la pestaña está visible
+      const startPolling = () => {
+        if (!isMountedRef.current || !open) return;
+
+        const interval = isTabVisibleRef.current ? 15000 : 30000; // 15s visible, 30s oculta
+        
+        updateIntervalRef.current = setTimeout(() => {
+          if (isMountedRef.current && open && cart.length > 0) {
+            updateProductData();
+            startPolling(); // Continuar el polling
+          }
+        }, interval);
+      };
+
+      // Iniciar polling y actualizar inmediatamente
+      updateProductData();
+      startPolling();
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (updateIntervalRef.current) {
+        clearTimeout(updateIntervalRef.current);
+        updateIntervalRef.current = null;
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [open, cart.length]);
+
+  // Actualizar datos cuando cambia el carrito
+  useEffect(() => {
+    updateProductData();
+  }, [cart]);
+
+  // Sincronización de usuario con Supabase (mantenido igual)
   useEffect(() => {
     const syncUserWithSupabase = async () => {
       if (isSignedIn && clerkUser) {
         try {
-          console.log('Syncing user with Supabase:', clerkUser.id);
-          
-          // 1. Asegurar que el perfil existe en Supabase
           const { error: profileError } = await supabase
             .from('profiles')
             .upsert({
@@ -67,73 +177,46 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
               onConflict: 'clerk_id'
             });
 
-          if (profileError) {
-            if (profileError.code === '42501') {
-              console.warn('RLS policy error - continuing anyway');
-            } else {
-              console.error('Error creating profile:', profileError);
-            }
-          } else {
-            console.log('Profile upserted successfully');
+          if (profileError && profileError.code !== '42501') {
+            console.error('Error creating profile:', profileError);
           }
-
-          // 2. Establecer el usuario como el clerk_id
-          setSupabaseUser({ id: clerkUser.id });
-          console.log('Supabase user set successfully');
-
         } catch (error) {
           console.error('Error syncing user:', error);
-          setSupabaseUser({ id: clerkUser.id });
         }
-      } else {
-        console.log('User signed out');
-        setSupabaseUser(null);
       }
     };
 
     syncUserWithSupabase();
   }, [isSignedIn, clerkUser]);
 
-  const handleDecreaseQuantity = (item: Product) => {
+  const handleDecreaseQuantity = (item: CartProduct) => {
     if (item.quantity === 1) {
       removeFromCart(item.id);
     } else {
-      addToCart({ ...item, quantity: -1 });
+      addToCart({ id: item.id, quantity: -1 });
     }
   };
 
+  // Funciones de carga/guardado del carrito (mantenidas igual)
   const loadCartFromSupabase = async () => {
-    if (!clerkUser?.id) {
-      console.log('No clerk user ID, skipping cart load');
-      return;
-    }
+    if (!clerkUser?.id) return;
     
     try {
       setLoading(true);
-      console.log('Loading cart from Supabase for user:', clerkUser.id);
-      
       const { data, error } = await supabase
         .from('user_carts')
         .select('cart_data')
         .eq('clerk_id', clerkUser.id)
         .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          console.log('No cart found for user');
-        } else if (error.code === '42P17') {
-          console.warn('RLS recursion error - skipping cart load');
-        } else {
-          console.error('Error loading cart:', error);
-          console.error('Error details:', error.details);
-        }
+      if (error && error.code !== 'PGRST116' && error.code !== '42P17') {
+        console.error('Error loading cart:', error);
         return;
       }
       
       if (data?.cart_data) {
-        console.log('Cart loaded successfully');
         clearCart();
-        data.cart_data.forEach((item: Product) => addToCart(item));
+        data.cart_data.forEach((item: CartItem) => addToCart(item));
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -143,15 +226,10 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   };
 
   const saveCartToSupabase = async () => {
-    if (!clerkUser?.id) {
-      console.log('No clerk user ID, skipping cart save');
-      return;
-    }
+    if (!clerkUser?.id) return;
     
     try {
       const validCart = cart.filter(item => item.quantity > 0);
-      console.log('Saving cart to Supabase for user:', clerkUser.id);
-      
       const { error } = await supabase
         .from('user_carts')
         .upsert({
@@ -164,8 +242,6 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
       if (error) {
         console.error('Error saving cart:', error);
-      } else {
-        console.log('Cart saved successfully');
       }
     } catch (error) {
       console.error('Error saving cart:', error);
@@ -176,29 +252,24 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
     if (!clerkUser?.id) return;
     
     try {
-      console.log('Clearing cart from Supabase for user:', clerkUser.id);
       const { error } = await supabase
         .from('user_carts')
         .delete()
         .eq('clerk_id', clerkUser.id);
 
-      if (error && error.code === '42P17') {
-        console.warn('RLS recursion error - skipping cart clear');
-      } else if (error) {
+      if (error && error.code !== '42P17') {
         console.error('Error clearing cart:', error);
-      } else {
-        console.log('Cart cleared successfully');
       }
     } catch (error) {
       console.error('Error clearing cart:', error);
     }
   };
 
+  // Sincronización del carrito con Supabase (mantenida igual)
   useEffect(() => {
     if (!clerkUser?.id) return;
 
     const handleCartSync = async () => {
-      console.log('Syncing cart with Supabase...');
       if (cart.length > 0) {
         await saveCartToSupabase();
       } else {
@@ -212,13 +283,11 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
   useEffect(() => {
     if (clerkUser?.id) {
-      console.log('User changed, loading cart:', clerkUser.id);
       loadCartFromSupabase();
     }
   }, [clerkUser?.id]);
 
   const handleClearCart = () => {
-    console.log('Clearing cart manually');
     clearCart();
     if (clerkUser?.id) clearCartFromSupabase();
   };
@@ -236,6 +305,15 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
     setLoading(false);
     setOpen(false);
   };
+
+  // Calcular total actualizado
+  const total = products
+    .filter(item => item.quantity > 0)
+    .reduce(
+      (total, item) => total + item.quantity * (item.price * (1 - item.discount / 100)),
+      0
+    )
+    .toFixed(2);
 
   return (
     <div className="relative inline-block text-left text-black">
@@ -272,24 +350,31 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
       {open && isSignedIn && (
         <div className="absolute -left-40 mt-4 w-80 bg-white shadow-lg rounded-md p-4 z-50 border border-blue-600">
-          <h3 className="text-sm font-semibold mb-2">Tu carrito</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-semibold">Tu carrito</h3>
+          </div>
 
-          {cart.filter(item => item.quantity > 0).length === 0 ? (
+          {products.filter(item => item.quantity > 0).length === 0 ? (
             <p className="text-sm text-gray-500">No hay productos en el carrito.</p>
           ) : (
             <div className="space-y-3">
-              {cart.filter(item => item.quantity > 0).map((item) => (
+              {products.filter(item => item.quantity > 0).map((item) => (
                 <div key={item.id} className="flex justify-between items-center border-b pb-2">
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-medium">{item.name}</p>
-                    <p className="text-xs text-gray-500">
-                      €{(item.price * (1 - item.discount / 100)).toFixed(2)} x {item.quantity}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-gray-500">
+                        €{(item.price * (1 - item.discount / 100)).toFixed(2)} x {item.quantity}
+                      </p>
+                      {!item.in_stock && (
+                        <span className="text-xs text-red-500">Sin stock</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button onClick={() => handleDecreaseQuantity(item)} className="px-2 bg-gray-200 rounded">-</button>
                     <span className="text-sm">{item.quantity}</span>
-                    <button onClick={() => addToCart({ ...item, quantity: 1 })} className="px-2 bg-gray-200 rounded">+</button>
+                    <button onClick={() => addToCart({ id: item.id, quantity: 1 })} className="px-2 bg-gray-200 rounded">+</button>
                     <button onClick={() => removeFromCart(item.id)} className="text-red-500 text-xs">✕</button>
                   </div>
                 </div>
@@ -297,13 +382,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
               <div className="pt-3 border-t flex flex-col gap-2 text-black">
                 <p className="text-sm font-medium">
-                  Total: €{cart
-                    .filter(item => item.quantity > 0)
-                    .reduce(
-                      (total, item) => total + item.quantity * (item.price * (1 - item.discount / 100)),
-                      0
-                    )
-                    .toFixed(2)}
+                  Total: €{total}
                 </p>
                 
                 <button onClick={handleClearCart} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md text-sm font-medium">

@@ -8,11 +8,10 @@ import Deutsch from "../atoms/flags/deutsch";
 
 interface ProductCardProps {
   product: Product;
-  showBadge?: boolean; // opcional, por ejemplo “Nuevo” o “Oferta”
+  showBadge?: boolean;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false }) => {
-  // Mapeo idioma -> componente bandera
   const LanguageFlag: Record<string, JSX.Element> = {
     es: <Spanish className="w-7 h-7 rounded-full border" />,
     en: <English className="w-7 h-7 rounded-full border" />,
@@ -29,21 +28,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* Badges container */}
-        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
-          {showBadge && (
-            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 border-emerald-200">
-              Nuevo
-            </span>
-          )}
-
-          {product.discount && product.discount > 0 && (
+        <div className="absolute top-2 left-2 flex flex-col items-end gap-1">
+          {product.discount! > 0 && (
             <span className="inline-flex items-center justify-center rounded-full w-14.5 border px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-800 border-red-200">
-              -{Math.round(product.discount)}%
+              -{Math.round(product.discount!)}%
             </span>
           )}
+        </div>
 
-          {/* 👇 Bandera del idioma */}
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
           {product.language && (
             <span className="inline-flex items-center justify-center rounded-full p-1">
               {LanguageFlag[product.language]}
@@ -66,7 +59,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
         )}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            {/* Precio final con descuento */}
             {product.discount ? (
               <>
                 <span className="text-2xl font-bold text-blue-600">
@@ -86,9 +78,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
             inStock={product.inStock}
             product={{
               id: product.id.toString(),
-              name: product.name,
-              price: product.price,
-              discount: product.discount || 0,
             }}
           />
         </div>

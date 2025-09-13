@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   slug?: string;
   category?: "booster" | "deck" | "single" | "set" | "accessory";
@@ -98,7 +98,7 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
 
 export const featuredProducts: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "Booster Pack Premium",
     slug: "booster-pack-premium",
     category: "booster",
@@ -108,7 +108,7 @@ export const featuredProducts: Product[] = [
     image: "/images/trading-card-booster-pack-premium.png",
   },
   {
-    id: 2,
+    id: "2",
     name: "Deck Competitivo Dragón",
     slug: "deck-competitivo-dragon",
     category: "deck",
@@ -118,7 +118,7 @@ export const featuredProducts: Product[] = [
     image: "/images/competitive-trading-card-deck.png",
   },
   {
-    id: 3,
+    id: "3",
     name: "Carta Holográfica Legendaria",
     slug: "carta-holografica-legendaria",
     category: "single",
@@ -128,7 +128,7 @@ export const featuredProducts: Product[] = [
     image: "/images/holographic-rare-trading-card.png",
   },
   {
-    id: 4,
+    id: "4",
     name: "Set Coleccionista Edición Limitada",
     slug: "set-coleccionista-edicion-limitada",
     category: "set",
@@ -141,7 +141,7 @@ export const featuredProducts: Product[] = [
 
 export const specialOffers: Product[] = [
   {
-    id: 101,
+    id: "101",
     name: "Bundle Mega Coleccionista",
     category: "booster",
     inStock: true,
@@ -152,7 +152,7 @@ export const specialOffers: Product[] = [
     slug: "bundle-mega-coleccionista",
   },
   {
-    id: 102,
+    id: "102",
     name: "Pack Competitivo Pro",
     category: "deck",
     inStock: true,
@@ -163,7 +163,7 @@ export const specialOffers: Product[] = [
     slug: "pack-competitivo-pro",
   },
   {
-    id: 103,
+    id: "103",
     name: "Set Coleccionista Premium",
     category: "set",
     inStock: true,
@@ -174,7 +174,7 @@ export const specialOffers: Product[] = [
     slug: "set-coleccionista-premium",
   },
   {
-    id: 104,
+    id: "104",
     name: "Bundle Accesorios Completo",
     category: "accessory",
     inStock: true,
@@ -188,7 +188,7 @@ export const specialOffers: Product[] = [
 
 export const products: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "Booster Pack Premium",
     slug: "booster-pack-premium",
     category: "booster",
@@ -198,7 +198,7 @@ export const products: Product[] = [
     image: "/images/trading-card-booster-pack-premium.png",
   },
   {
-    id: 2,
+    id: "2",
     name: "Deck Competitivo Dragón",
     slug: "deck-competitivo-dragon",
     category: "deck",
@@ -208,7 +208,7 @@ export const products: Product[] = [
     image: "/images/competitive-trading-card-deck.png",
   },
   {
-    id: 3,
+    id: "3",
     name: "Carta Holográfica Legendaria",
     slug: "carta-holografica-legendaria",
     category: "single",
@@ -218,7 +218,7 @@ export const products: Product[] = [
     image: "/images/holographic-rare-trading-card.png",
   },
   {
-    id: 4,
+    id: "4",
     name: "Set Coleccionista Edición Limitada",
     slug: "set-coleccionista-edicion-limitada",
     category: "set",
@@ -228,7 +228,7 @@ export const products: Product[] = [
     image: "/images/collector-trading-card-set.png",
   },
   {
-    id: 5,
+    id: "5",
     name: "Booster Box Completa",
     slug: "booster-box-completa",
     category: "booster",
@@ -238,7 +238,7 @@ export const products: Product[] = [
     image: "/images/trading-card-booster-packs-collection.png",
   },
   {
-    id: 6,
+    id: "6",
     name: "Deck Starter Principiante",
     slug: "deck-starter-principiante",
     category: "deck",
@@ -248,7 +248,7 @@ export const products: Product[] = [
     image: "/images/competitive-trading-card-deck.png",
   },
   {
-    id: 7,
+    id: "7",
     name: "Protectores Premium Transparentes",
     category: "accessory",
     price: 12.99,
@@ -258,7 +258,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 8,
+    id: "8",
     name: "Carpeta Coleccionista 9-Pocket",
     category: "accessory",
     price: 24.99,
@@ -268,7 +268,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 9,
+    id: "9",
     name: "Tapete de Juego Dragón Místico",
     category: "accessory",
     price: 29.99,
@@ -278,7 +278,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 10,
+    id: "10",
     name: "Set de Dados Metálicos",
     category: "accessory",
     price: 18.99,
@@ -288,7 +288,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 11,
+    id: "11",
     name: "Caja de Almacenamiento Deluxe",
     category: "accessory",
     price: 45.99,
@@ -298,7 +298,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 12,
+    id: "12",
     name: "Contador de Vida Digital",
     category: "accessory",
     price: 15.99,
@@ -308,7 +308,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 13,
+    id: "13",
     name: "Protectores Mate Negro",
     category: "accessory",
     price: 14.99,
@@ -318,7 +318,7 @@ export const products: Product[] = [
     image: "/images/trading-card-accessories-sleeves-binders.png",
   },
   {
-    id: 14,
+    id: "14",
     name: "Separadores de Cartas Premium",
     category: "accessory",
     price: 8.99,

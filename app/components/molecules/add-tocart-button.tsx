@@ -1,15 +1,12 @@
 "use client";
 
 import { SignUpButton, useUser } from "@clerk/nextjs";
-import { useCart } from "../atoms/provider/cart-context"; // 👈 importa el hook, no el provider
+import { useCart } from "../atoms/provider/cart-context";
 
 interface AddToCartButtonProps {
   inStock: boolean;
   product: {
     id: string;
-    name: string;
-    price: number;
-    discount: number;
   };
 }
 
@@ -18,7 +15,8 @@ export default function AddToCartButton({ inStock, product }: AddToCartButtonPro
   const { addToCart } = useCart();
 
   const handleAdd = () => {
-    addToCart({ ...product, quantity: 1 });
+    // Solo guardamos el ID y la cantidad, no los precios
+    addToCart({ id: product.id, quantity: 1 });
   };
 
   const buttonClasses = `inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 h-9 px-3 ${
@@ -50,7 +48,6 @@ export default function AddToCartButton({ inStock, product }: AddToCartButtonPro
     return <button className={buttonClasses} disabled>{buttonContent}</button>;
   }
 
-  // 🔒 Usuario NO logueado → abre modal de Clerk
   if (!isSignedIn) {
     return (
       <SignUpButton mode="modal">
@@ -59,7 +56,6 @@ export default function AddToCartButton({ inStock, product }: AddToCartButtonPro
     );
   }
 
-  // ✅ Usuario logueado → añade al carrito
   return (
     <button onClick={handleAdd} className={buttonClasses}>
       {buttonContent}
