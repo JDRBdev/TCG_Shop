@@ -1,63 +1,22 @@
 // app/productos/page.tsx (Server Component)
-import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import ProductosClientPage from './client-side'
+import { fetchProducts } from '@/app/data/products' // Importar la función de traducción
 
 export const revalidate = 60 // Revalida cada 60 segundos
 
-async function getProducts() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        }
-      },
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    }
-  )
-
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('name')
-
-  if (error) {
-    console.error('Error fetching products:', error)
-    return []
-  }
-
-  return (data || []).map((item: any) => ({
-    id: item.id,
-    name: item.name,
-    description: item.description,
-    price: Number(item.price) || 0,
-    discount: Number(item.discount) || 0,
-    inStock: item.in_stock,
-    image: item.image,
-    language: item.language,
-    category: item.category,
-    brand: item.brand,
-    slug: item.slug,
-    createdAt: item.created_at,
-    updatedAt: item.updated_at
-  }))
-}
-
 export default async function ProductosPage({ 
-  searchParams 
+  searchParams,
+  params 
 }: { 
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  params: Promise<{ lang: string }>
 }) {
   const searchParamsObj = await searchParams
+  const { lang } = await params
   
-  const initialProducts = await getProducts()
+  // Obtener productos TRADUCIDOS según el lang
+  const initialProducts = await fetchProducts(lang)
   
   // Parsear los parámetros de búsqueda
   const filters = {
@@ -66,6 +25,13 @@ export default async function ProductosPage({
     brand: typeof searchParamsObj.brand === 'string' ? searchParamsObj.brand : "all",
     sort: typeof searchParamsObj.sort === 'string' ? searchParamsObj.sort : "name",
     inStock: typeof searchParamsObj.inStock === 'string' ? searchParamsObj.inStock === "true" : false
+  }
+
+  // Log para debugging
+  console.log('lang:', lang)
+  console.log('Productos traducidos:', initialProducts.length)
+  if (initialProducts.length > 0) {
+    console.log('Primer producto traducido:', initialProducts[0].name)
   }
 
   return (

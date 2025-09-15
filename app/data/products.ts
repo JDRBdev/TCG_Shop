@@ -23,6 +23,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey!);
 
 // Función para obtener productos traducidos según idioma
+// Función para obtener productos traducidos según idioma
 export async function fetchProducts(locale: string): Promise<Product[]> {
   try {
     // 1️⃣ Obtener todos los productos
@@ -56,7 +57,8 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
     const { data: translations, error: translationsError } = await supabase
       .from('product_translations')
       .select('*')
-      .in('id', translationIds);
+      .in('id', translationIds)
+      .eq('lang', locale); // FILTRAR POR IDIOMA SOLICITADO
 
     if (translationsError) {
       console.error('Error al obtener traducciones:', translationsError);
@@ -65,20 +67,21 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
 
     // 4️⃣ Combinar productos con sus traducciones según locale
     const result = products.map((p: any) => {
-      const mapItems = mappings.filter((m: any) => m.products_id === p.id);
-      const translation = translations.find(
-        (t: any) =>
-          mapItems.some((m) => m.product_translations_id === t.id) &&
-          t.lang === locale
+      // Encontrar el mapping para este producto
+      const productMappings = mappings.filter((m: any) => m.products_id === p.id);
+      
+      // Encontrar la traducción que corresponda al locale solicitado
+      const translation = translations.find((t: any) => 
+        productMappings.some((m) => m.product_translations_id === t.id)
       );
 
       return {
         id: p.id,
-        name: translation?.name ?? '',
+        name: translation?.name ?? p.name, // Usar traducción o nombre original
         price: p.price,
-        description: translation?.description ?? '',
+        description: translation?.description ?? p.description, // Usar traducción o descripción original
         image: p.image,
-        inStock: p.in_stock,
+        inStock: p.in_stock ?? p.stock, // Manejar ambos nombres de columna
         category: p.category || 'other',
         language: p.language,
         slug: p.slug,
@@ -87,6 +90,12 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
         createdAt: p.created_at,
         updatedAt: p.updated_at,
       };
+    });
+
+    // Debug: mostrar qué productos se encontraron y sus traducciones
+    console.log(`Traducciones para locale '${locale}':`, translations.length);
+    result.forEach((product, index) => {
+      console.log(`Producto ${index + 1}:`, product.name);
     });
 
     return result;
