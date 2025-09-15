@@ -44,6 +44,7 @@ async function getProducts() {
     language: item.language,
     category: item.category,
     brand: item.brand,
+    slug: item.slug,
     createdAt: item.created_at,
     updatedAt: item.updated_at
   }))
