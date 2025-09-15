@@ -105,6 +105,67 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
   }
 }
 
+// Agrega esta función a products.ts
+export async function fetchTranslatedProduct(slug: string, locale: string): Promise<Product | null> {
+  try {
+    console.log('Buscando producto traducido:', slug, 'para lang:', locale);
+    
+    // 1️⃣ Obtener el producto por slug
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (productError || !product) {
+      console.error('Error al obtener producto:', productError);
+      return null;
+    }
+
+    // 2️⃣ Obtener las relaciones de traducciones para este producto
+    const { data: mappings, error: mappingsError } = await supabase
+      .from('products_product_translations')
+      .select('product_translations_id')
+      .eq('products_id', product.id);
+
+    if (mappingsError) {
+      console.error('Error al obtener relaciones de traducciones:', mappingsError);
+      return null;
+    }
+
+    const translationIds = mappings.map((m: any) => m.product_translations_id);
+
+    // 3️⃣ Obtener la traducción específica para el locale
+    const { data: translations, error: translationsError } = await supabase
+      .from('product_translations')
+      .select('*')
+      .in('id', translationIds)
+      .eq('lang', locale)
+      .single(); // Solo necesitamos una traducción
+
+    // 4️⃣ Combinar producto con traducción
+    return {
+      id: product.id,
+      name: translations?.name ?? product.name,
+      description: translations?.description ?? product.description,
+      price: product.price,
+      discount: product.discount,
+      inStock: product.in_stock ?? product.stock,
+      image: product.image,
+      language: product.language,
+      category: product.category,
+      brand: product.brand,
+      slug: product.slug,
+      createdAt: product.created_at,
+      updatedAt: product.updated_at
+    };
+
+  } catch (err) {
+    console.error('Error inesperado al obtener producto traducido:', err);
+    return null;
+  }
+}
+
 export const featuredProducts: Product[] = [
   {
     id: "1",

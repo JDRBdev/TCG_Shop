@@ -9,10 +9,11 @@ import Deutsch from '@/app/components/atoms/flags/deutsch';
 import { JSX } from 'react';
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; lang: string }>;
 }
 
-async function getProduct(slug: string) {
+// Función para obtener producto traducido
+async function getTranslatedProduct(slug: string, locale: string) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -30,37 +31,72 @@ async function getProduct(slug: string) {
     }
   );
 
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('slug', slug)
-    .single();
+  try {
+    console.log('Buscando producto traducido:', slug, 'para lang:', locale);
+    
+    // 1️⃣ Obtener el producto por slug
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('slug', slug)
+      .single();
 
-  if (error) {
-    console.error('Error fetching product:', error);
+    if (productError || !product) {
+      console.error('Error al obtener producto:', productError);
+      return null;
+    }
+
+    // 2️⃣ Obtener las relaciones de traducciones para este producto
+    const { data: mappings, error: mappingsError } = await supabase
+      .from('products_product_translations')
+      .select('product_translations_id')
+      .eq('products_id', product.id);
+
+    if (mappingsError) {
+      console.error('Error al obtener relaciones de traducciones:', mappingsError);
+      return null;
+    }
+
+    const translationIds = mappings.map((m: any) => m.product_translations_id);
+
+    // 3️⃣ Obtener la traducción específica para el locale
+    const { data: translation, error: translationError } = await supabase
+      .from('product_translations')
+      .select('*')
+      .in('id', translationIds)
+      .eq('lang', locale)
+      .single();
+
+    if (translationError) {
+      console.log('No se encontró traducción para', locale, 'usando datos originales');
+    }
+
+    // 4️⃣ Combinar producto con traducción
+    return {
+      id: product.id,
+      name: translation?.name ?? product.name,
+      description: translation?.description ?? product.description,
+      price: Number(product.price) || 0,
+      discount: Number(product.discount) || 0,
+      inStock: product.in_stock,
+      image: product.image,
+      language: product.language,
+      category: product.category,
+      brand: product.brand,
+      slug: product.slug,
+      createdAt: product.created_at,
+      updatedAt: product.updated_at
+    };
+
+  } catch (err) {
+    console.error('Error inesperado al obtener producto traducido:', err);
     return null;
   }
-
-  return {
-    id: data.id,
-    name: data.name,
-    description: data.description,
-    price: Number(data.price) || 0,
-    discount: Number(data.discount) || 0,
-    inStock: data.in_stock,
-    image: data.image,
-    language: data.language,
-    category: data.category,
-    brand: data.brand,
-    slug: data.slug,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at
-  };
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
+  const { slug, lang } = await params;
+  const product = await getTranslatedProduct(slug, lang);
 
   return {
     title: product ? `${product.name} - TCG Shop` : 'Producto no encontrado',
@@ -69,12 +105,15 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
+  const { slug, lang } = await params;
+  const product = await getTranslatedProduct(slug, lang);
 
   if (!product) {
     notFound();
   }
+
+  // Debug
+  console.log('Producto traducido:', product.name, 'para lang:', lang);
 
   const LanguageFlag: Record<string, JSX.Element> = {
     es: <Spanish className="w-10 h-10 rounded-full border" />,
@@ -92,9 +131,9 @@ export default async function ProductDetailPage({ params }: Props) {
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-600 mb-6">
-          <a href="/" className="hover:text-blue-600">Inicio</a>
+          <a href={`/${lang}`} className="hover:text-blue-600">Inicio</a>
           <span className="mx-2">/</span>
-          <a href="/productos" className="hover:text-blue-600">Productos</a>
+          <a href={`/${lang}/productos`} className="hover:text-blue-600">Productos</a>
           <span className="mx-2">/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>
@@ -190,7 +229,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <AddToCartButton
                     inStock={product.inStock}
                     product={{
-                    id: product.id.toString(), // Solo pasamos el ID
+                    id: product.id.toString(),
                     }}
                 />
             </div>
@@ -224,7 +263,20 @@ export async function generateStaticParams() {
     .select('slug')
     .not('slug', 'is', null);
 
-  return (data || []).map((product) => ({
-    slug: product.slug,
-  }));
+  const products = data || [];
+  
+  // Generar params para todos los idiomas y todos los productos
+  const languages = ['es', 'en', 'fr', 'de'];
+  const params = [];
+  
+  for (const product of products) {
+    for (const lang of languages) {
+      params.push({
+        slug: product.slug,
+        lang: lang
+      });
+    }
+  }
+
+  return params;
 }

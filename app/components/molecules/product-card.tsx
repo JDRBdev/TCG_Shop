@@ -25,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
           <img
             src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
             alt={product.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           <div className="absolute top-2 left-2 flex flex-col items-end gap-1">
@@ -56,14 +56,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
       
       <div className="p-4">
         <Link href={`/productos/${product.slug}`} className="block cursor-pointer">
-          <h4 className="text-lg text-black font-semibold mb-2 hover:text-blue-600">{product.name}</h4>
+          <h4 className="text-lg text-black font-semibold mb-2 hover:text-blue-600 min-h-[56px]">
+            {product.name}
+          </h4>
         </Link>
-        
-        {product.description && (
-          <Link href={`/productos/${product.slug}`} className="block cursor-pointer">
-            <p className="text-sm text-gray-600 mb-3 hover:text-blue-600">{product.description}</p>
-          </Link>
-        )}
         
         <div className="flex items-center justify-between mb-2">
           <Link href={`/productos/${product.slug}`} className="cursor-pointer">
