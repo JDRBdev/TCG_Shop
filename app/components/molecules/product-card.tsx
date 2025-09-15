@@ -4,8 +4,7 @@ import AddToCartButton from "./add-tocart-button";
 import { Product } from "../../data/products";
 import Spanish from "../atoms/flags/spanish";
 import English from "../atoms/flags/english";
-import French from "../atoms/flags/french";
-import Deutsch from "../atoms/flags/deutsch";
+import Japanese from "../atoms/flags/japanese";
 
 interface ProductCardProps {
   product: Product;
@@ -16,8 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
   const LanguageFlag: Record<string, JSX.Element> = {
     es: <Spanish className="w-7 h-7 rounded-full border" />,
     en: <English className="w-7 h-7 rounded-full border" />,
-    fr: <French className="w-7 h-7 rounded-full border" />,
-    de: <Deutsch className="w-7 h-7 rounded-full border" />,
+    jp: <Japanese className="w-7 h-7 rounded-full border" />,
   };
 
   return (
