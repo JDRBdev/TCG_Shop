@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "TCG Store",
+    "title": "Boutique TCG",
     "nav": {
       "home": "Accueil",
       "tournaments": "Tournois",
@@ -8,14 +8,14 @@
       "offers": "Offres",
       "accessories": "Accessoires"
     },
-    "sign_in": "Se connecter",
-    "sign_up": "S'inscrire",
+    "sign_in": "Connexion",
+    "sign_up": "Inscription",
     "search": "Rechercher des cartes...",
     "cart": "Panier"
   },
   "hero": {
     "title": "Les Meilleures Cartes à Collectionner",
-    "subtitle": "Découvrez des cartes exclusives, des sets limités et des accessoires pour collectionneurs et joueurs compétitifs",
+    "subtitle": "Découvrez des cartes exclusives, des séries limitées et des accessoires pour collectionneurs et joueurs compétitifs",
     "exploreCatalog": "Explorer le Catalogue",
     "viewOffers": "Voir les Offres"
   },
@@ -24,17 +24,51 @@
     "new": "Nouveau",
     "add": "Ajouter",
     "items": {
-      "boosterPack": "Booster Pack Premium",
+      "boosterPack": "Pack Booster Premium",
       "competitiveDeck": "Deck Compétitif",
       "holographicCard": "Carte Holographique Rare",
       "collectorSet": "Set Collectionneur"
+    },
+    "filters": {
+      "title": "Filtres",
+      "availability": "Disponibilité",
+      "onlyInStock": "Seuls les produits disponibles",
+      "language": "Langue",
+      "allLanguages": "Toutes les langues",
+      "spanish": "Espagnol",
+      "english": "Anglais",
+      "japanese": "Japonais",
+      "category": "Catégorie",
+      "allCategories": "Toutes les Catégories",
+      "boosterPacks": "Packs Booster",
+      "constructedDeccks": "Decks Construits",
+      "boosterBox": "Boîte Booster",
+      "collectorSet": "Sets Collectionneurs",
+      "brand": "Marque",
+      "allBrands": "Toutes les Marques",
+      "sortName": "Nom A-Z",
+      "sortPriceLow": "Prix: Croissant",
+      "sortPriceHigh": "Prix: Décroissant",
+      "sortDiscount": "Remise: Décroissant",
+      "openFilters": "Ouvrir les filtres",
+      "closeFilters": "Fermer les filtres",
+      "applyFilters": "Appliquer les filtres"
+    },
+    "search": {
+      "placeholder": "Rechercher des produits..."
+    },
+    "results": {
+      "showing": "Affichage de",
+      "products": "produits",
+      "noProducts": "Aucun produit trouvé",
+      "tryAdjusting": "Essayez d'ajuster les filtres ou les termes de recherche"
     }
   },
   "categories": {
     "title": "Catégories Populaires",
     "boosterPacks": {
-      "title": "Booster Packs",
-      "description": "Paquets avec des cartes aléatoires pour agrandir votre collection",
+      "title": "Packs Booster",
+      "description": "Sachets avec des cartes aléatoires pour agrandir votre collection",
       "count": "150+ produits"
     },
     "constructedDecks": {
@@ -50,10 +84,10 @@
   },
   "offers": {
     "title": "Offres Spéciales",
-    "subtitle": "Profitez de ces remises à durée limitée",
+    "subtitle": "Profitez de ces remises limitées dans le temps",
     "megaBundle": {
-      "title": "Bundle Méga Collectionneur",
-      "description": "3 Booster Boxes + Accessoires Premium",
+      "title": "Bundle Mega Collectionneur",
+      "description": "3 Boîtes Booster + Accessoires Premium",
       "getOffer": "Obtenir l'Offre"
     },
     "tournament": {
@@ -64,10 +98,10 @@
     }
   },
   "footer": {
-    "description": "Votre magasin de confiance pour les Trading Card Games. Qualité garantie et expédition rapide.",
+    "description": "Votre boutique de confiance pour les Jeux de Cartes à Collectionner. Qualité garantie et livraison rapide.",
     "products": {
       "title": "Produits",
-      "boosterPacks": "Booster Packs",
+      "boosterPacks": "Packs Booster",
       "decks": "Decks",
       "singleCards": "Cartes Individuelles",
       "accessories": "Accessoires"
@@ -75,16 +109,16 @@
     "support": {
       "title": "Support",
       "helpCenter": "Centre d'Aide",
-      "shipping": "Expédition et Retours",
+      "shipping": "Livraison & Retours",
       "contact": "Contact",
       "faq": "FAQ"
     },
     "newsletter": {
       "title": "Newsletter",
-      "description": "Recevez des offres exclusives et des actualités",
+      "description": "Recevez des offres exclusives et des nouvelles",
       "placeholder": "votre@email.com",
       "subscribe": "S'abonner"
     },
-    "copyright": "© 2024 TCG Store. Tous droits réservés."
+    "copyright": "© 2024 Boutique TCG. Tous droits réservés."
   }
 }

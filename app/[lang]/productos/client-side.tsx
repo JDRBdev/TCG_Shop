@@ -40,6 +40,7 @@ interface Filters {
 interface ProductosClientPageProps {
   initialProducts: Product[]
   initialFilters: Filters
+  dict: any // Agregar el diccionario como prop
 }
 
 // Función optimizada para obtener solo precios y stock actualizados
@@ -69,7 +70,8 @@ async function fetchUpdatedProductData(): Promise<{id: string, price: number, di
 
 export default function ProductosClientPage({ 
   initialProducts, 
-  initialFilters 
+  initialFilters,
+  dict // Recibir el diccionario
 }: ProductosClientPageProps) {
   const router = useRouter()
   const isMountedRef = useRef(true)
@@ -186,24 +188,24 @@ export default function ProductosClientPage({
     router.push(`/productos?${params.toString()}`, { scroll: false })
   }, [router])
 
-  // Datos para filtros (igual que antes)
+  // Datos para filtros - AHORA USANDO EL DICCIONARIO
   const language = [
-    { value: "all", label: "Todos los idiomas" },
-    { value: "es", label: "Español" },
-    { value: "en", label: "Inglés" },
-    { value: "jp", label: "Japonés" },
+    { value: "all", label: dict.products.filters.allLanguages || "Todos los idiomas" },
+    { value: "es", label: dict.products.filters.spanish || "Español" },
+    { value: "en", label: dict.products.filters.english || "Inglés" },
+    { value: "jp", label: dict.products.filters.japanese || "Japonés" },
   ]
 
   const categories = [
-    { value: "all", label: "Todas las Categorías" },
-    { value: "booster-packs", label: "Booster Packs" },
-    { value: "preconstructed-deck", label: "Decks Construidos" },
-    { value: "booster-box", label: "Booster Box" },
-    { value: "collector-set", label: "Sets Coleccionista" },
+    { value: "all", label: dict.products.filters.allCategories || "Todas las Categorías" },
+    { value: "booster-packs", label: dict.products.filters.boosterPacks || "Booster Packs" },
+    { value: "preconstructed-deck", label: dict.products.filters.constructedDecks || "Decks Construidos" },
+    { value: "booster-box", label: dict.products.filters.boosterBox || "Booster Box" },
+    { value: "collector-set", label: dict.products.filters.collectorSet || "Sets Coleccionista" },
   ]
 
   const brands = [
-    { value: "all", label: "Todas las Marcas" },
+    { value: "all", label: dict.products.filters.allBrands || "Todas las Marcas" },
     { value: "pokemon", label: "Pokémon" },
     { value: "magic", label: "Magic: The Gathering" },
     { value: "yugioh", label: "Yu-Gi-Oh!" },
@@ -212,10 +214,10 @@ export default function ProductosClientPage({
   ]
 
   const sortOptions = [
-    { value: "name", label: "Nombre A-Z" },
-    { value: "price-low", label: "Precio: Menor a Mayor" },
-    { value: "price-high", label: "Precio: Mayor a Menor" },
-    { value: "discount", label: "Descuento: Mayor a Menor" },
+    { value: "name", label: dict.products.filters.sortName || "Nombre A-Z" },
+    { value: "price-low", label: dict.products.filters.sortPriceLow || "Precio: Menor a Mayor" },
+    { value: "price-high", label: dict.products.filters.sortPriceHigh || "Precio: Mayor a Menor" },
+    { value: "discount", label: dict.products.filters.sortDiscount || "Descuento: Mayor a Menor" },
   ]
 
   // Filtrar productos
@@ -240,9 +242,9 @@ export default function ProductosClientPage({
     }
   })
 
-  return (
+    return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900">
-      {/* Header con búsqueda y controles */}
+      {/* Header con búsqueda y controles - USANDO DICCIONARIO */}
       <section className="py-8 shadow-lg">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6 items-center">
           <div className="flex-1 relative">
@@ -252,7 +254,7 @@ export default function ProductosClientPage({
               </svg>
               <input
                 type="text"
-                placeholder="Buscar productos..."
+                placeholder={dict.products.search.placeholder || "Buscar productos..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full h-12 rounded-lg border-0 shadow-md px-4 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
@@ -282,13 +284,17 @@ export default function ProductosClientPage({
       </section>
 
       <div className="container mx-auto px-4 py-8 flex gap-8">
-        {/* Sidebar filtros - Desktop */}
+        {/* Sidebar filtros - Desktop - USANDO DICCIONARIO */}
         <aside className="lg:w-64 hidden lg:block">
           <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
-            <h3 className="text-lg font-bold mb-6 text-gray-800 border-b pb-2">Filtros</h3>
+            <h3 className="text-lg font-bold mb-6 text-gray-800 border-b pb-2">
+              {dict.products.filters.title || "Filtros"}
+            </h3>
 
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Disponibilidad</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.availability || "Disponibilidad"}
+              </h4>
               <div className="space-y-2">
                   <label className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <input
@@ -297,14 +303,18 @@ export default function ProductosClientPage({
                       onChange={(e) => updateFilter("inStock", e.target.checked)}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Solo productos disponibles</span>
+                    <span className="ml-2 text-sm text-gray-700">
+                      {dict.products.filters.onlyInStock || "Solo productos disponibles"}
+                    </span>
                   </label>
               </div>
             </div>
 
             {/* Idioma */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Idioma</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.language || "Idioma"}
+              </h4>
               <div className="space-y-2">
                 {language.map((langOption) => (
                   <label key={langOption.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
@@ -324,7 +334,9 @@ export default function ProductosClientPage({
 
             {/* Categoría */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Categoría</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.category || "Categoría"}
+              </h4>
               <div className="space-y-2">
                 {categories.map((cat) => (
                   <label key={cat.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
@@ -344,7 +356,9 @@ export default function ProductosClientPage({
 
             {/* Marca */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Marca</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.brand || "Marca"}
+              </h4>
               <div className="space-y-2">
                 {brands.map((brand) => (
                   <label key={brand.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
@@ -366,10 +380,10 @@ export default function ProductosClientPage({
 
         {/* Productos */}
         <main className="flex-1">
-          {/* Info de resultados */}
+          {/* Info de resultados - USANDO DICCIONARIO */}
           <div className="mb-6 flex justify-between items-center">
             <p className="text-gray-600 text-sm">
-              Mostrando <span className="font-semibold">{sortedProducts.length}</span> productos
+              {dict.products.results.showing || "Mostrando"} <span className="font-semibold">{sortedProducts.length}</span> {dict.products.results.products || "productos"}
             </p>
             <button 
               onClick={() => setIsMobileFiltersOpen(true)}
@@ -378,7 +392,7 @@ export default function ProductosClientPage({
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
               </svg>
-              Filtros
+              {dict.products.filters.title || "Filtros"}
             </button>
           </div>
 
@@ -393,8 +407,12 @@ export default function ProductosClientPage({
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h3 className="mt-2 text-lg font-medium text-gray-900 mb-2">No se encontraron productos</h3>
-              <p className="text-sm text-gray-500">Intenta ajustar los filtros o términos de búsqueda</p>
+              <h3 className="mt-2 text-lg font-medium text-gray-900 mb-2">
+                {dict.products.results.noProducts || "No se encontraron productos"}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {dict.products.results.tryAdjusting || "Intenta ajustar los filtros o términos de búsqueda"}
+              </p>
             </div>
           )}
         </main>
@@ -404,24 +422,26 @@ export default function ProductosClientPage({
       <button 
         onClick={() => setIsMobileFiltersOpen(true)}
         className="lg:hidden fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center transition-all transform hover:scale-110"
-        aria-label="Abrir filtros"
+        aria-label={dict.products.filters.openFilters || "Abrir filtros"}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
         </svg>
       </button>
 
-      {/* Panel de filtros móviles */}
+      {/* Panel de filtros móviles - USANDO DICCIONARIO */}
       <div className={`fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${isMobileFiltersOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="absolute inset-0 bg-opacity-50" onClick={() => setIsMobileFiltersOpen(false)}></div>
         <div className="absolute left-0 top-0 h-full w-4/5 max-w-sm bg-white shadow-xl overflow-y-auto">
           <div className="p-6">
             <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <h2 className="text-xl font-bold text-gray-800">Filtros</h2>
+              <h2 className="text-xl font-bold text-gray-800">
+                {dict.products.filters.title || "Filtros"}
+              </h2>
               <button 
                 onClick={() => setIsMobileFiltersOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
-                aria-label="Cerrar filtros"
+                aria-label={dict.products.filters.closeFilters || "Cerrar filtros"}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -430,7 +450,9 @@ export default function ProductosClientPage({
             </div>
 
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Disponibilidad</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.availability || "Disponibilidad"}
+              </h4>
               <div className="space-y-2">
                   <label className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
                     <input
@@ -439,14 +461,18 @@ export default function ProductosClientPage({
                       onChange={(e) => updateFilter("inStock", e.target.checked)}
                       className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
-                    <span className="ml-3 text-gray-700">Solo productos disponibles</span>
+                    <span className="ml-3 text-gray-700">
+                      {dict.products.filters.onlyInStock || "Solo productos disponibles"}
+                    </span>
                   </label>
               </div>
             </div>
 
             {/* Idioma */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Idioma</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.language || "Idioma"}
+              </h4>
               <div className="space-y-2">
                 {language.map((langOption) => (
                   <label key={langOption.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
@@ -468,7 +494,9 @@ export default function ProductosClientPage({
 
             {/* Categoría */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Categoría</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.category || "Categoría"}
+              </h4>
               <div className="space-y-2">
                 {categories.map((cat) => (
                   <label key={cat.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
@@ -490,7 +518,9 @@ export default function ProductosClientPage({
 
             {/* Marca */}
             <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-gray-700">Marca</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">
+                {dict.products.filters.brand || "Marca"}
+              </h4>
               <div className="space-y-2">
                 {brands.map((brand) => (
                   <label key={brand.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
@@ -514,7 +544,7 @@ export default function ProductosClientPage({
               onClick={() => setIsMobileFiltersOpen(false)}
               className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors"
             >
-              Aplicar filtros
+              {dict.products.filters.applyFilters || "Aplicar filtros"}
             </button>
           </div>
         </div>

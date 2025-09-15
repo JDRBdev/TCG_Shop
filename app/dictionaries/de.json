@@ -15,56 +15,90 @@
   },
   "hero": {
     "title": "Die Besten Trading Cards",
-    "subtitle": "Entdecke exklusive Karten, limitierte Sets und Zubehör für Sammler und Wettkampfspieler",
+    "subtitle": "Entdecken Sie exklusive Karten, limitierte Sets und Zubehör für Sammler und Wettkampfspieler",
     "exploreCatalog": "Katalog Erkunden",
     "viewOffers": "Angebote Ansehen"
   },
   "products": {
-    "title": "Empfohlene Produkte",
+    "title": "Ausgewählte Produkte",
     "new": "Neu",
     "add": "Hinzufügen",
     "items": {
       "boosterPack": "Premium Booster Pack",
-      "competitiveDeck": "Wettkampf Deck",
-      "holographicCard": "Seltene Holografische Karte",
-      "collectorSet": "Sammler Set"
+      "competitiveDeck": "Wettkampfdeck",
+      "holographicCard": "Holographische Seltene Karte",
+      "collectorSet": "Sammler-Set"
+    },
+    "filters": {
+      "title": "Filter",
+      "availability": "Verfügbarkeit",
+      "onlyInStock": "Nur verfügbare Produkte",
+      "language": "Sprache",
+      "allLanguages": "Alle Sprachen",
+      "spanish": "Spanisch",
+      "english": "Englisch",
+      "japanese": "Japanisch",
+      "category": "Kategorie",
+      "allCategories": "Alle Kategorien",
+      "boosterPacks": "Booster Packs",
+      "constructedDecks": "Fertige Decks",
+      "boosterBox": "Booster Box",
+      "collectorSet": "Sammler-Sets",
+      "brand": "Marke",
+      "allBrands": "Alle Marken",
+      "sortName": "Name A-Z",
+      "sortPriceLow": "Preis: Niedrig zu Hoch",
+      "sortPriceHigh": "Preis: Hoch zu Niedrig",
+      "sortDiscount": "Rabatt: Hoch zu Niedrig",
+      "openFilters": "Filter öffnen",
+      "closeFilters": "Filter schließen",
+      "applyFilters": "Filter anwenden"
+    },
+    "search": {
+      "placeholder": "Produkte suchen..."
+    },
+    "results": {
+      "showing": "Zeige",
+      "products": "Produkte",
+      "noProducts": "Keine Produkte gefunden",
+      "tryAdjusting": "Versuchen Sie, Filter oder Suchbegriffe anzupassen"
     }
   },
   "categories": {
     "title": "Beliebte Kategorien",
     "boosterPacks": {
       "title": "Booster Packs",
-      "description": "Packungen mit zufälligen Karten zur Erweiterung deiner Sammlung",
+      "description": "Packs mit zufälligen Karten zum Erweitern Ihrer Sammlung",
       "count": "150+ Produkte"
     },
     "constructedDecks": {
-      "title": "Konstruierte Decks",
+      "title": "Fertige Decks",
       "description": "Spielfertige Decks für Wettkampfturniere",
       "count": "80+ Produkte"
     },
     "accessories": {
       "title": "Zubehör",
-      "description": "Hüllen, Ordner und Zubehör zum Schutz deiner Karten",
+      "description": "Hüllen, Ordner und Zubehör zum Schutz Ihrer Karten",
       "count": "200+ Produkte"
     }
   },
   "offers": {
-    "title": "Spezielle Angebote",
-    "subtitle": "Nutze diese zeitlich begrenzten Rabatte",
+    "title": "Sonderangebote",
+    "subtitle": "Nutzen Sie diese zeitlich begrenzten Rabatte",
     "megaBundle": {
-      "title": "Mega Sammler Bundle",
-      "description": "3 Booster Boxen + Premium Zubehör",
-      "getOffer": "Angebot Erhalten"
+      "title": "Mega-Sammler-Bundle",
+      "description": "3 Booster-Boxen + Premium-Zubehör",
+      "getOffer": "Angebot Anfordern"
     },
     "tournament": {
       "title": "Wöchentliches Turnier",
-      "description": "Nimm teil und gewinne exklusive Karten",
+      "description": "Nehmen Sie teil und gewinnen Sie exklusive Karten",
       "playersRegistered": "Spieler registriert",
       "register": "Registrieren"
     }
   },
   "footer": {
-    "description": "Dein vertrauensvoller Shop für Trading Card Games. Garantierte Qualität und schneller Versand.",
+    "description": "Ihr vertrauenswürdiger Shop für Trading Card Games. Garantierte Qualität und schneller Versand.",
     "products": {
       "title": "Produkte",
       "boosterPacks": "Booster Packs",
@@ -75,14 +109,14 @@
     "support": {
       "title": "Support",
       "helpCenter": "Hilfe-Center",
-      "shipping": "Versand & Rücksendungen",
+      "shipping": "Versand & Rückgaben",
       "contact": "Kontakt",
       "faq": "FAQ"
     },
     "newsletter": {
       "title": "Newsletter",
-      "description": "Erhalte exklusive Angebote und Neuigkeiten",
-      "placeholder": "deine@email.com",
+      "description": "Erhalten Sie exklusive Angebote und Neuigkeiten",
+      "placeholder": "ihre@email.de",
       "subscribe": "Abonnieren"
     },
     "copyright": "© 2024 TCG Store. Alle Rechte vorbehalten."

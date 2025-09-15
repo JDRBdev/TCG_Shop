@@ -26,8 +26,42 @@
     "items": {
       "boosterPack": "Premium Booster Pack",
       "competitiveDeck": "Competitive Deck",
-      "holographicCard": "Rare Holographic Card",
+      "holographicCard": "Holographic Rare Card",
       "collectorSet": "Collector Set"
+    },
+    "filters": {
+      "title": "Filters",
+      "availability": "Availability",
+      "onlyInStock": "Only available products",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "spanish": "Spanish",
+      "english": "English",
+      "japanese": "Japanese",
+      "category": "Category",
+      "allCategories": "All Categories",
+      "boosterPacks": "Booster Packs",
+      "constructedDecks": "Constructed Decks",
+      "boosterBox": "Booster Box",
+      "collectorSet": "Collector Sets",
+      "brand": "Brand",
+      "allBrands": "All Brands",
+      "sortName": "Name A-Z",
+      "sortPriceLow": "Price: Low to High",
+      "sortPriceHigh": "Price: High to Low",
+      "sortDiscount": "Discount: High to Low",
+      "openFilters": "Open filters",
+      "closeFilters": "Close filters",
+      "applyFilters": "Apply filters"
+    },
+    "search": {
+      "placeholder": "Search products..."
+    },
+    "results": {
+      "showing": "Showing",
+      "products": "products",
+      "noProducts": "No products found",
+      "tryAdjusting": "Try adjusting filters or search terms"
     }
   },
   "categories": {
@@ -50,7 +84,7 @@
   },
   "offers": {
     "title": "Special Offers",
-    "subtitle": "Take advantage of these limited-time discounts",
+    "subtitle": "Take advantage of these limited time discounts",
     "megaBundle": {
       "title": "Mega Collector Bundle",
       "description": "3 Booster Boxes + Premium Accessories",

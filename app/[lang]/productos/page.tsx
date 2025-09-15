@@ -1,9 +1,10 @@
 // app/productos/page.tsx (Server Component)
 import { cookies } from 'next/headers'
 import ProductosClientPage from './client-side'
-import { fetchProducts } from '@/app/data/products' // Importar la función de traducción
+import { fetchProducts } from '@/app/data/products'
+import { getDictionary } from '../dictionaries' // Importar getDictionary
 
-export const revalidate = 60 // Revalida cada 60 segundos
+export const revalidate = 60
 
 export default async function ProductosPage({ 
   searchParams,
@@ -18,6 +19,18 @@ export default async function ProductosPage({
   // Obtener productos TRADUCIDOS según el lang
   const initialProducts = await fetchProducts(lang)
   
+  // Define un array constante con los idiomas soportados
+  const supportedLangs = ["en", "es", "fr", "de"] as const;
+
+  // Verifica si 'lang' está dentro de los idiomas soportados.
+  // Si es así, lo usa; si no, por defecto usa "en" (inglés).
+  const safeLang = supportedLangs.includes(lang as any) 
+    ? (lang as typeof supportedLangs[number]) 
+    : "es";
+
+  // Obtiene el diccionario de traducciones correspondiente al idioma seguro seleccionado
+  const dict = await getDictionary(safeLang) // es
+  
   // Parsear los parámetros de búsqueda
   const filters = {
     language: typeof searchParamsObj.language === 'string' ? searchParamsObj.language : "all",
@@ -27,17 +40,11 @@ export default async function ProductosPage({
     inStock: typeof searchParamsObj.inStock === 'string' ? searchParamsObj.inStock === "true" : false
   }
 
-  // Log para debugging
-  console.log('lang:', lang)
-  console.log('Productos traducidos:', initialProducts.length)
-  if (initialProducts.length > 0) {
-    console.log('Primer producto traducido:', initialProducts[0].name)
-  }
-
   return (
     <ProductosClientPage 
       initialProducts={initialProducts}
       initialFilters={filters}
+      dict={dict} // Pasar el diccionario como prop
     />
   )
 }

@@ -28,6 +28,40 @@
       "competitiveDeck": "Deck Competitivo",
       "holographicCard": "Carta Holográfica Rara",
       "collectorSet": "Set Coleccionista"
+    },
+    "filters": {
+      "title": "Filtros",
+      "availability": "Disponibilidad",
+      "onlyInStock": "Solo productos disponibles",
+      "language": "Idioma",
+      "allLanguages": "Todos los idiomas",
+      "spanish": "Español",
+      "english": "Inglés",
+      "japanese": "Japonés",
+      "category": "Categoría",
+      "allCategories": "Todas las Categorías",
+      "boosterPacks": "Booster Packs",
+      "constructedDecks": "Decks Construidos",
+      "boosterBox": "Booster Box",
+      "collectorSet": "Sets Coleccionista",
+      "brand": "Marca",
+      "allBrands": "Todas las Marcas",
+      "sortName": "Nombre A-Z",
+      "sortPriceLow": "Precio: Menor a Mayor",
+      "sortPriceHigh": "Precio: Mayor a Menor",
+      "sortDiscount": "Descuento: Mayor a Menor",
+      "openFilters": "Abrir filtros",
+      "closeFilters": "Cerrar filtros",
+      "applyFilters": "Aplicar filtros"
+    },
+    "search": {
+      "placeholder": "Buscar productos..."
+    },
+    "results": {
+      "showing": "Mostrando",
+      "products": "productos",
+      "noProducts": "No se encontraron productos",
+      "tryAdjusting": "Intenta ajustar los filtros o términos de búsqueda"
     }
   },
   "categories": {
