@@ -112,10 +112,11 @@ export default function Header({ dict }: HeaderProps) {
             </div>
 
             <div className="md:hidden flex items-center space-x-2">
-              <LanguageSelector currentLang={currentLang} />
+              {/* Mobile cart button */}
+              <CartButton label={dict.header.cart} />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors z-60 relative"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors relative"
                 aria-label="Toggle mobile menu"
                 aria-expanded={isMobileMenuOpen}
               >
@@ -166,8 +167,7 @@ export default function Header({ dict }: HeaderProps) {
               <h2 className="text-lg font-bold text-gray-900">{dict.header.title}</h2>
             </div>
 
-            {/* Mobile cart button */}
-            <CartButton label={dict.header.cart} />
+            <LanguageSelector currentLang={currentLang} />
 
             <button
               onClick={() => setIsMobileMenuOpen(false)}
