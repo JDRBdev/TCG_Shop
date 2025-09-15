@@ -91,7 +91,7 @@ export default function LanguageSelector({ currentLang }: LanguageSelectorProps)
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-[110] pointer-events-auto">
+        <div className="absolute -right-10 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-[110] pointer-events-auto">
           <ul role="listbox" className="py-1">
             {languages.map((l) => {
               const selected = l.code === activeCode

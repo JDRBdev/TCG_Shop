@@ -60,7 +60,7 @@ export default function Header({ dict }: HeaderProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900">{dict.header.title}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 hidden sm:block">{dict.header.title}</h1>
               </Link>
             </div>
 
@@ -112,8 +112,11 @@ export default function Header({ dict }: HeaderProps) {
             </div>
 
             <div className="md:hidden flex items-center space-x-2">
-              {/* Mobile cart button */}
+              {/* Mobile cart and language button */}
+              
+              <LanguageSelector currentLang={currentLang} />
               <CartButton label={dict.header.cart} />
+
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors relative"
@@ -166,8 +169,6 @@ export default function Header({ dict }: HeaderProps) {
               </div>
               <h2 className="text-lg font-bold text-gray-900">{dict.header.title}</h2>
             </div>
-
-            <LanguageSelector currentLang={currentLang} />
 
             <button
               onClick={() => setIsMobileMenuOpen(false)}
