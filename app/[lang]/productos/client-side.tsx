@@ -197,15 +197,15 @@ export default function ProductosClientPage({
   const categories = [
     { value: "all", label: "Todas las Categorías" },
     { value: "booster-packs", label: "Booster Packs" },
-    { value: "deck", label: "Decks Construidos" },
+    { value: "preconstructed-deck", label: "Decks Construidos" },
     { value: "booster-box", label: "Booster Box" },
-    { value: "set", label: "Sets Coleccionista" },
+    { value: "collector-set", label: "Sets Coleccionista" },
   ]
 
   const brands = [
     { value: "all", label: "Todas las Marcas" },
     { value: "pokemon", label: "Pokémon" },
-    { value: "magic-the-gathering", label: "Magic: The Gathering" },
+    { value: "magic", label: "Magic: The Gathering" },
     { value: "yugioh", label: "Yu-Gi-Oh!" },
     { value: "one-piece", label: "One Piece" },
     { value: "digimon", label: "Digimon" },
