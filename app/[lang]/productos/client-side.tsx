@@ -73,6 +73,7 @@ export default function ProductosClientPage({
 }: ProductosClientPageProps) {
   const router = useRouter()
   const isMountedRef = useRef(true)
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
 
   // Estado local
   const [searchTerm, setSearchTerm] = useState("")
@@ -190,8 +191,7 @@ export default function ProductosClientPage({
     { value: "all", label: "Todos los idiomas" },
     { value: "es", label: "Español" },
     { value: "en", label: "Inglés" },
-    { value: "fr", label: "Francés" },
-    { value: "de", label: "Alemán" },
+    { value: "jp", label: "Japonés" },
   ]
 
   const categories = [
@@ -241,25 +241,30 @@ export default function ProductosClientPage({
   })
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900">
       {/* Header con búsqueda y controles */}
-      <section className="bg-gray-50 py-8">
+      <section className="py-8 shadow-lg">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-6 items-center">
           <div className="flex-1 relative">
-            <input
-              type="text"
-              placeholder="Buscar productos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-3 w-full h-12 rounded-md border border-gray-300 px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <div className="relative">
+              <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar productos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-full h-12 rounded-lg border-0 shadow-md px-4 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+              />
+            </div>
           </div>
           
-          <div className="relative inline-block w-64">
+          <div className="relative inline-block w-full lg:w-64">
             <select
               value={sortBy}
               onChange={(e) => updateFilter("sort", e.target.value)}
-              className="h-12 w-full rounded-md border border-gray-300 bg-white px-3 pr-10 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+              className="h-12 w-full rounded-lg border-0 bg-white shadow-md px-4 pr-10 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 appearance-none"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -273,32 +278,36 @@ export default function ProductosClientPage({
               </svg>
             </div>
           </div>
-
-          {/* Checkbox disponibilidad */}
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={showOnlyInStock}
-              onChange={(e) => updateFilter("inStock", e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-            />
-            <span className="ml-2 text-sm text-gray-700">Solo disponibles</span>
-          </label>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-8 flex gap-8">
-        {/* Sidebar filtros */}
+        {/* Sidebar filtros - Desktop */}
         <aside className="lg:w-64 hidden lg:block">
-          <div className="bg-white rounded-lg border p-6 sticky top-24">
-            <h3 className="text-lg font-semibold mb-6">Filtros</h3>
+          <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+            <h3 className="text-lg font-bold mb-6 text-gray-800 border-b pb-2">Filtros</h3>
+
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-gray-700">Disponibilidad</h4>
+              <div className="space-y-2">
+                  <label className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showOnlyInStock}
+                      onChange={(e) => updateFilter("inStock", e.target.checked)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">Solo productos disponibles</span>
+                  </label>
+              </div>
+            </div>
 
             {/* Idioma */}
             <div className="mb-6">
-              <h4 className="font-medium mb-3">Idioma</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">Idioma</h4>
               <div className="space-y-2">
                 {language.map((langOption) => (
-                  <label key={langOption.value} className="flex items-center">
+                  <label key={langOption.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <input
                       type="radio"
                       name="language"
@@ -315,10 +324,10 @@ export default function ProductosClientPage({
 
             {/* Categoría */}
             <div className="mb-6">
-              <h4 className="font-medium mb-3">Categoría</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">Categoría</h4>
               <div className="space-y-2">
                 {categories.map((cat) => (
-                  <label key={cat.value} className="flex items-center">
+                  <label key={cat.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <input
                       type="radio"
                       name="category"
@@ -335,10 +344,10 @@ export default function ProductosClientPage({
 
             {/* Marca */}
             <div className="mb-6">
-              <h4 className="font-medium mb-3">Marca</h4>
+              <h4 className="font-semibold mb-3 text-gray-700">Marca</h4>
               <div className="space-y-2">
                 {brands.map((brand) => (
-                  <label key={brand.value} className="flex items-center">
+                  <label key={brand.value} className="flex items-center p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                     <input
                       type="radio"
                       name="brand"
@@ -357,6 +366,22 @@ export default function ProductosClientPage({
 
         {/* Productos */}
         <main className="flex-1">
+          {/* Info de resultados */}
+          <div className="mb-6 flex justify-between items-center">
+            <p className="text-gray-600 text-sm">
+              Mostrando <span className="font-semibold">{sortedProducts.length}</span> productos
+            </p>
+            <button 
+              onClick={() => setIsMobileFiltersOpen(true)}
+              className="lg:hidden bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-md transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+              </svg>
+              Filtros
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {sortedProducts.map((p) => (
               <ProductCard key={p.id} product={p} showBadge={!!p.price}/>
@@ -364,11 +389,135 @@ export default function ProductosClientPage({
           </div>
 
           {sortedProducts.length === 0 && (
-            <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron productos</h3>
+            <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 className="mt-2 text-lg font-medium text-gray-900 mb-2">No se encontraron productos</h3>
+              <p className="text-sm text-gray-500">Intenta ajustar los filtros o términos de búsqueda</p>
             </div>
           )}
         </main>
+      </div>
+
+      {/* Botón flotante para móviles */}
+      <button 
+        onClick={() => setIsMobileFiltersOpen(true)}
+        className="lg:hidden fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center transition-all transform hover:scale-110"
+        aria-label="Abrir filtros"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+        </svg>
+      </button>
+
+      {/* Panel de filtros móviles */}
+      <div className={`fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${isMobileFiltersOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="absolute inset-0 bg-opacity-50" onClick={() => setIsMobileFiltersOpen(false)}></div>
+        <div className="absolute left-0 top-0 h-full w-4/5 max-w-sm bg-white shadow-xl overflow-y-auto">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6 border-b pb-4">
+              <h2 className="text-xl font-bold text-gray-800">Filtros</h2>
+              <button 
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+                aria-label="Cerrar filtros"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-gray-700">Disponibilidad</h4>
+              <div className="space-y-2">
+                  <label className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showOnlyInStock}
+                      onChange={(e) => updateFilter("inStock", e.target.checked)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-gray-700">Solo productos disponibles</span>
+                  </label>
+              </div>
+            </div>
+
+            {/* Idioma */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-gray-700">Idioma</h4>
+              <div className="space-y-2">
+                {language.map((langOption) => (
+                  <label key={langOption.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="radio"
+                      name="language-mobile"
+                      value={langOption.value}
+                      checked={selectedLanguage === langOption.value}
+                      onChange={() => {
+                        updateFilter("language", langOption.value)
+                      }}
+                      className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-gray-700">{langOption.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Categoría */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-gray-700">Categoría</h4>
+              <div className="space-y-2">
+                {categories.map((cat) => (
+                  <label key={cat.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="radio"
+                      name="category-mobile"
+                      value={cat.value}
+                      checked={selectedCategory === cat.value}
+                      onChange={() => {
+                        updateFilter("category", cat.value)
+                      }}
+                      className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-gray-700">{cat.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Marca */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-gray-700">Marca</h4>
+              <div className="space-y-2">
+                {brands.map((brand) => (
+                  <label key={brand.value} className="flex items-center p-3 rounded-lg bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="radio"
+                      name="brand-mobile"
+                      value={brand.value}
+                      checked={selectedBrand === brand.value}
+                      onChange={() => {
+                        updateFilter("brand", brand.value)
+                      }}
+                      className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-gray-700">{brand.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setIsMobileFiltersOpen(false)}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors"
+            >
+              Aplicar filtros
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
