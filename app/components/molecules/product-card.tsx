@@ -9,9 +9,11 @@ import Japanese from "../atoms/flags/japanese";
 interface ProductCardProps {
   product: Product;
   showBadge?: boolean;
+  dict: any;   // ✅ diccionario
+  lang: string; // ✅ idioma actual
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false, dict, lang }) => {
   const LanguageFlag: Record<string, JSX.Element> = {
     es: <Spanish className="w-7 h-7 rounded-full border" />,
     en: <English className="w-7 h-7 rounded-full border" />,
@@ -20,7 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
 
   return (
     <div className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-      <Link href={`/productos/${product.slug}`} className="block">
+      <Link href={`/${lang}/productos/${product.slug}`} className="block">
         <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
           <img
             src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
@@ -47,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
           {!product.inStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                Agotado
+                {dict.products.outOfStock || "Agotado"}
               </span>
             </div>
           )}
@@ -55,14 +57,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
       </Link>
       
       <div className="p-4">
-        <Link href={`/productos/${product.slug}`} className="block cursor-pointer">
+        <Link href={`/${lang}/productos/${product.slug}`} className="block cursor-pointer">
           <h4 className="text-lg text-black font-semibold mb-2 hover:text-blue-600 min-h-[56px]">
             {product.name}
           </h4>
         </Link>
         
         <div className="flex items-center justify-between mb-2">
-          <Link href={`/productos/${product.slug}`} className="cursor-pointer">
+          <Link href={`/${lang}/productos/${product.slug}`} className="cursor-pointer">
             <div className="flex items-center gap-2">
               {product.discount ? (
                 <>
@@ -86,6 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
             product={{
               id: product.id.toString(),
             }}
+            addToCartText={dict.products.add || "Agregar"}
           />
         </div>
       </div>

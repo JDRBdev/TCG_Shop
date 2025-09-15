@@ -8,9 +8,10 @@ interface AddToCartButtonProps {
   product: {
     id: string;
   };
+  addToCartText: string; // Nuevo: texto desde diccionario
 }
 
-export default function AddToCartButton({ inStock, product }: AddToCartButtonProps) {
+export default function AddToCartButton({ inStock, product, addToCartText }: AddToCartButtonProps) {
   const { isSignedIn } = useUser();
   const { addToCart } = useCart();
 
@@ -40,7 +41,7 @@ export default function AddToCartButton({ inStock, product }: AddToCartButtonPro
           d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7M9.5 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm11 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
         />
       </svg>
-      {inStock ? "Agregar" : "Agotado"}
+      {inStock ? addToCartText : "Agotado"} {/* ← USANDO DICCIONARIO */}
     </>
   );
 

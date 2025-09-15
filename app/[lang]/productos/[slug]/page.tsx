@@ -7,6 +7,7 @@ import English from '@/app/components/atoms/flags/english';
 import French from '@/app/components/atoms/flags/french';
 import Deutsch from '@/app/components/atoms/flags/deutsch';
 import { JSX } from 'react';
+import { getDictionary } from '../../dictionaries'; // Importar getDictionary
 
 interface Props {
   params: Promise<{ slug: string; lang: string }>;
@@ -107,6 +108,17 @@ export async function generateMetadata({ params }: Props) {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug, lang } = await params;
   const product = await getTranslatedProduct(slug, lang);
+  // Define un array constante con los idiomas soportados
+  const supportedLangs = ["en", "es", "fr", "de"] as const;
+
+  // Verifica si 'lang' está dentro de los idiomas soportados.
+  // Si es así, lo usa; si no, por defecto usa "en" (inglés).
+  const safeLang = supportedLangs.includes(lang as any) 
+    ? (lang as typeof supportedLangs[number]) 
+    : "es";
+
+  // Obtiene el diccionario de traducciones correspondiente al idioma seguro seleccionado
+  const dict = await getDictionary(safeLang) // es
 
   if (!product) {
     notFound();
@@ -129,11 +141,15 @@ export default async function ProductDetailPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-white text-black py-8">
       <div className="container mx-auto px-4">
-        {/* Breadcrumb */}
+        {/* Breadcrumb - USANDO DICCIONARIO */}
         <nav className="text-sm text-gray-600 mb-6">
-          <a href={`/${lang}`} className="hover:text-blue-600">Inicio</a>
+          <a href={`/${lang}`} className="hover:text-blue-600">
+            {dict.header.nav.home || "Inicio"}
+          </a>
           <span className="mx-2">/</span>
-          <a href={`/${lang}/productos`} className="hover:text-blue-600">Productos</a>
+          <a href={`/${lang}/productos`} className="hover:text-blue-600">
+            {dict.header.nav.products || "Productos"}
+          </a>
           <span className="mx-2">/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>
@@ -162,7 +178,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <div className="flex items-center gap-2 mb-4">
                   {LanguageFlag[product.language]}
                   <span className="text-sm text-gray-600">
-                    {product.language.toUpperCase()} Language
+                    {product.language.toUpperCase()} {dict.products.filters.language || "Language"}
                   </span>
                 </div>
               )}
@@ -188,37 +204,45 @@ export default async function ProductDetailPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Disponibilidad */}
+              {/* Disponibilidad - USANDO DICCIONARIO */}
               <div className="mb-4">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   product.inStock 
                     ? 'bg-green-100 text-green-800' 
                     : 'bg-red-100 text-red-800'
                 }`}>
-                  {product.inStock ? 'En stock' : 'Agotado'}
+                  {product.inStock 
+                    ? dict.products.inStock || "En stock" 
+                    : dict.products.outOfStock || "Agotado"}
                 </span>
               </div>
             </div>
 
-            {/* Descripción */}
+            {/* Descripción - USANDO DICCIONARIO */}
             {product.description && (
               <div>
-                <h3 className="text-lg font-semibold mb-2">Descripción</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  {dict.products.description || "Descripción"}
+                </h3>
                 <p className="text-gray-700 leading-relaxed">{product.description}</p>
               </div>
             )}
 
-            {/* Categoría y Marca */}
+            {/* Categoría y Marca - USANDO DICCIONARIO */}
             <div className="grid grid-cols-2 gap-4 text-sm">
               {product.category && (
                 <div>
-                  <span className="font-semibold">Categoría:</span>
+                  <span className="font-semibold">
+                    {dict.products.filters.category || "Categoría"}:
+                  </span>
                   <span className="ml-2 text-gray-600 capitalize">{product.category}</span>
                 </div>
               )}
               {product.brand && (
                 <div>
-                  <span className="font-semibold">Marca:</span>
+                  <span className="font-semibold">
+                    {dict.products.filters.brand || "Marca"}:
+                  </span>
                   <span className="ml-2 text-gray-600 capitalize">{product.brand}</span>
                 </div>
               )}
@@ -231,6 +255,7 @@ export default async function ProductDetailPage({ params }: Props) {
                     product={{
                     id: product.id.toString(),
                     }}
+                    addToCartText={dict.products.add || "Agregar"}
                 />
             </div>
           </div>

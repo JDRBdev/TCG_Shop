@@ -62,7 +62,10 @@
       "products": "products",
       "noProducts": "No products found",
       "tryAdjusting": "Try adjusting filters or search terms"
-    }
+    },
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "description": "Description"
   },
   "categories": {
     "title": "Popular Categories",

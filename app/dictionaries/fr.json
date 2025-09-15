@@ -62,7 +62,10 @@
       "products": "produits",
       "noProducts": "Aucun produit trouvé",
       "tryAdjusting": "Essayez d'ajuster les filtres ou les termes de recherche"
-    }
+    },
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "description": "Description"
   },
   "categories": {
     "title": "Catégories Populaires",

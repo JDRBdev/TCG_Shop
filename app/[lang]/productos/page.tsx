@@ -45,6 +45,7 @@ export default async function ProductosPage({
       initialProducts={initialProducts}
       initialFilters={filters}
       dict={dict} // Pasar el diccionario como prop
+      lang={safeLang || "es"} // Pasar el idioma actual como prop
     />
   )
 }

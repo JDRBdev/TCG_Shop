@@ -41,6 +41,7 @@ interface ProductosClientPageProps {
   initialProducts: Product[]
   initialFilters: Filters
   dict: any // Agregar el diccionario como prop
+  lang: string // Agregar el idioma actual como prop
 }
 
 // Función optimizada para obtener solo precios y stock actualizados
@@ -71,7 +72,8 @@ async function fetchUpdatedProductData(): Promise<{id: string, price: number, di
 export default function ProductosClientPage({ 
   initialProducts, 
   initialFilters,
-  dict // Recibir el diccionario
+  dict,
+  lang
 }: ProductosClientPageProps) {
   const router = useRouter()
   const isMountedRef = useRef(true)
@@ -398,7 +400,13 @@ export default function ProductosClientPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {sortedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} showBadge={!!p.price}/>
+                <ProductCard 
+                  key={p.id} 
+                  product={p} 
+                  showBadge={!!p.price} 
+                  dict={dict}       // ✅ pasa el diccionario
+                  lang={lang || "en"} // ✅ pasa el idioma actual
+                />
             ))}
           </div>
 
