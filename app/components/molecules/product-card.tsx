@@ -21,9 +21,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
   };
 
   return (
-    <Link href={`/productos/${product.slug}`} className="block">
-      <div className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-        <div className="relative overflow-hidden rounded-t-lg">
+    <div className="rounded-lg border bg-white shadow-sm group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <Link href={`/productos/${product.slug}`} className="block">
+        <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
           <img
             src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
             alt={product.name}
@@ -54,12 +54,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h4 className="text-lg text-black font-semibold mb-2">{product.name}</h4>
-          {product.description && (
-            <p className="text-sm text-gray-600 mb-3">{product.description}</p>
-          )}
-          <div className="flex items-center justify-between mb-2">
+      </Link>
+      
+      <div className="p-4">
+        <Link href={`/productos/${product.slug}`} className="block cursor-pointer">
+          <h4 className="text-lg text-black font-semibold mb-2 hover:text-blue-600">{product.name}</h4>
+        </Link>
+        
+        {product.description && (
+          <Link href={`/productos/${product.slug}`} className="block cursor-pointer">
+            <p className="text-sm text-gray-600 mb-3 hover:text-blue-600">{product.description}</p>
+          </Link>
+        )}
+        
+        <div className="flex items-center justify-between mb-2">
+          <Link href={`/productos/${product.slug}`} className="cursor-pointer">
             <div className="flex items-center gap-2">
               {product.discount ? (
                 <>
@@ -76,16 +85,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
                 </span>
               )}
             </div>
-            <AddToCartButton
-              inStock={product.inStock}
-              product={{
-                id: product.id.toString(),
-              }}
-            />
-          </div>
+          </Link>
+          
+          <AddToCartButton
+            inStock={product.inStock}
+            product={{
+              id: product.id.toString(),
+            }}
+          />
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

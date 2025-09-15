@@ -75,6 +75,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<CartProduct[]>([]);
   const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
+  const [isClient, setIsClient] = useState(false);
   
   const { isSignedIn, user: clerkUser } = useUser();
   const { getToken } = useAuth();
@@ -83,6 +84,34 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   const isMountedRef = useRef(true);
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isTabVisibleRef = useRef(true);
+  const cartRef = useRef<HTMLDivElement>(null);
+
+  // Detectar cuando estamos en el cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Cerrar el carrito al hacer clic fuera de él
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Deshabilitar scroll del body cuando el carrito está abierto
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [open, isClient]);
 
   // Función para actualizar datos de productos del carrito
   const updateProductData = async () => {
@@ -112,6 +141,8 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
   // Efecto para polling inteligente cuando el carrito está abierto
   useEffect(() => {
+    if (!isClient) return;
+    
     isMountedRef.current = true;
     isTabVisibleRef.current = document.visibilityState === 'visible';
 
@@ -153,15 +184,18 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [open, cart.length]);
+  }, [open, cart.length, isClient]);
 
   // Actualizar datos cuando cambia el carrito
   useEffect(() => {
+    if (!isClient) return;
     updateProductData();
-  }, [cart]);
+  }, [cart, isClient]);
 
   // Sincronización de usuario con Supabase (mantenido igual)
   useEffect(() => {
+    if (!isClient) return;
+    
     const syncUserWithSupabase = async () => {
       if (isSignedIn && clerkUser) {
         try {
@@ -187,7 +221,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
     };
 
     syncUserWithSupabase();
-  }, [isSignedIn, clerkUser]);
+  }, [isSignedIn, clerkUser, isClient]);
 
   const handleDecreaseQuantity = (item: CartProduct) => {
     if (item.quantity === 1) {
@@ -267,7 +301,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
   // Sincronización del carrito con Supabase (mantenida igual)
   useEffect(() => {
-    if (!clerkUser?.id) return;
+    if (!clerkUser?.id || !isClient) return;
 
     const handleCartSync = async () => {
       if (cart.length > 0) {
@@ -279,13 +313,13 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
 
     const timeoutId = setTimeout(handleCartSync, 1000);
     return () => clearTimeout(timeoutId);
-  }, [cart, clerkUser?.id]);
+  }, [cart, clerkUser?.id, isClient]);
 
   useEffect(() => {
-    if (clerkUser?.id) {
+    if (clerkUser?.id && isClient) {
       loadCartFromSupabase();
     }
-  }, [clerkUser?.id]);
+  }, [clerkUser?.id, isClient]);
 
   const handleClearCart = () => {
     clearCart();
@@ -348,53 +382,120 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
         </button>
       )}
 
-      {open && isSignedIn && (
-        <div className="absolute -left-40 mt-4 w-80 bg-white shadow-lg rounded-md p-4 z-50 border border-blue-600">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-semibold">Tu carrito</h3>
-          </div>
+      {/* Overlay de fondo - solo en cliente */}
+      {isClient && open && (
+        <div className="fixed inset-0 bg-opacity-50 z-40 transition-opacity duration-300"></div>
+      )}
 
-          {products.filter(item => item.quantity > 0).length === 0 ? (
-            <p className="text-sm text-gray-500">No hay productos en el carrito.</p>
-          ) : (
-            <div className="space-y-3">
-              {products.filter(item => item.quantity > 0).map((item) => (
-                <div key={item.id} className="flex justify-between items-center border-b pb-2">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{item.name}</p>
-                    <div className="flex justify-between items-center">
-                      <p className="text-xs text-gray-500">
-                        €{(item.price * (1 - item.discount / 100)).toFixed(2)} x {item.quantity}
-                      </p>
-                      {!item.in_stock && (
-                        <span className="text-xs text-red-500">Sin stock</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button onClick={() => handleDecreaseQuantity(item)} className="px-2 bg-gray-200 rounded">-</button>
-                    <span className="text-sm">{item.quantity}</span>
-                    <button onClick={() => addToCart({ id: item.id, quantity: 1 })} className="px-2 bg-gray-200 rounded">+</button>
-                    <button onClick={() => removeFromCart(item.id)} className="text-red-500 text-xs">✕</button>
-                  </div>
-                </div>
-              ))}
-
-              <div className="pt-3 border-t flex flex-col gap-2 text-black">
-                <p className="text-sm font-medium">
-                  Total: €{total}
-                </p>
-                
-                <button onClick={handleClearCart} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md text-sm font-medium">
-                  Vaciar carrito
-                </button>
-                
-                <button onClick={handleCheckout} disabled={loading} className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md text-sm font-medium disabled:opacity-50">
-                  {loading ? "Procesando..." : "Ir a pagar"}
-                </button>
-              </div>
+      {/* Aside del carrito - solo en cliente */}
+      {isClient && (
+        <div
+          ref={cartRef}
+          className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+            open ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div className="flex flex-col h-full">
+            {/* Header del carrito */}
+            <div className="flex justify-between items-center p-4 pb-6 border-b">
+              <h2 className="text-lg font-semibold">Tu carrito</h2>
+              <button 
+                onClick={() => setOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-100"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-          )}
+
+            {/* Contenido del carrito */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {products.filter(item => item.quantity > 0).length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7M9.5 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm11 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                  </svg>
+                  <p className="text-gray-500">No hay productos en el carrito.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {products.filter(item => item.quantity > 0).map((item) => (
+                    <div key={item.id} className="flex items-start border-b pb-4">
+                      <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center mr-3">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{item.name}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-sm font-semibold">
+                            €{(item.price * (1 - item.discount / 100)).toFixed(2)}
+                          </p>
+                          {!item.in_stock && (
+                            <span className="text-xs text-red-500 bg-red-100 px-2 py-1 rounded">Sin stock</span>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleDecreaseQuantity(item)} 
+                              className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded"
+                            >
+                              -
+                            </button>
+                            <span className="text-sm">{item.quantity}</span>
+                            <button 
+                              onClick={() => addToCart({ id: item.id, quantity: 1 })} 
+                              className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button 
+                            onClick={() => removeFromCart(item.id)} 
+                            className="text-gray-500 hover:text-red-500"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer del carrito */}
+            {products.filter(item => item.quantity > 0).length > 0 && (
+              <div className="p-4 border-t bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-medium">Total:</span>
+                  <span className="text-lg font-semibold">€{total}</span>
+                </div>
+                
+                <div className="space-y-2">
+                  <button 
+                    onClick={handleClearCart} 
+                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Vaciar carrito
+                  </button>
+                  
+                  <button 
+                    onClick={handleCheckout} 
+                    disabled={loading}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    {loading ? "Procesando..." : "Ir a pagar"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

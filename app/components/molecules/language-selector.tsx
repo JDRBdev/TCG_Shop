@@ -68,7 +68,7 @@ export default function LanguageSelector({ currentLang }: LanguageSelectorProps)
   }, [])
 
   return (
-    <div ref={ref} className="relative z-[100]">
+    <div ref={ref} className="relative">
       {/* Botón principal */}
       <button
         type="button"
