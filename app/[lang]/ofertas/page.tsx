@@ -44,7 +44,13 @@ export default async function OfertasPage({ params }: PageProps) {
           <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">Ofertas Especiales</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {specialOffers.map((offer) => (
-              <ProductCard key={offer.id} product={offer} showBadge />
+              <ProductCard 
+                key={offer.id} 
+                product={offer} 
+                dict={dict}
+                lang={safeLang || "es"}
+                showBadge 
+              />
             ))}
           </div>
         </div>
