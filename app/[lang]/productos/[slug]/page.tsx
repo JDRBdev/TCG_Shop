@@ -10,7 +10,7 @@ import { JSX } from 'react';
 import { getDictionary } from '../../dictionaries'; // Importar getDictionary
 
 interface Props {
-  params: Promise<{ slug: string; lang: string }>;
+  params: { slug: string; lang: string };
 }
 
 // Función para obtener producto traducido
@@ -96,7 +96,7 @@ async function getTranslatedProduct(slug: string, locale: string) {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug, lang } = await params;
+  const { slug, lang } = params;
   const product = await getTranslatedProduct(slug, lang);
 
   return {
@@ -106,7 +106,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { slug, lang } = await params;
+  const { slug, lang } = params;
   const product = await getTranslatedProduct(slug, lang);
   // Define un array constante con los idiomas soportados
   const supportedLangs = ["en", "es", "fr", "de"] as const;
