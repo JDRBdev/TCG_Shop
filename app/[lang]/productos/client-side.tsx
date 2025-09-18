@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import ProductCard from "@/app/components/molecules/product-card"
 import { createClient } from '@supabase/supabase-js'
 import { Product } from "@/app/data/products"
@@ -169,26 +169,33 @@ export default function ProductosClientPage({
     }
   }, [isUpdating])
 
-  // Actualizar URL al cambiar filtro
-  const updateFilter = useCallback((key: keyof Filters, value: string | boolean) => {
-    // Actualizar estado local
-    if (key === 'language') {
-      setSelectedLanguage(value as string)
-    } else if (key === 'category') {
-      setSelectedCategory(value as string)
-    } else if (key === 'brand') {
-      setSelectedBrand(value as string)
-    } else if (key === 'sort') {
-      setSortBy(value as string)
-    } else if (key === 'inStock') {
-      setShowOnlyInStock(value as boolean)
-    }
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-    // Actualizar URL
-    const params = new URLSearchParams(window.location.search)
-    params.set(key, value.toString())
-    router.push(`/productos?${params.toString()}`, { scroll: false })
-  }, [router])
+  const updateFilter = useCallback(
+    (key: keyof Filters, value: string | boolean) => {
+      // Actualizar estado local
+      if (key === "language") {
+        setSelectedLanguage(value as string)
+      } else if (key === "category") {
+        setSelectedCategory(value as string)
+      } else if (key === "brand") {
+        setSelectedBrand(value as string)
+      } else if (key === "sort") {
+        setSortBy(value as string)
+      } else if (key === "inStock") {
+        setShowOnlyInStock(value as boolean)
+      }
+
+      // Crear nuevos search params basados en los actuales
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(key, value.toString())
+
+      // Push con pathname actual (mantiene el lang en la URL)
+      router.push(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [router, pathname, searchParams]
+  )
 
   // Datos para filtros - AHORA USANDO EL DICCIONARIO
   const language = [
