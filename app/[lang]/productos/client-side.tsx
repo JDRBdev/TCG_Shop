@@ -217,9 +217,7 @@ export default function ProductosClientPage({
     { value: "all", label: dict.products.filters.allBrands || "Todas las Marcas" },
     { value: "pokemon", label: "Pokémon" },
     { value: "magic", label: "Magic: The Gathering" },
-    { value: "yugioh", label: "Yu-Gi-Oh!" },
     { value: "one-piece", label: "One Piece" },
-    { value: "digimon", label: "Digimon" },
   ]
 
   const sortOptions = [
