@@ -94,80 +94,73 @@ export default function ProductosClientPage({
 
   // POLLING OPTIMIZADO para actualizaciones
   useEffect(() => {
-    isMountedRef.current = true
-    let timeoutId: NodeJS.Timeout
-    let isTabVisible = true
+  isMountedRef.current = true;
+  let timeoutId: NodeJS.Timeout;
+  let isTabVisible = true;
+  let isUpdating = false;
 
-    // Función para actualizar datos
-    const updateProductData = async () => {
-      if (!isMountedRef.current || !isTabVisible || isUpdating) return
+  const updateProductData = async () => {
+    if (!isMountedRef.current || !isTabVisible || isUpdating) return;
 
-      setIsUpdating(true)
-      try {
-        const updatedData = await fetchUpdatedProductData()
-        
-        if (isMountedRef.current && updatedData.length > 0) {
-          setAllProducts(prevProducts => 
-            prevProducts.map(product => {
-              const updated = updatedData.find(p => p.id === product.id)
-              if (updated && (
-                updated.price !== product.price || 
+    isUpdating = true;
+    try {
+      const updatedData = await fetchUpdatedProductData();
+
+      if (isMountedRef.current && updatedData.length > 0) {
+        setAllProducts(prevProducts =>
+          prevProducts.map(product => {
+            const updated = updatedData.find(p => p.id === product.id);
+            if (
+              updated &&
+              (updated.price !== product.price ||
                 updated.discount !== product.discount ||
-                updated.inStock !== product.inStock
-              )) {
-                console.log(`📊 Producto actualizado: ${product.name}`)
-                return { 
-                  ...product, 
-                  price: updated.price,
-                  discount: updated.discount,
-                  inStock: updated.inStock
-                }
-              }
-              return product
-            })
-          )
-          setLastUpdate(new Date())
-        }
-      } catch (error) {
-        console.error('Error en polling:', error)
-      } finally {
-        setIsUpdating(false)
+                updated.inStock !== product.inStock)
+            ) {
+              console.log(`📊 Producto actualizado: ${product.name}`);
+              return {
+                ...product,
+                price: updated.price,
+                discount: updated.discount,
+                inStock: updated.inStock,
+              };
+            }
+            return product;
+          })
+        );
+        setLastUpdate(new Date());
       }
+    } catch (error) {
+      console.error('Error en polling:', error);
+    } finally {
+      isUpdating = false;
     }
+  };
 
-    // Detectar visibilidad de la pestaña
-    const handleVisibilityChange = () => {
-      isTabVisible = document.visibilityState === 'visible'
-      if (isTabVisible) {
-        // Si la pestaña se vuelve visible, actualizar inmediatamente
-        updateProductData()
-      }
-    }
+  const handleVisibilityChange = () => {
+    isTabVisible = document.visibilityState === 'visible';
+    if (isTabVisible) updateProductData();
+  };
 
-    // Configurar listener de visibilidad
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Función recursiva para polling inteligente
-    const startPolling = () => {
-      if (!isMountedRef.current) return
+  const startPolling = () => {
+    if (!isMountedRef.current) return;
 
-      updateProductData()
-      
-      // Polling adaptativo: más frecuente cuando la pestaña está visible
-      const interval = isTabVisible ? 15000 : 30000 // 15s visible, 30s oculta
-      timeoutId = setTimeout(startPolling, interval)
-    }
+    updateProductData();
 
-    // Iniciar polling
-    startPolling()
+    const interval = isTabVisible ? 15000 : 30000; // 15s o 30s
+    timeoutId = setTimeout(startPolling, interval);
+  };
 
-    // Cleanup
-    return () => {
-      isMountedRef.current = false
-      clearTimeout(timeoutId)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [isUpdating])
+  startPolling();
+
+  return () => {
+    isMountedRef.current = false;
+    clearTimeout(timeoutId);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, []); // ← SIN dependencias
+
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
