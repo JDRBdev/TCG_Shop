@@ -44,122 +44,142 @@ interface ProductosClientPageProps {
   lang: string // Agregar el idioma actual como prop
 }
 
-// Función optimizada para obtener solo precios y stock actualizados
-async function fetchUpdatedProductData(): Promise<{id: string, price: number, discount: number, inStock: boolean}[]> {
+// ✅ Función opcional para una actualización manual (por si el usuario refresca)
+async function fetchUpdatedProductData(): Promise<
+  { id: string; price: number; discount: number; inStock: boolean }[]
+> {
   try {
     const { data, error } = await supabase
-      .from('products')
-      .select('id, price, discount, in_stock')
-      .order('name')
+      .from("products")
+      .select("id, price, discount, in_stock")
+      .order("name");
 
     if (error) {
-      console.error('Error fetching updated prices:', error)
-      return []
+      console.error("Error fetching updated prices:", error);
+      return [];
     }
 
-    return (data || []).map(item => ({
+    return (data || []).map((item) => ({
       id: item.id,
       price: Number(item.price) || 0,
       discount: Number(item.discount) || 0,
-      inStock: item.in_stock
-    }))
+      inStock: item.in_stock,
+    }));
   } catch (error) {
-    console.error('Error in fetchUpdatedProductData:', error)
-    return []
+    console.error("Error in fetchUpdatedProductData:", error);
+    return [];
   }
 }
 
-export default function ProductosClientPage({ 
-  initialProducts, 
+export default function ProductosClientPage({
+  initialProducts,
   initialFilters,
   dict,
-  lang
+  lang,
 }: ProductosClientPageProps) {
-  const router = useRouter()
-  const isMountedRef = useRef(true)
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
+  const router = useRouter();
+  const isMountedRef = useRef(true);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   // Estado local
-  const [searchTerm, setSearchTerm] = useState("")
-  const [allProducts, setAllProducts] = useState<Product[]>(initialProducts)
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [allProducts, setAllProducts] = useState<Product[]>(initialProducts);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  // Usar filtros iniciales desde SSR
-  const [selectedLanguage, setSelectedLanguage] = useState(initialFilters.language)
-  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category)
-  const [selectedBrand, setSelectedBrand] = useState(initialFilters.brand)
-  const [sortBy, setSortBy] = useState(initialFilters.sort)
-  const [showOnlyInStock, setShowOnlyInStock] = useState(initialFilters.inStock)
+  // Filtros iniciales
+  const [selectedLanguage, setSelectedLanguage] = useState(initialFilters.language);
+  const [selectedCategory, setSelectedCategory] = useState(initialFilters.category);
+  const [selectedBrand, setSelectedBrand] = useState(initialFilters.brand);
+  const [sortBy, setSortBy] = useState(initialFilters.sort);
+  const [showOnlyInStock, setShowOnlyInStock] = useState(initialFilters.inStock);
 
-  // POLLING OPTIMIZADO para actualizaciones
+  // ✅ Actualización en tiempo real con Supabase Realtime
   useEffect(() => {
-  isMountedRef.current = true;
-  let timeoutId: NodeJS.Timeout;
-  let isTabVisible = true;
-  let isUpdating = false;
+    isMountedRef.current = true;
 
-  const updateProductData = async () => {
-    if (!isMountedRef.current || !isTabVisible || isUpdating) return;
+    type ProductChangePayload = {
+      eventType: "INSERT" | "UPDATE" | "DELETE";
+      new: Product | null;
+      old: Product | null;
+    };
 
-    isUpdating = true;
-    try {
-      const updatedData = await fetchUpdatedProductData();
+  const channel = supabase
+    .channel('products-changes')
+    .on(
+      'postgres_changes', // 👈 primer argumento: tipo de evento
+      { event: '*', schema: 'public', table: 'products' }, // 👈 segundo: filtro
+      (payload) => { // 👈 tercero: callback
+        const { eventType, new: newData, old } = payload;
 
-      if (isMountedRef.current && updatedData.length > 0) {
-        setAllProducts(prevProducts =>
-          prevProducts.map(product => {
-            const updated = updatedData.find(p => p.id === product.id);
-            if (
-              updated &&
-              (updated.price !== product.price ||
-                updated.discount !== product.discount ||
-                updated.inStock !== product.inStock)
-            ) {
-              console.log(`📊 Producto actualizado: ${product.name}`);
-              return {
-                ...product,
-                price: updated.price,
-                discount: updated.discount,
-                inStock: updated.inStock,
-              };
-            }
-            return product;
-          })
-        );
+        setAllProducts((prev) => {
+          let updatedProducts = [...prev];
+
+          switch (eventType) {
+            case 'INSERT':
+              if (newData) {
+                console.log('🆕 Producto insertado:', newData.name);
+                updatedProducts = [...prev, newData as Product];
+              }
+              break;
+
+            case 'UPDATE':
+              if (newData) {
+                console.log('♻️ Producto actualizado:', newData.name);
+                updatedProducts = prev.map((p) =>
+                  p.id === (newData as Product).id
+                    ? { ...p, ...(newData as Product) }
+                    : p
+                );
+              }
+              break;
+
+            case 'DELETE':
+              if (old) {
+                console.log('❌ Producto eliminado:', old.name);
+                updatedProducts = prev.filter(
+                  (p) => p.id !== (old as Product).id
+                );
+              }
+              break;
+          }
+
+          return updatedProducts;
+        });
+
         setLastUpdate(new Date());
       }
-    } catch (error) {
-      console.error('Error en polling:', error);
-    } finally {
-      isUpdating = false;
-    }
+    )
+    .subscribe();
+
+    return () => {
+      isMountedRef.current = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // ✅ Opcional: botón o trigger manual para forzar actualización completa
+  const handleManualRefresh = async () => {
+    setIsUpdating(true);
+    const updatedData = await fetchUpdatedProductData();
+
+    setAllProducts((prev) =>
+      prev.map((product) => {
+        const updated = updatedData.find((p) => p.id === product.id);
+        return updated
+          ? {
+              ...product,
+              price: updated.price,
+              discount: updated.discount,
+              inStock: updated.inStock,
+            }
+          : product;
+      })
+    );
+
+    setLastUpdate(new Date());
+    setIsUpdating(false);
   };
-
-  const handleVisibilityChange = () => {
-    isTabVisible = document.visibilityState === 'visible';
-    if (isTabVisible) updateProductData();
-  };
-
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  const startPolling = () => {
-    if (!isMountedRef.current) return;
-
-    updateProductData();
-
-    const interval = isTabVisible ? 15000 : 30000; // 15s o 30s
-    timeoutId = setTimeout(startPolling, interval);
-  };
-
-  startPolling();
-
-  return () => {
-    isMountedRef.current = false;
-    clearTimeout(timeoutId);
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  };
-}, []); // ← SIN dependencias
 
 
   const pathname = usePathname()
