@@ -92,21 +92,16 @@ export default function ProductosClientPage({
   const [sortBy, setSortBy] = useState(initialFilters.sort)
   const [showOnlyInStock, setShowOnlyInStock] = useState(initialFilters.inStock)
 
-  // POLLING OPTIMIZADO para actualizaciones
-  useEffect(() => {
+useEffect(() => {
   isMountedRef.current = true;
-  let timeoutId: NodeJS.Timeout;
-  let isTabVisible = true;
   let isUpdating = false;
 
   const updateProductData = async () => {
-    if (!isMountedRef.current || !isTabVisible || isUpdating) return;
-
+    if (!isMountedRef.current || isUpdating) return;
     isUpdating = true;
     try {
       const updatedData = await fetchUpdatedProductData();
-
-      if (isMountedRef.current && updatedData.length > 0) {
+      if (updatedData.length > 0) {
         setAllProducts(prevProducts =>
           prevProducts.map(product => {
             const updated = updatedData.find(p => p.id === product.id);
@@ -117,12 +112,7 @@ export default function ProductosClientPage({
                 updated.inStock !== product.inStock)
             ) {
               console.log(`📊 Producto actualizado: ${product.name}`);
-              return {
-                ...product,
-                price: updated.price,
-                discount: updated.discount,
-                inStock: updated.inStock,
-              };
+              return { ...product, ...updated };
             }
             return product;
           })
@@ -130,36 +120,29 @@ export default function ProductosClientPage({
         setLastUpdate(new Date());
       }
     } catch (error) {
-      console.error('Error en polling:', error);
+      console.error("Error actualizando productos:", error);
     } finally {
       isUpdating = false;
     }
   };
 
+  // 🔹 Llamar solo una vez al montar
+  updateProductData();
+
+  // 🔹 O si quieres, también cuando la pestaña vuelve a ser visible
   const handleVisibilityChange = () => {
-    isTabVisible = document.visibilityState === 'visible';
-    if (isTabVisible) updateProductData();
+    if (document.visibilityState === "visible") {
+      updateProductData();
+    }
   };
 
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  const startPolling = () => {
-    if (!isMountedRef.current) return;
-
-    updateProductData();
-
-    const interval = isTabVisible ? 15000 : 30000; // 15s o 30s
-    timeoutId = setTimeout(startPolling, interval);
-  };
-
-  startPolling();
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   return () => {
     isMountedRef.current = false;
-    clearTimeout(timeoutId);
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
   };
-}, []); // ← SIN dependencias
+}, []);
 
 
   const pathname = usePathname()
