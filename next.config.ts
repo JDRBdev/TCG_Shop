@@ -6,17 +6,19 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'directus-tcg-shop.onrender.com',
-        port: '',
         pathname: '/assets/**',
       },
-      // Puedes agregar más hosts si necesitas
       {
         protocol: 'https',
         hostname: '**.render.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pihjmdqfdxosppgdgyed.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
-  // Otras configuraciones que quieras agregar...
 };
 
 export default nextConfig;

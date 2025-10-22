@@ -25,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false, d
       <Link href={`/${lang}/productos/${product.slug}`} className="block">
         <div className="relative overflow-hidden rounded-t-lg cursor-pointer">
           <img
-            src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
+            src={`${product.image || "placeholder.svg"}`}
             alt={product.name}
             className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
           />

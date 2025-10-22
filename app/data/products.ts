@@ -7,14 +7,14 @@ export interface Product {
   category?: "booster" | "deck" | "single" | "set" | "accessory";
   brand?: string;
   price: number;
-  discount?: number;      
+  discount?: number;
   inStock: boolean;
   description: string;
   image: string;
   language?: "es" | "en" | "fr" | "de";
   createdAt?: string;
   updatedAt?: string;
-  timeLeft?: string; 
+  timeLeft?: string;
 }
 
 // Inicializa Supabase
@@ -22,17 +22,23 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey!);
 
-// Función para obtener productos traducidos según idioma
-// Función para obtener productos traducidos según idioma
+const BUCKET_NAME = "directus_files";
+
+function getPublicImageUrl(imageId: string | null): string {
+  if (!imageId) return "/placeholder.svg";
+  if (imageId.startsWith("http")) return imageId;
+  return `${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/${imageId}.webp`;
+}
+
+// 📦 Obtener todos los productos (con imágenes públicas)
 export async function fetchProducts(locale: string): Promise<Product[]> {
   try {
-    // 1️⃣ Obtener todos los productos
     const { data: products, error: productsError } = await supabase
-      .from('products')
-      .select('*');
+      .from("products")
+      .select("*");
 
     if (productsError) {
-      console.error('Error al obtener productos:', productsError);
+      console.error("Error al obtener productos:", productsError);
       return [];
     }
 
@@ -40,49 +46,45 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
 
     const productIds = products.map((p: any) => p.id);
 
-    // 2️⃣ Obtener las relaciones en products_product_translations
+    // Relaciones producto ↔ traducción
     const { data: mappings, error: mappingsError } = await supabase
-      .from('products_product_translations')
-      .select('products_id, product_translations_id')
-      .in('products_id', productIds);
+      .from("products_product_translations")
+      .select("products_id, product_translations_id")
+      .in("products_id", productIds);
 
     if (mappingsError) {
-      console.error('Error al obtener relaciones de traducciones:', mappingsError);
+      console.error("Error al obtener relaciones de traducciones:", mappingsError);
       return [];
     }
 
     const translationIds = mappings.map((m: any) => m.product_translations_id);
 
-    // 3️⃣ Obtener las traducciones reales
     const { data: translations, error: translationsError } = await supabase
-      .from('product_translations')
-      .select('*')
-      .in('id', translationIds)
-      .eq('lang', locale); // FILTRAR POR IDIOMA SOLICITADO
+      .from("product_translations")
+      .select("*")
+      .in("id", translationIds)
+      .eq("lang", locale);
 
     if (translationsError) {
-      console.error('Error al obtener traducciones:', translationsError);
+      console.error("Error al obtener traducciones:", translationsError);
       return [];
     }
 
-    // 4️⃣ Combinar productos con sus traducciones según locale
+    // Combinar productos + traducciones + URLs públicas
     const result = products.map((p: any) => {
-      // Encontrar el mapping para este producto
       const productMappings = mappings.filter((m: any) => m.products_id === p.id);
-      
-      // Encontrar la traducción que corresponda al locale solicitado
-      const translation = translations.find((t: any) => 
+      const translation = translations.find((t: any) =>
         productMappings.some((m) => m.product_translations_id === t.id)
       );
 
       return {
         id: p.id,
-        name: translation?.name ?? p.name, // Usar traducción o nombre original
+        name: translation?.name ?? p.name,
         price: p.price,
-        description: translation?.description ?? p.description, // Usar traducción o descripción original
-        image: p.image,
-        inStock: p.in_stock ?? p.stock, // Manejar ambos nombres de columna
-        category: p.category || 'other',
+        description: translation?.description ?? p.description,
+        image: getPublicImageUrl(p.image),
+        inStock: p.in_stock ?? p.stock,
+        category: p.category || "other",
         language: p.language,
         slug: p.slug,
         brand: p.brand,
@@ -92,79 +94,75 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
       };
     });
 
-    // Debug: mostrar qué productos se encontraron y sus traducciones
-    console.log(`Traducciones para locale '${locale}':`, translations.length);
-    result.forEach((product, index) => {
-      console.log(`Producto ${index + 1}:`, product.name);
-    });
-
+    console.log(`✅ Productos cargados (${result.length}) con imágenes públicas.`);
     return result;
   } catch (err) {
-    console.error('Error inesperado al obtener productos:', err);
+    console.error("Error inesperado al obtener productos:", err);
     return [];
   }
 }
 
-// Agrega esta función a products.ts
-export async function fetchTranslatedProduct(slug: string, locale: string): Promise<Product | null> {
+// 📦 Obtener un producto traducido individual
+export async function fetchTranslatedProduct(
+  slug: string,
+  locale: string
+): Promise<Product | null> {
   try {
-    console.log('Buscando producto traducido:', slug, 'para lang:', locale);
-    
-    // 1️⃣ Obtener el producto por slug
     const { data: product, error: productError } = await supabase
-      .from('products')
-      .select('*')
-      .eq('slug', slug)
+      .from("products")
+      .select("*")
+      .or(`slug.eq.${slug},id.eq.${slug}`)
       .single();
 
     if (productError || !product) {
-      console.error('Error al obtener producto:', productError);
+      console.error("Error al obtener producto:", productError);
       return null;
     }
 
-    // 2️⃣ Obtener las relaciones de traducciones para este producto
     const { data: mappings, error: mappingsError } = await supabase
-      .from('products_product_translations')
-      .select('product_translations_id')
-      .eq('products_id', product.id);
+      .from("products_product_translations")
+      .select("product_translations_id")
+      .eq("products_id", product.id);
 
     if (mappingsError) {
-      console.error('Error al obtener relaciones de traducciones:', mappingsError);
+      console.error("Error al obtener relaciones de traducciones:", mappingsError);
       return null;
     }
 
     const translationIds = mappings.map((m: any) => m.product_translations_id);
 
-    // 3️⃣ Obtener la traducción específica para el locale
-    const { data: translations, error: translationsError } = await supabase
-      .from('product_translations')
-      .select('*')
-      .in('id', translationIds)
-      .eq('lang', locale)
-      .single(); // Solo necesitamos una traducción
+    const { data: translation, error: translationsError } = await supabase
+      .from("product_translations")
+      .select("*")
+      .in("id", translationIds)
+      .eq("lang", locale)
+      .single();
 
-    // 4️⃣ Combinar producto con traducción
+    if (translationsError) {
+      console.error("Error al obtener traducción:", translationsError);
+    }
+
     return {
       id: product.id,
-      name: translations?.name ?? product.name,
-      description: translations?.description ?? product.description,
+      name: translation?.name ?? product.name,
+      description: translation?.description ?? product.description,
       price: product.price,
       discount: product.discount,
       inStock: product.in_stock ?? product.stock,
-      image: product.image,
+      image: getPublicImageUrl(product.image),
       language: product.language,
       category: product.category,
       brand: product.brand,
       slug: product.slug,
       createdAt: product.created_at,
-      updatedAt: product.updated_at
+      updatedAt: product.updated_at,
     };
-
   } catch (err) {
-    console.error('Error inesperado al obtener producto traducido:', err);
+    console.error("Error inesperado al obtener producto traducido:", err);
     return null;
   }
 }
+
 
 export const featuredProducts: Product[] = [
   {

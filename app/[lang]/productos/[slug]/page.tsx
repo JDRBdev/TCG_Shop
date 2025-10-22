@@ -13,6 +13,16 @@ interface Props {
   params: { slug: string; lang: string };
 }
 
+// 🧩 Generador de URLs públicas desde Supabase Storage
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const BUCKET_NAME = "directus_files"; // cambia si tu bucket se llama distinto
+
+function getPublicImageUrl(imagePath?: string): string {
+  if (!imagePath) return "/placeholder.svg"; // fallback local
+  if (imagePath.startsWith("http")) return imagePath;
+  return `${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/${imagePath}`;
+}
+
 // Función para obtener producto traducido
 async function getTranslatedProduct(slug: string, locale: string) {
   const supabase = createClient(
@@ -158,13 +168,15 @@ export default async function ProductDetailPage({ params }: Props) {
           {/* Imagen del producto */}
           <div className="relative">
             <div className="rounded-lg border bg-white p-4">
-              <Image
-                src={`https://directus-tcg-shop.onrender.com/assets/${product.image || "placeholder.svg"}`}
-                alt={product.name}
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover rounded-lg"
-              />
+<img
+  src={`${getPublicImageUrl(product.image)}.webp`}  // Generamos la URL completa
+  alt={product.name}
+  width={600}
+  height={400}
+  loading="lazy"
+  className="w-full h-auto object-cover rounded-lg"
+/>
+
             </div>
           </div>
 
