@@ -8,6 +8,7 @@ import French from '@/app/components/atoms/flags/french';
 import Deutsch from '@/app/components/atoms/flags/deutsch';
 import { JSX } from 'react';
 import { getDictionary } from '../../dictionaries'; // Importar getDictionary
+import Japanese from '@/app/components/atoms/flags/japanese';
 
 interface Props {
   params: { slug: string; lang: string };
@@ -138,10 +139,10 @@ export default async function ProductDetailPage({ params }: Props) {
   console.log('Producto traducido:', product.name, 'para lang:', lang);
 
   const LanguageFlag: Record<string, JSX.Element> = {
-    es: <Spanish className="w-10 h-10 rounded-full border" />,
-    en: <English className="w-10 h-10 rounded-full border" />,
-    fr: <French className="w-10 h-10 rounded-full border" />,
-    de: <Deutsch className="w-10 h-10 rounded-full border" />,
+    es: <Spanish className="w-5 h-5 rounded-full border" />,
+    en: <English className="w-5 h-5 rounded-full border" />,
+    jp: <Japanese className="w-5 h-5 rounded-full border" />,
+
   };
 
   const finalPrice = product.discount > 0 
