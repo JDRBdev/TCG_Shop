@@ -170,7 +170,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <div className="relative">
             <div className="rounded-lg border bg-white p-4">
 <img
-  src={`${getPublicImageUrl(product.image)}.webp`}  // Generamos la URL completa
+  src={`${getPublicImageUrl(product.image)}.avif`}  // Generamos la URL completa
   alt={product.name}
   width={600}
   height={400}

@@ -27,7 +27,7 @@ const BUCKET_NAME = "directus_files";
 function getPublicImageUrl(imageId: string | null): string {
   if (!imageId) return "/placeholder.svg";
   if (imageId.startsWith("http")) return imageId;
-  return `${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/${imageId}.webp`;
+  return `${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/${imageId}.avif`;
 }
 
 // 📦 Obtener todos los productos (con imágenes públicas)
