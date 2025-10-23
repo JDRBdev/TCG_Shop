@@ -217,9 +217,9 @@ export default async function ProductDetailPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Disponibilidad - USANDO DICCIONARIO */}
-              <div className="mb-6">
-                <span className={`inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-md ${
+              {/* Disponibilidad y Botón - USANDO DICCIONARIO */}
+              <div className="flex flex-row items-center gap-4 mb-6">
+                <span className={`flex items-center px-2.5 py-2 w-fit rounded-md text-sm font-bold ${
                   product.inStock 
                     ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' 
                     : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
@@ -228,6 +228,16 @@ export default async function ProductDetailPage({ params }: Props) {
                     ? dict.products.inStock || "En stock" 
                     : dict.products.outOfStock || "Agotado"}
                 </span>
+                
+                <div className="flex-1">
+                  <AddToCartButton
+                      inStock={product.inStock}
+                      product={{
+                      id: product.id.toString(),
+                      }}
+                      addToCartText={dict.products.add || "Agregar"}
+                  />
+                </div>
               </div>
             </div>
 
@@ -262,16 +272,7 @@ export default async function ProductDetailPage({ params }: Props) {
               )}
             </div>
 
-            {/* Botón de añadir al carrito */}
-            <div className="pt-2">
-                <AddToCartButton
-                    inStock={product.inStock}
-                    product={{
-                    id: product.id.toString(),
-                    }}
-                    addToCartText={dict.products.add || "Agregar"}
-                />
-            </div>
+
           </div>
         </div>
       </div>
