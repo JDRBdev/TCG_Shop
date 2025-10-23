@@ -150,79 +150,79 @@ export default async function ProductDetailPage({ params }: Props) {
     : product.price;
 
   return (
-    <div className="min-h-screen bg-white text-black py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12">
+      <div className="container mx-auto px-4 max-w-7xl">
         {/* Breadcrumb - USANDO DICCIONARIO */}
-        <nav className="text-sm text-gray-600 mb-6">
-          <a href={`/${lang}`} className="hover:text-blue-600">
+        <nav className="text-sm mb-8 flex items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-sm w-fit">
+          <a href={`/${lang}`} className="text-slate-600 hover:text-blue-600 transition-colors font-medium">
             {dict.header.nav.home || "Inicio"}
           </a>
-          <span className="mx-2">/</span>
-          <a href={`/${lang}/productos`} className="hover:text-blue-600">
+          <span className="text-slate-400">/</span>
+          <a href={`/${lang}/productos`} className="text-slate-600 hover:text-blue-600 transition-colors font-medium">
             {dict.header.nav.products || "Productos"}
           </a>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-slate-400">/</span>
+          <span className="text-slate-900 font-semibold">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Imagen del producto */}
-          <div className="relative">
-            <div className="rounded-lg border bg-white p-4">
-<img
-  src={`${getPublicImageUrl(product.image)}.avif`}  // Generamos la URL completa
-  alt={product.name}
-  width={600}
-  height={400}
-  loading="lazy"
-  className="w-full h-auto object-cover rounded-lg"
-/>
-
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            <div className="relative rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
+              <img
+                src={`${getPublicImageUrl(product.image)}.avif`}
+                alt={product.name}
+                width={600}
+                height={400}
+                loading="lazy"
+                className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+              />
             </div>
           </div>
 
           {/* Información del producto */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+          <div className="space-y-8">
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200">
+              <h1 className="text-4xl font-bold text-slate-900 mb-4 leading-tight">{product.name}</h1>
               
               {/* Idioma */}
               {product.language && (
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-3 mb-6 bg-slate-50 rounded-full px-4 py-2 w-fit">
                   {LanguageFlag[product.language]}
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-slate-700 font-medium">
                     {product.language.toUpperCase()} {dict.products.filters.language || "Language"}
                   </span>
                 </div>
               )}
 
               {/* Precio */}
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-4 mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                 {product.discount > 0 ? (
                   <>
-                    <span className="text-3xl font-bold text-blue-600">
+                    <span className="text-4xl font-bold text-blue-600">
                       €{finalPrice.toFixed(2)}
                     </span>
-                    <span className="text-xl line-through text-gray-400">
+                    <span className="text-xl line-through text-slate-400 font-medium">
                       €{product.price.toFixed(2)}
                     </span>
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-semibold">
+                    <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                       -{Math.round(product.discount)}%
                     </span>
                   </>
                 ) : (
-                  <span className="text-3xl font-bold text-blue-600">
+                  <span className="text-4xl font-bold text-blue-600">
                     €{product.price.toFixed(2)}
                   </span>
                 )}
               </div>
 
               {/* Disponibilidad - USANDO DICCIONARIO */}
-              <div className="mb-4">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              <div className="mb-6">
+                <span className={`inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-md ${
                   product.inStock 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' 
+                    : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
                 }`}>
                   {product.inStock 
                     ? dict.products.inStock || "En stock" 
@@ -233,36 +233,37 @@ export default async function ProductDetailPage({ params }: Props) {
 
             {/* Descripción - USANDO DICCIONARIO */}
             {product.description && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2">
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200">
+                <h3 className="text-xl font-bold mb-4 text-slate-900 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full"></span>
                   {dict.products.description || "Descripción"}
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+                <p className="text-slate-700 leading-relaxed text-base">{product.description}</p>
               </div>
             )}
 
             {/* Categoría y Marca - USANDO DICCIONARIO */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4">
               {product.category && (
-                <div>
-                  <span className="font-semibold">
-                    {dict.products.filters.category || "Categoría"}:
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow">
+                  <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                    {dict.products.filters.category || "Categoría"}
                   </span>
-                  <span className="ml-2 text-gray-600 capitalize">{product.category}</span>
+                  <span className="text-lg font-bold text-slate-900 capitalize">{product.category}</span>
                 </div>
               )}
               {product.brand && (
-                <div>
-                  <span className="font-semibold">
-                    {dict.products.filters.brand || "Marca"}:
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow">
+                  <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                    {dict.products.filters.brand || "Marca"}
                   </span>
-                  <span className="ml-2 text-gray-600 capitalize">{product.brand}</span>
+                  <span className="text-lg font-bold text-slate-900 capitalize">{product.brand}</span>
                 </div>
               )}
             </div>
 
             {/* Botón de añadir al carrito */}
-            <div className="pt-4">
+            <div className="pt-2">
                 <AddToCartButton
                     inStock={product.inStock}
                     product={{
