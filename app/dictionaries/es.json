@@ -96,7 +96,7 @@
     "tournament": {
       "title": "Torneo Semanal",
       "description": "Participa y gana cartas exclusivas",
-      "playersRegistered": "jugadores registrados",
+      "players_community": "Únete a la comunidad y al resto de competidores",
       "register": "Registrarse"
     }
   },
