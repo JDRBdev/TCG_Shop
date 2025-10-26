@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductCard from "../components/molecules/product-card";
-import { featuredProducts } from "../data/products";
+import { fetchNewProducts } from "../data/products";
 import { getDictionary } from "./dictionaries";
 
 export default async function Page({
@@ -14,6 +14,7 @@ export default async function Page({
     ? (lang as (typeof supportedLangs)[number])
     : "es";
   const dict = await getDictionary(safeLang);
+  const newProducts = await fetchNewProducts(safeLang);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -69,14 +70,14 @@ export default async function Page({
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* New Products */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h3 className="text-3xl font-bold text-center mb-12 text-slate-900">
             {dict.products.title}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((p) => (
+            {newProducts.map((p) => (
               <ProductCard
                 key={p.id}
                 product={p}

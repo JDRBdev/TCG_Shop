@@ -30,21 +30,49 @@ function getPublicImageUrl(imageId: string | null): string {
   return `${supabaseUrl}/storage/v1/object/public/${BUCKET_NAME}/${imageId}.avif`;
 }
 
-// 📦 Obtener todos los productos (con imágenes públicas)
-export async function fetchProducts(locale: string): Promise<Product[]> {
-  try {
-    const { data: products, error: productsError } = await supabase
-      .from("products")
-      .select("*");
+// ===========================================================
+// 🔧 FUNCIÓN BASE GENÉRICA
+// ===========================================================
 
-    if (productsError) {
-      console.error("Error al obtener productos:", productsError);
+interface FetchOptions {
+  locale: string;
+  filters?: Record<string, any>;
+  orderBy?: string;
+  ascending?: boolean;
+  limit?: number;
+}
+
+async function fetchBaseProducts({
+  locale,
+  filters,
+  orderBy,
+  ascending = true,
+  limit,
+}: FetchOptions): Promise<Product[]> {
+  try {
+    // Base query
+    let query = supabase.from("products").select("*");
+
+    // Filtros dinámicos
+    if (filters) {
+      for (const [key, value] of Object.entries(filters)) {
+        query = query.eq(key, value);
+      }
+    }
+
+    // Orden y límite
+    if (orderBy) query = query.order(orderBy, { ascending });
+    if (limit) query = query.limit(limit);
+
+    const { data: products, error } = await query;
+    if (error || !products) {
+      console.error("Error al obtener productos:", error);
       return [];
     }
 
-    if (!products?.length) return [];
+    if (!products.length) return [];
 
-    const productIds = products.map((p: any) => p.id);
+    const productIds = products.map((p) => p.id);
 
     // Relaciones producto ↔ traducción
     const { data: mappings, error: mappingsError } = await supabase
@@ -53,11 +81,11 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
       .in("products_id", productIds);
 
     if (mappingsError) {
-      console.error("Error al obtener relaciones de traducciones:", mappingsError);
+      console.error("Error en mappings:", mappingsError);
       return [];
     }
 
-    const translationIds = mappings.map((m: any) => m.product_translations_id);
+    const translationIds = mappings.map((m) => m.product_translations_id);
 
     const { data: translations, error: translationsError } = await supabase
       .from("product_translations")
@@ -66,146 +94,74 @@ export async function fetchProducts(locale: string): Promise<Product[]> {
       .eq("lang", locale);
 
     if (translationsError) {
-      console.error("Error al obtener traducciones:", translationsError);
+      console.error("Error en traducciones:", translationsError);
       return [];
     }
 
-    // Combinar productos + traducciones + URLs públicas
-    const result = products.map((p: any) => {
-      const productMappings = mappings.filter((m: any) => m.products_id === p.id);
-      const translation = translations.find((t: any) =>
-        productMappings.some((m) => m.product_translations_id === t.id)
+    // Combinación final
+    return products.map((p) => {
+      const related = mappings.filter((m) => m.products_id === p.id);
+      const translation = translations.find((t) =>
+        related.some((m) => m.product_translations_id === t.id)
       );
 
       return {
         id: p.id,
         name: translation?.name ?? p.name,
-        price: p.price,
         description: translation?.description ?? p.description,
-        image: getPublicImageUrl(p.image),
-        inStock: p.in_stock ?? p.stock,
-        category: p.category || "other",
-        language: p.language,
-        slug: p.slug,
-        brand: p.brand,
+        price: p.price,
         discount: p.discount,
+        inStock: p.in_stock ?? p.stock,
+        image: getPublicImageUrl(p.image),
+        category: p.category,
+        brand: p.brand,
+        slug: p.slug,
+        language: p.language,
         createdAt: p.created_at,
         updatedAt: p.updated_at,
       };
     });
-
-    console.log(`✅ Productos cargados (${result.length}) con imágenes públicas.`);
-    return result;
   } catch (err) {
-    console.error("Error inesperado al obtener productos:", err);
+    console.error("Error inesperado en fetchBaseProducts:", err);
     return [];
   }
 }
 
-// 📦 Obtener un producto traducido individual
-export async function fetchTranslatedProduct(
-  slug: string,
-  locale: string
-): Promise<Product | null> {
-  try {
-    const { data: product, error: productError } = await supabase
-      .from("products")
-      .select("*")
-      .or(`slug.eq.${slug},id.eq.${slug}`)
-      .single();
+// ===========================================================
+// 🚀 FUNCIONES ESPECÍFICAS REUTILIZANDO LA BASE
+// ===========================================================
 
-    if (productError || !product) {
-      console.error("Error al obtener producto:", productError);
-      return null;
-    }
-
-    const { data: mappings, error: mappingsError } = await supabase
-      .from("products_product_translations")
-      .select("product_translations_id")
-      .eq("products_id", product.id);
-
-    if (mappingsError) {
-      console.error("Error al obtener relaciones de traducciones:", mappingsError);
-      return null;
-    }
-
-    const translationIds = mappings.map((m: any) => m.product_translations_id);
-
-    const { data: translation, error: translationsError } = await supabase
-      .from("product_translations")
-      .select("*")
-      .in("id", translationIds)
-      .eq("lang", locale)
-      .single();
-
-    if (translationsError) {
-      console.error("Error al obtener traducción:", translationsError);
-    }
-
-    return {
-      id: product.id,
-      name: translation?.name ?? product.name,
-      description: translation?.description ?? product.description,
-      price: product.price,
-      discount: product.discount,
-      inStock: product.in_stock ?? product.stock,
-      image: getPublicImageUrl(product.image),
-      language: product.language,
-      category: product.category,
-      brand: product.brand,
-      slug: product.slug,
-      createdAt: product.created_at,
-      updatedAt: product.updated_at,
-    };
-  } catch (err) {
-    console.error("Error inesperado al obtener producto traducido:", err);
-    return null;
-  }
+export async function fetchAllProducts(locale: string): Promise<Product[]> {
+  return fetchBaseProducts({ locale });
 }
 
+export async function fetchNewProducts(locale: string): Promise<Product[]> {
+  return fetchBaseProducts({
+    locale,
+    orderBy: "created_at",
+    ascending: false,
+    limit: 4,
+  });
+}
 
-export const featuredProducts: Product[] = [
-  {
-    id: "1",
-    name: "Booster Pack Premium",
-    slug: "booster-pack-premium",
-    category: "booster",
-    price: 15.99,
-    inStock: true,
-    description: "Pack con 15 cartas aleatorias incluyendo 1 rara garantizada",
-    image: "/images/trading-card-booster-pack-premium.png",
-  },
-  {
-    id: "2",
-    name: "Deck Competitivo Dragón",
-    slug: "deck-competitivo-dragon",
-    category: "deck",
-    price: 45.99,
-    inStock: true,
-    description: "Deck listo para torneos con estrategia de dragones",
-    image: "/images/competitive-trading-card-deck.png",
-  },
-  {
-    id: "3",
-    name: "Carta Holográfica Legendaria",
-    slug: "carta-holografica-legendaria",
-    category: "single",
-    price: 89.99,
-    inStock: false,
-    description: "Carta única con efectos holográficos y poder legendario",
-    image: "/images/holographic-rare-trading-card.png",
-  },
-  {
-    id: "4",
-    name: "Set Coleccionista Edición Limitada",
-    slug: "set-coleccionista-edicion-limitada",
-    category: "set",
-    price: 129.99,
-    inStock: true,
-    description: "Colección completa de 50 cartas con caja especial",
-    image: "/images/collector-trading-card-set.png",
-  },
-];
+export async function fetchProductsByCategory(
+  locale: string,
+  category: string
+): Promise<Product[]> {
+  return fetchBaseProducts({
+    locale,
+    filters: { category },
+    orderBy: "created_at",
+    ascending: false,
+  });
+}
+
+// ===========================================================
+// 💾 Ejemplo: export para componentes
+// ===========================================================
+
+// Ejemplo de uso: const newProducts = await fetchNewProducts("es");
+export const newProducts: Product[] = [];
 
 export const specialOffers: Product[] = [
   {

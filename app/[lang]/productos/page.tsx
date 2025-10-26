@@ -1,7 +1,7 @@
 // app/productos/page.tsx (Server Component)
 import { cookies } from 'next/headers'
 import ProductosClientPage from './client-side'
-import { fetchProducts } from '@/app/data/products'
+import { fetchAllProducts } from '@/app/data/products'
 import { getDictionary } from '../dictionaries' // Importar getDictionary
 
 export const revalidate = 60
@@ -17,7 +17,7 @@ export default async function ProductosPage({
   const { lang } = await params
   
   // Obtener productos TRADUCIDOS según el lang
-  const initialProducts = await fetchProducts(lang)
+  const initialProducts = await fetchAllProducts(lang)
   
   // Define un array constante con los idiomas soportados
   const supportedLangs = ["en", "es", "fr", "de"] as const;
