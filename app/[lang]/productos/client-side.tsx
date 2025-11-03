@@ -7,24 +7,34 @@ import ProductCard from "@/app/components/molecules/product-card"
 import useProductUpdates from "@/app/hooks/useProductUpdates"
 import { Product } from "@/app/data/products"
 
-// Actualizaciones globales de productos mediante hook reutilizable
+/**
+ * PÁGINA DE PRODUCTOS FILTRABLE
+ * 
+ * Funcionalidad:
+ * - Listado de todos los productos con filtros (idioma, categoría, marca)
+ * - Búsqueda por nombre en tiempo real
+ * - Ordenamiento (precio, nombre, descuento)
+ * - Actualización automática de precios/stock desde BD
+ * - Responsive: desktop (sidebar filtros) + mobile (drawer)
+ */
 
+/**
+ * Tipos de filtros disponibles
+ */
 interface Filters {
-  language: string
-  category: string
-  brand: string
-  sort: string
-  inStock: boolean
+  language: string  // Idioma: "all", "es", "en", "jp"
+  category: string  // Categoría: "all", "booster-packs", etc.
+  brand: string     // Marca: "all", "pokemon", "magic", "one-piece"
+  sort: string      // Ordenamiento: "name", "price-low", "price-high", "discount"
+  inStock: boolean  // Solo mostrar productos en stock
 }
 
 interface ProductosClientPageProps {
-  initialProducts: Product[]
-  initialFilters: Filters
-  dict: any
-  lang: string
+  initialProducts: Product[]    // Productos iniciales del servidor
+  initialFilters: Filters       // Filtros desde URL/defaults
+  dict: any                      // Diccionario de traducciones
+  lang: string                   // Idioma actual
 }
-
-// La lógica de fetch/refresh vive ahora en el hook useProductUpdates
 
 export default function ProductosClientPage({ 
   initialProducts, 
@@ -34,49 +44,69 @@ export default function ProductosClientPage({
 }: ProductosClientPageProps) {
   const router = useRouter()
   const isMountedRef = useRef(true)
+  
+  // Estado UI: móvil - abierto/cerrado drawer de filtros
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false)
 
+  // Estado: búsqueda por nombre
   const [searchTerm, setSearchTerm] = useState("")
+  // Estado: lista de productos (actualizada en tiempo real desde BD)
   const [allProducts, setAllProducts] = useState<Product[]>(initialProducts)
-  // Hook de actualizaciones compartidas
+
+  // Hook global que monitorea cambios en BD (precio, descuento, stock)
+  // - fetchOnMount: traer datos al montar
+  // - visibilityTrigger: actualizar cuando usuario vuelve a la pestaña
   const { updates, isUpdating, lastUpdate, refresh } = useProductUpdates({
     enabled: true,
     fetchOnMount: true,
     visibilityTrigger: true,
   })
 
+  // Estados filtros: mantienen el valor seleccionado por usuario
   const [selectedLanguage, setSelectedLanguage] = useState(initialFilters.language)
   const [selectedCategory, setSelectedCategory] = useState(initialFilters.category)
   const [selectedBrand, setSelectedBrand] = useState(initialFilters.brand)
   const [sortBy, setSortBy] = useState(initialFilters.sort)
   const [showOnlyInStock, setShowOnlyInStock] = useState(initialFilters.inStock)
 
-// Aplica las actualizaciones devueltas por el hook a la lista local
-useEffect(() => {
-  if (!updates || updates.length === 0) return
-  setAllProducts(prevProducts =>
-    prevProducts.map(product => {
-      const updated = updates.find(p => p.id === product.id)
-      if (
-        updated &&
-        (updated.price !== product.price ||
-          (updated.discount ?? 0) !== (product.discount ?? 0) ||
-          updated.inStock !== product.inStock)
-      ) {
-        console.log(`📊 Producto actualizado: ${product.name}`)
-        return { ...product, ...updated }
-      }
-      return product
-    })
-  )
-}, [updates])
+  /**
+   * Effect: cuando hay nuevas actualizaciones desde BD
+   * Mergea precios/descuentos/stock actualizados en la lista local
+   * Solo actualiza campos que realmente cambiaron
+   */
+  useEffect(() => {
+    if (!updates || updates.length === 0) return
+    setAllProducts(prevProducts =>
+      prevProducts.map(product => {
+        const updated = updates.find(p => p.id === product.id)
+        if (
+          updated &&
+          (updated.price !== product.price ||
+            (updated.discount ?? 0) !== (product.discount ?? 0) ||
+            updated.inStock !== product.inStock)
+        ) {
+          console.log(`📊 Producto actualizado: ${product.name}`)
+          return { ...product, ...updated }
+        }
+        return product
+      })
+    )
+  }, [updates])
 
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
+  /**
+   * Actualizar un filtro y reflejar en URL
+   * Esto permite:
+   * - Sincronizar URL con filtros seleccionados
+   * - Poder compartir/bookmarkear búsquedas
+   * - Restaurar filtros al volver atrás en navegador
+   */
   const updateFilter = useCallback(
     (key: keyof Filters, value: string | boolean) => {
+      // Actualizar estado local del filtro
       if (key === "language") {
         setSelectedLanguage(value as string)
       } else if (key === "category") {
@@ -89,13 +119,15 @@ useEffect(() => {
         setShowOnlyInStock(value as boolean)
       }
 
+      // Actualizar URL para reflejar cambio
       const params = new URLSearchParams(searchParams.toString())
       params.set(key, value.toString())
-
       router.push(`${pathname}?${params.toString()}`, { scroll: false })
     },
     [router, pathname, searchParams]
   )
+
+  // ============ OPCIONES DE FILTROS ============
 
   const language = [
     { value: "all", label: dict.products.filters.allLanguages || "Todos los idiomas" },
@@ -126,6 +158,12 @@ useEffect(() => {
     { value: "discount", label: dict.products.filters.sortDiscount || "Descuento: Mayor a Menor" },
   ]
 
+  // ============ LÓGICA DE FILTRADO ============
+
+  /**
+   * Paso 1: Filtrar según criterios del usuario
+   * Aplica condiciones de coincidencia para cada campo
+   */
   const filteredProducts = allProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesLanguage = selectedLanguage === "all" || product.language === selectedLanguage
@@ -133,9 +171,14 @@ useEffect(() => {
     const matchesBrand = selectedBrand === "all" || product.brand === selectedBrand
     const matchesStock = !showOnlyInStock || product.inStock
 
+    // Debe cumplir TODOS los criterios
     return matchesSearch && matchesLanguage && matchesCategory && matchesBrand && matchesStock
   })
 
+  /**
+   * Paso 2: Ordenar resultado filtrado
+   * Según opción elegida por usuario
+   */
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "name": return a.name.localeCompare(b.name)
