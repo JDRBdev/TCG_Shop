@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import AddToCartButton from '@/app/components/molecules/add-tocart-button';
+import ProductRealtimeInfo from '@/app/components/molecules/product-realtime-info';
 import Spanish from '@/app/components/atoms/flags/spanish';
 import English from '@/app/components/atoms/flags/english';
 import French from '@/app/components/atoms/flags/french';
@@ -196,49 +197,14 @@ export default async function ProductDetailPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Precio */}
-              <div className="flex items-center gap-4 mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                {product.discount > 0 ? (
-                  <>
-                    <span className="text-4xl font-bold text-blue-600">
-                      €{finalPrice.toFixed(2)}
-                    </span>
-                    <span className="text-xl line-through text-slate-400 font-medium">
-                      €{product.price.toFixed(2)}
-                    </span>
-                    <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                      -{Math.round(product.discount)}%
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-4xl font-bold text-blue-600">
-                    €{product.price.toFixed(2)}
-                  </span>
-                )}
-              </div>
-
-              {/* Disponibilidad y Botón - USANDO DICCIONARIO */}
-              <div className="flex flex-row items-center gap-4 mb-6">
-                <span className={`flex items-center px-2.5 py-2 w-fit rounded-md text-sm font-bold ${
-                  product.inStock 
-                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' 
-                    : 'bg-gradient-to-r from-red-400 to-pink-500 text-white'
-                }`}>
-                  {product.inStock 
-                    ? dict.products.inStock || "En stock" 
-                    : dict.products.outOfStock || "Agotado"}
-                </span>
-                
-                <div className="flex-1">
-                  <AddToCartButton
-                      inStock={product.inStock}
-                      product={{
-                      id: product.id.toString(),
-                      }}
-                      addToCartText={dict.products.add || "Agregar"}
-                  />
-                </div>
-              </div>
+              {/* Precio, stock y CTA dinámicos con contexto global */}
+              <ProductRealtimeInfo
+                id={product.id.toString()}
+                price={product.price}
+                discount={product.discount}
+                inStock={product.inStock}
+                dict={dict}
+              />
             </div>
 
             {/* Descripción - USANDO DICCIONARIO */}

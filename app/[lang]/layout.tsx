@@ -5,6 +5,7 @@ import "./../globals.css"
 import { getDictionary } from "../[lang]/dictionaries"
 import Header from "../components/organisms/header"
 import Footer from "../components/organisms/footer"
+import { ProductUpdatesProvider } from "../components/atoms/provider/product-updates-context"
 
 import {
   ClerkProvider
@@ -45,7 +46,9 @@ export default async function Layout({
           </head>
           <body className={`h-full min-h-screen ${className}`}>
             <Header dict={dict}/>
-            {children}
+            <ProductUpdatesProvider>
+              {children}
+            </ProductUpdatesProvider>
             <Footer dict={dict} />
           </body>
         </html>

@@ -4,30 +4,10 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import ProductCard from "@/app/components/molecules/product-card"
-import { createClient } from '@supabase/supabase-js'
+import useProductUpdates from "@/app/hooks/useProductUpdates"
 import { Product } from "@/app/data/products"
 
-// Configuración de Supabase
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Faltan variables de entorno de Supabase')
-}
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  global: {
-    headers: {
-      'Accept': 'application/json',
-      'apikey': supabaseAnonKey,
-      'Content-Type': 'application/json'
-    }
-  },
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  }
-})
+// Actualizaciones globales de productos mediante hook reutilizable
 
 interface Filters {
   language: string
@@ -44,29 +24,7 @@ interface ProductosClientPageProps {
   lang: string
 }
 
-async function fetchUpdatedProductData(): Promise<{id: string, price: number, discount: number, inStock: boolean}[]> {
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('id, price, discount, in_stock')
-      .order('name')
-
-    if (error) {
-      console.error('Error fetching updated prices:', error)
-      return []
-    }
-
-    return (data || []).map(item => ({
-      id: item.id,
-      price: Number(item.price) || 0,
-      discount: Number(item.discount) || 0,
-      inStock: item.in_stock
-    }))
-  } catch (error) {
-    console.error('Error in fetchUpdatedProductData:', error)
-    return []
-  }
-}
+// La lógica de fetch/refresh vive ahora en el hook useProductUpdates
 
 export default function ProductosClientPage({ 
   initialProducts, 
@@ -80,8 +38,12 @@ export default function ProductosClientPage({
 
   const [searchTerm, setSearchTerm] = useState("")
   const [allProducts, setAllProducts] = useState<Product[]>(initialProducts)
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [isUpdating, setIsUpdating] = useState(false)
+  // Hook de actualizaciones compartidas
+  const { updates, isUpdating, lastUpdate, refresh } = useProductUpdates({
+    enabled: true,
+    fetchOnMount: true,
+    visibilityTrigger: true,
+  })
 
   const [selectedLanguage, setSelectedLanguage] = useState(initialFilters.language)
   const [selectedCategory, setSelectedCategory] = useState(initialFilters.category)
@@ -89,55 +51,25 @@ export default function ProductosClientPage({
   const [sortBy, setSortBy] = useState(initialFilters.sort)
   const [showOnlyInStock, setShowOnlyInStock] = useState(initialFilters.inStock)
 
+// Aplica las actualizaciones devueltas por el hook a la lista local
 useEffect(() => {
-  isMountedRef.current = true;
-  let isUpdating = false;
-
-  const updateProductData = async () => {
-    if (!isMountedRef.current || isUpdating) return;
-    isUpdating = true;
-    try {
-      const updatedData = await fetchUpdatedProductData();
-      if (updatedData.length > 0) {
-        setAllProducts(prevProducts =>
-          prevProducts.map(product => {
-            const updated = updatedData.find(p => p.id === product.id);
-            if (
-              updated &&
-              (updated.price !== product.price ||
-                updated.discount !== product.discount ||
-                updated.inStock !== product.inStock)
-            ) {
-              console.log(`📊 Producto actualizado: ${product.name}`);
-              return { ...product, ...updated };
-            }
-            return product;
-          })
-        );
-        setLastUpdate(new Date());
+  if (!updates || updates.length === 0) return
+  setAllProducts(prevProducts =>
+    prevProducts.map(product => {
+      const updated = updates.find(p => p.id === product.id)
+      if (
+        updated &&
+        (updated.price !== product.price ||
+          (updated.discount ?? 0) !== (product.discount ?? 0) ||
+          updated.inStock !== product.inStock)
+      ) {
+        console.log(`📊 Producto actualizado: ${product.name}`)
+        return { ...product, ...updated }
       }
-    } catch (error) {
-      console.error("Error actualizando productos:", error);
-    } finally {
-      isUpdating = false;
-    }
-  };
-
-  updateProductData();
-
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === "visible") {
-      updateProductData();
-    }
-  };
-
-  document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  return () => {
-    isMountedRef.current = false;
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
-  };
-}, []);
+      return product
+    })
+  )
+}, [updates])
 
 
   const pathname = usePathname()
