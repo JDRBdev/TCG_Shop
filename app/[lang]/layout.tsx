@@ -45,11 +45,11 @@ export default async function Layout({
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           </head>
           <body className={`h-full min-h-screen ${className}`}>
-            <Header dict={dict}/>
             <ProductUpdatesProvider>
+              <Header dict={dict}/>
               {children}
+              <Footer dict={dict} />
             </ProductUpdatesProvider>
-            <Footer dict={dict} />
           </body>
         </html>
       </CartProvider>

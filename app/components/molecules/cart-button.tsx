@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../atoms/provider/cart-context";
 import { createClient } from '@supabase/supabase-js';
 import { SignInButton, useUser, useAuth } from "@clerk/nextjs";
+import CartProductCard from "./cart-product-card";
 
 interface CartButtonProps {
   label?: string;
@@ -12,9 +13,11 @@ interface CartButtonProps {
 interface Product {
   id: string;
   name: string;
+  slug?: string;
   price: number;
   discount: number;
   in_stock: boolean;
+  image?: string;
 }
 
 interface CartItem {
@@ -54,7 +57,7 @@ async function fetchUpdatedProductData(productIds: string[]): Promise<Product[]>
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, price, discount, in_stock')
+      .select('id, name, slug, price, discount, in_stock, image')
       .in('id', productIds);
 
     if (error) {
@@ -128,9 +131,11 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
       return {
         id: item.id,
         name: productInfo?.name || 'Producto no disponible',
+        slug: productInfo?.slug,
         price: productInfo?.price || 0,
         discount: productInfo?.discount || 0,
         in_stock: productInfo?.in_stock || false,
+        image: `${supabaseUrl}/storage/v1/object/public/directus_files/${productInfo?.image}.avif`,
         quantity: item.quantity
       };
     });
@@ -421,49 +426,16 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
               ) : (
                 <div className="space-y-4">
                   {products.filter(item => item.quantity > 0).map((item) => (
-                    <div key={item.id} className="flex items-start border-b pb-4">
-                      <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center mr-3">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{item.name}</p>
-                        <div className="flex justify-between items-center mt-1">
-                          <p className="text-sm font-semibold">
-                            €{(item.price * (1 - item.discount / 100)).toFixed(2)}
-                          </p>
-                          {!item.in_stock && (
-                            <span className="text-xs text-red-500 bg-red-100 px-2 py-1 rounded">Sin stock</span>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleDecreaseQuantity(item)} 
-                              className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded"
-                            >
-                              -
-                            </button>
-                            <span className="text-sm">{item.quantity}</span>
-                            <button 
-                              onClick={() => addToCart({ id: item.id, quantity: 1 })} 
-                              className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded"
-                            >
-                              +
-                            </button>
-                          </div>
-                          <button 
-                            onClick={() => removeFromCart(item.id)} 
-                            className="text-gray-500 hover:text-red-500"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <CartProductCard
+                      key={item.id}
+                      product={item as any}
+                      quantity={item.quantity}
+                      showQuantity
+                      onIncrease={() => addToCart({ id: item.id, quantity: 1 })}
+                      onDecrease={() => handleDecreaseQuantity(item)}
+                      onRemove={() => removeFromCart(item.id)}
+                      lang={'es'}
+                    />
                   ))}
                 </div>
               )}
