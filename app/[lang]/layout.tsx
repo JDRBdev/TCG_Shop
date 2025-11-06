@@ -18,7 +18,7 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Jose David Rodriguez Betancor",
+  title: "TCG Store - Your Online Trading Card Game Shop",
   description: "Portfolio website",
 }
 

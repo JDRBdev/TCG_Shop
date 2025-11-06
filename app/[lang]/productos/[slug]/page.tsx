@@ -166,7 +166,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Imagen del producto */}
-          <div className="relative group">
+          <div className="relative group h-full">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
             <div className="relative rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
               <img
@@ -217,7 +217,7 @@ export default async function ProductDetailPage({ params }: Props) {
             )}
 
             {/* Categoría y Marca - USANDO DICCIONARIO */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               {product.category && (
                 <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200 hover:shadow-xl transition-shadow">
                   <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">

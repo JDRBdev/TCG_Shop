@@ -145,55 +145,6 @@ export default async function Page({
           </div>
         </div>
       </section>
-
-      {/* Special Offers */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-slate-900 mb-3">
-              {dict.offers.title}
-            </h3>
-            <p className="text-slate-600">{dict.offers.subtitle}</p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-xl p-8 relative overflow-hidden">
-              <span className="absolute top-4 right-4 bg-white text-blue-600 text-xs px-3 py-1 rounded-full font-semibold">
-                -30%
-              </span>
-              <h4 className="text-2xl font-bold mb-2">
-                {dict.offers.megaBundle.title}
-              </h4>
-              <p className="opacity-90 mb-4">
-                {dict.offers.megaBundle.description}
-              </p>
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-3xl font-bold">$199.99</span>
-                <span className="text-lg line-through opacity-70">$285.99</span>
-              </div>
-              <button className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-xl font-semibold shadow transition-all">
-                {dict.offers.megaBundle.getOffer}
-              </button>
-            </div>
-
-            <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-xl p-8 relative overflow-hidden">
-              <span className="absolute top-4 right-4 bg-white text-indigo-600 text-xs px-3 py-1 rounded-full font-semibold">
-                Limitado
-              </span>
-              <h4 className="text-2xl font-bold mb-2">
-                {dict.offers.tournament.title}
-              </h4>
-              <p className="opacity-90 mb-4">
-                {dict.offers.tournament.description}
-              </p>
-              <Link href="/torneos">
-                <button className="bg-white text-indigo-600 hover:bg-indigo-50 px-6 py-2 rounded-xl font-semibold shadow transition-all">
-                  {dict.offers.tournament.register}
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
