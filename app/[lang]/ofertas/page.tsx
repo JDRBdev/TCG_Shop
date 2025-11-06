@@ -11,7 +11,7 @@ export default async function OfertasPage({ params }: PageProps) {
   const supportedLangs = ["en", "es", "fr", "de"] as const
   const safeLang = supportedLangs.includes(lang as any) ? (lang as (typeof supportedLangs)[number]) : "en"
   const dict = await getDictionary(safeLang)
-  // Traer ofertas dinámicamente: top 4 productos por descuento
+  // Traer ofertas dinámicamente: top 6 productos por descuento
   const offers = await fetchSpecialOffers(safeLang)
 
   return (
@@ -40,7 +40,7 @@ export default async function OfertasPage({ params }: PageProps) {
             <h3 className="text-4xl font-bold text-slate-900 mb-4">Ofertas Especiales</h3>
             <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-pink-500 mx-auto rounded-full"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {offers.map((offer) => (
               <ProductCard 
                 key={offer.id} 

@@ -173,7 +173,7 @@ export const newProducts: Product[] = [];
  * Obtener las mejores ofertas: top N productos por mayor descuento
  * Implementado reutilizando fetchBaseProducts y pasando un `modifyQuery`
  */
-export async function fetchSpecialOffers(locale: string, limit = 4): Promise<Product[]> {
+export async function fetchSpecialOffers(locale: string, limit = 6): Promise<Product[]> {
   return fetchBaseProducts({
     locale,
     limit,
