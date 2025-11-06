@@ -12,6 +12,7 @@ interface ProductCardProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
   onRemove?: () => void;
+  onProductClick?: () => void;
 }
 
 const CartProductCard: React.FC<ProductCardProps> = ({
@@ -22,6 +23,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({
   onIncrease,
   onDecrease,
   onRemove,
+  onProductClick,
 }) => {
   // Traer actualizaciones en tiempo real desde el contexto global
   const { updates } = useProductUpdatesContext()
@@ -48,7 +50,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({
 
     return (
       <div className="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm border border-slate-100">
-        <Link href={`/${lang}/productos/${merged.slug}`} className="flex-shrink-0">
+        <Link href={`/${lang}/productos/${merged.slug}`} className="flex-shrink-0" onClick={onProductClick}>
           <div className="w-16 h-16 rounded-md overflow-hidden bg-gray-100">
             <img
               src={merged.image || "/placeholder.svg"}
@@ -59,7 +61,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({
         </Link>
 
         <div className="flex-1 min-w-0">
-          <Link href={`/${safeLang}/productos/${merged.slug}`} className="block">
+          <Link href={`/${safeLang}/productos/${merged.slug}`} className="block" onClick={onProductClick}>
             <p className="text-sm font-medium text-slate-900 truncate hover:text-blue-600 transition-colors">{merged.name}</p>
           </Link>
 

@@ -434,6 +434,7 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
                       onIncrease={() => addToCart({ id: item.id, quantity: 1 })}
                       onDecrease={() => handleDecreaseQuantity(item)}
                       onRemove={() => removeFromCart(item.id)}
+                      onProductClick={() => setOpen(false)}
                       lang={'es'}
                     />
                   ))}
