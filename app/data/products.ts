@@ -40,6 +40,8 @@ interface FetchOptions {
   orderBy?: string;
   ascending?: boolean;
   limit?: number;
+  // Permite al llamador ajustar la query base (p. ej. añadir where/not/gt/order)
+  modifyQuery?: (query: any) => any;
 }
 
 async function fetchBaseProducts({
@@ -47,7 +49,8 @@ async function fetchBaseProducts({
   filters,
   orderBy,
   ascending = true,
-  limit,
+  limit = 0,
+  modifyQuery,
 }: FetchOptions): Promise<Product[]> {
   try {
     // Base query
@@ -60,7 +63,10 @@ async function fetchBaseProducts({
       }
     }
 
-    // Orden y límite
+    // Permite al llamador ajustar la query base
+    if (modifyQuery) query = modifyQuery(query);
+
+    // Orden y límite (se pueden usar también dentro de modifyQuery si se prefiere)
     if (orderBy) query = query.order(orderBy, { ascending });
     if (limit) query = query.limit(limit);
 
@@ -163,52 +169,18 @@ export async function fetchProductsByCategory(
 // Ejemplo de uso: const newProducts = await fetchNewProducts("es");
 export const newProducts: Product[] = [];
 
-export const specialOffers: Product[] = [
-  {
-    id: "101",
-    name: "Bundle Mega Coleccionista",
-    category: "booster",
-    inStock: true,
-    description: "3 Booster Boxes + Accesorios Premium + Cartas Exclusivas",
-    price: 199.99,
-    discount: 0.3,
-    image: "/images/trading-card-booster-packs-collection.png",
-    slug: "bundle-mega-coleccionista",
-  },
-  {
-    id: "102",
-    name: "Pack Competitivo Pro",
-    category: "deck",
-    inStock: true,
-    description: "2 Decks Construidos + Guía de Estrategia + Protectores",
-    price: 89.99,
-    discount: 0.31,
-    image: "/images/competitive-trading-card-deck.png",
-    slug: "pack-competitivo-pro",
-  },
-  {
-    id: "103",
-    name: "Set Coleccionista Premium",
-    category: "set",
-    inStock: true,
-    description: "Cartas Holográficas Raras + Carpeta Coleccionista",
-    price: 149.99,
-    discount: 0.25,
-    image: "/images/holographic-rare-trading-card.png",
-    slug: "set-coleccionista-premium",
-  },
-  {
-    id: "104",
-    name: "Bundle Accesorios Completo",
-    category: "accessory",
-    inStock: true,
-    description: "Protectores, Carpetas, Dados y Tapete de Juego",
-    price: 59.99,
-    discount: 0.33,
-    image: "/images/trading-card-accessories-sleeves-binders.png",
-    slug: "bundle-accesorios-completo",
-  },
-];
+/**
+ * Obtener las mejores ofertas: top N productos por mayor descuento
+ * Implementado reutilizando fetchBaseProducts y pasando un `modifyQuery`
+ */
+export async function fetchSpecialOffers(locale: string, limit = 4): Promise<Product[]> {
+  return fetchBaseProducts({
+    locale,
+    limit,
+    modifyQuery: (query: any) =>
+      query.not("discount", "is", null).gt("discount", 0).order("discount", { ascending: false }),
+  });
+}
 
 export const products: Product[] = [
   {

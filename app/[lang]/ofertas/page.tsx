@@ -1,5 +1,5 @@
 import { getDictionary } from "./../dictionaries";
-import { specialOffers } from "@/app/data/products";
+import { fetchSpecialOffers } from "@/app/data/products";
 import ProductCard from "@/app/components/molecules/product-card";
 
 interface PageProps {
@@ -11,6 +11,8 @@ export default async function OfertasPage({ params }: PageProps) {
   const supportedLangs = ["en", "es", "fr", "de"] as const
   const safeLang = supportedLangs.includes(lang as any) ? (lang as (typeof supportedLangs)[number]) : "en"
   const dict = await getDictionary(safeLang)
+  // Traer ofertas dinámicamente: top 4 productos por descuento
+  const offers = await fetchSpecialOffers(safeLang)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-50">
@@ -39,7 +41,7 @@ export default async function OfertasPage({ params }: PageProps) {
             <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-pink-500 mx-auto rounded-full"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {specialOffers.map((offer) => (
+            {offers.map((offer) => (
               <ProductCard 
                 key={offer.id} 
                 product={offer} 

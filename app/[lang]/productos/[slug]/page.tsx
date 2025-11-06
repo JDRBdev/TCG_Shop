@@ -1,12 +1,8 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import Image from 'next/image';
-import AddToCartButton from '@/app/components/molecules/add-tocart-button';
 import ProductRealtimeInfo from '@/app/components/molecules/product-realtime-info';
 import Spanish from '@/app/components/atoms/flags/spanish';
 import English from '@/app/components/atoms/flags/english';
-import French from '@/app/components/atoms/flags/french';
-import Deutsch from '@/app/components/atoms/flags/deutsch';
 import { JSX } from 'react';
 import { getDictionary } from '../../dictionaries'; // Importar getDictionary
 import Japanese from '@/app/components/atoms/flags/japanese';
@@ -108,7 +104,8 @@ async function getTranslatedProduct(slug: string, locale: string) {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug, lang } = params;
+  // `params` may be a promise in Next.js dynamic APIs — await it before use
+  const { slug, lang } = await params as any;
   const product = await getTranslatedProduct(slug, lang);
 
   return {
@@ -118,7 +115,8 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { slug, lang } = params;
+  // `params` may be a promise — await it before using its properties
+  const { slug, lang } = await params as any;
   const product = await getTranslatedProduct(slug, lang);
   // Define un array constante con los idiomas soportados
   const supportedLangs = ["en", "es", "fr", "de"] as const;
