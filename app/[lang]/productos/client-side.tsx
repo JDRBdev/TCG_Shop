@@ -52,6 +52,10 @@ export default function ProductosClientPage({
   const [searchTerm, setSearchTerm] = useState("")
   // Estado: lista de productos (actualizada en tiempo real desde BD)
   const [allProducts, setAllProducts] = useState<Product[]>(initialProducts)
+  // Paginación: página actual, loading y bandera "hay más"
+  const [page, setPage] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [hasMore, setHasMore] = useState<boolean>(false)
 
   // Hook global que monitorea cambios en BD (precio, descuento, stock)
   // - fetchOnMount: traer datos al montar
@@ -158,36 +162,46 @@ export default function ProductosClientPage({
     { value: "discount", label: dict.products.filters.sortDiscount || "Descuento: Mayor a Menor" },
   ]
 
-  // ============ LÓGICA DE FILTRADO ============
+  // Fetch paginado: solicitamos al servidor solo 9 productos por página
+  async function fetchPage(p: number) {
+    setIsLoading(true)
+    try {
+      const params = new URLSearchParams()
+      // locale siempre es el idioma de la UI para las traducciones
+      params.set("locale", lang)
+      params.set("page", String(p))
+      params.set("limit", "9")
+      // language es el filtro del idioma del producto
+      if (selectedLanguage && selectedLanguage !== "all") params.set("language", selectedLanguage)
+      if (selectedCategory && selectedCategory !== "all") params.set("category", selectedCategory)
+      if (selectedBrand && selectedBrand !== "all") params.set("brand", selectedBrand)
+      if (showOnlyInStock) params.set("inStock", "true")
+      if (sortBy) params.set("sort", sortBy)
+      if (searchTerm) params.set("search", searchTerm)
 
-  /**
-   * Paso 1: Filtrar según criterios del usuario
-   * Aplica condiciones de coincidencia para cada campo
-   */
-  const filteredProducts = allProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesLanguage = selectedLanguage === "all" || product.language === selectedLanguage
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory
-    const matchesBrand = selectedBrand === "all" || product.brand === selectedBrand
-    const matchesStock = !showOnlyInStock || product.inStock
-
-    // Debe cumplir TODOS los criterios
-    return matchesSearch && matchesLanguage && matchesCategory && matchesBrand && matchesStock
-  })
-
-  /**
-   * Paso 2: Ordenar resultado filtrado
-   * Según opción elegida por usuario
-   */
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortBy) {
-      case "name": return a.name.localeCompare(b.name)
-      case "price-low": return a.price - b.price
-      case "price-high": return b.price - a.price
-      case "discount": return (b.discount || 0) - (a.discount || 0)
-      default: return 0
+      const res = await fetch(`/api/products?${params.toString()}`)
+      const json = await res.json()
+      const items: Product[] = json.products || []
+      setAllProducts(items)
+      setHasMore(items.length === 9)
+      setPage(p)
+    } catch (err) {
+      console.error("Error fetching paginated products:", err)
+    } finally {
+      setIsLoading(false)
     }
-  })
+  }
+
+  // Cuando cambian filtros, búsqueda u orden, resetear a página 1 y recargar
+  useEffect(() => {
+    fetchPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLanguage, selectedCategory, selectedBrand, sortBy, showOnlyInStock, searchTerm])
+
+  // ============ PRODUCTOS PARA MOSTRAR ============
+  // Los productos ya vienen filtrados y ordenados del servidor,
+  // solo los mostramos directamente (9 por página)
+  const productsToDisplay = allProducts
 
     return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -333,7 +347,7 @@ export default function ProductosClientPage({
           {/* Info de resultados */}
           <div className="mb-8 flex justify-between items-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-slate-200">
             <p className="text-slate-700 text-base font-medium">
-              {dict.products.results.showing || "Mostrando"} <span className="font-bold text-blue-600">{sortedProducts.length}</span> {dict.products.results.products || "productos"}
+              {dict.products.results.showing || "Mostrando"} <span className="font-bold text-blue-600">{productsToDisplay.length}</span> {dict.products.results.products || "productos"}
             </p>
             <button 
               onClick={() => setIsMobileFiltersOpen(true)}
@@ -347,7 +361,7 @@ export default function ProductosClientPage({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {sortedProducts.map((p) => (
+            {productsToDisplay.map((p) => (
                 <ProductCard 
                   key={p.id} 
                   product={p} 
@@ -358,7 +372,30 @@ export default function ProductosClientPage({
             ))}
           </div>
 
-          {sortedProducts.length === 0 && (
+          {/* Paginador */}
+          <div className="mt-8 flex justify-center items-center gap-4">
+            <button
+              onClick={() => fetchPage(Math.max(1, page - 1))}
+              disabled={page <= 1 || isLoading}
+              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm disabled:opacity-50"
+            >
+              { "Anterior"}
+            </button>
+
+            <div className="text-slate-700 font-medium">
+              {"Página"} {page}
+            </div>
+
+            <button
+              onClick={() => fetchPage(page + 1)}
+              disabled={!hasMore || isLoading}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm disabled:opacity-50"
+            >
+              {"Siguiente"}
+            </button>
+          </div>
+
+          {productsToDisplay.length === 0 && (
             <div className="text-center py-16 bg-white rounded-2xl shadow-xl border border-slate-200">
               <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
                 <svg className="h-10 w-10 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
