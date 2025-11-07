@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useRef, useState, useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import English from "../atoms/flags/english"
 import Spanish from "../atoms/flags/spanish"
 import Deutsch from "../atoms/flags/deutsch"
@@ -18,6 +18,7 @@ export default function LanguageSelector({ currentLang }: LanguageSelectorProps)
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const ref = useRef<HTMLDivElement>(null)
 
   // Flags como función => evita problemas de reuso del mismo nodo
@@ -54,7 +55,10 @@ export default function LanguageSelector({ currentLang }: LanguageSelectorProps)
     const segs = pathname.split("/")
     if ((SUPPORTED as readonly string[]).includes(segs[1])) segs[1] = langCode
     else segs.splice(1, 0, langCode)
-    router.push(segs.join("/") || "/")
+  // Preserve current query parameters (search) so things like session_id are not lost.
+  const search = searchParams?.toString()
+    const target = (segs.join("/") || "/") + (search ? `?${search}` : "")
+    router.push(target)
     setOpen(false)
   }
 

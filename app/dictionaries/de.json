@@ -124,4 +124,18 @@
     },
     "copyright": "© 2025 TCG Store. Alle Rechte vorbehalten."
   }
+  ,
+  "thankYou": {
+    "title": "Vielen Dank für Ihren Kauf",
+    "noSession": "Keine Sitzungs-ID erhalten. Wenn Sie gerade bezahlt haben, warten Sie ein paar Sekunden und prüfen Sie Ihre E-Mails.",
+    "noStripe": "Kauf abgeschlossen. (Kein Stripe-Schlüssel auf dem Server, um Details anzuzeigen.)",
+    "paymentStatus": "Zahlungsstatus:",
+    "paid": "Bezahlt",
+    "total": "Gesamt:",
+    "method": "Methode:",
+    "card": "Karte",
+    "items": "Artikel",
+    "backHome": "Zurück zur Startseite",
+    "sessionId": "Sitzungs-ID:"
+  }
 }

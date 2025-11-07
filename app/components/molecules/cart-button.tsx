@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../atoms/provider/cart-context";
+import CheckoutButton from "./checkout-button";
 import { createClient } from '@supabase/supabase-js';
 import { SignInButton, useUser, useAuth } from "@clerk/nextjs";
 import CartProductCard from "./cart-product-card";
@@ -119,7 +120,8 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
   // Función para actualizar datos de productos del carrito
   const updateProductData = async () => {
     if (cart.length === 0) {
-      setProducts([]);
+      // Avoid setting a new empty array on every call (causes re-renders)
+      if (products.length !== 0) setProducts([]);
       return;
     }
     
@@ -128,6 +130,21 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
     
     const updatedProducts: CartProduct[] = cart.map(item => {
       const productInfo = productData.find(p => p.id === item.id);
+
+      // Build a safe image URL:
+      // - If productInfo.image is a full URL (http) or starts with '/', prefer it (we'll prefix origin later when sending to Stripe)
+      // - If it's an id/reference, build Supabase public URL
+      // - Fallback to placeholder
+      let imageUrl = undefined as string | undefined;
+      const rawImg = productInfo?.image;
+      if (rawImg) {
+        if (typeof rawImg === 'string' && (rawImg.startsWith('http') || rawImg.startsWith('/'))) {
+          imageUrl = rawImg;
+        } else {
+          imageUrl = `${supabaseUrl}/storage/v1/object/public/directus_files/${rawImg}.avif`;
+        }
+      }
+
       return {
         id: item.id,
         name: productInfo?.name || 'Producto no disponible',
@@ -135,13 +152,34 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
         price: productInfo?.price || 0,
         discount: productInfo?.discount || 0,
         in_stock: productInfo?.in_stock || false,
-        image: `${supabaseUrl}/storage/v1/object/public/directus_files/${productInfo?.image}.avif`,
+        image: imageUrl ?? '/placeholder.svg',
         quantity: item.quantity
       };
     });
     
-    setProducts(updatedProducts);
-    setLastUpdate(Date.now());
+    // Only update state when there is an actual change to avoid render loops
+    const areEqual = (a: CartProduct[], b: CartProduct[]) => {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        const x = a[i];
+        const y = b[i];
+        if (
+          x.id !== y.id ||
+          x.quantity !== y.quantity ||
+          x.price !== y.price ||
+          x.discount !== y.discount ||
+          x.in_stock !== y.in_stock ||
+          x.image !== y.image ||
+          x.name !== y.name
+        ) return false;
+      }
+      return true;
+    };
+
+    if (!areEqual(products, updatedProducts)) {
+      setProducts(updatedProducts);
+      setLastUpdate(Date.now());
+    }
   };
 
   // Efecto para polling inteligente cuando el carrito está abierto
@@ -336,13 +374,13 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
       setOpen(false);
       return;
     }
-    
     setLoading(true);
     alert("Redirigiendo a la pasarela de pago...");
     clearCart();
     if (clerkUser?.id) await clearCartFromSupabase();
     setLoading(false);
     setOpen(false);
+    // fallback: open CheckoutButton by leaving the aside open — but we clear cart on success via webhook
   };
 
   // Calcular total actualizado
@@ -457,14 +495,21 @@ const CartButton: React.FC<CartButtonProps> = ({ label = "Carrito" }) => {
                   >
                     Vaciar carrito
                   </button>
-                  
-                  <button 
-                    onClick={handleCheckout} 
-                    disabled={loading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
-                  >
-                    {loading ? "Procesando..." : "Ir a pagar"}
-                  </button>
+
+                  {/* CheckoutButton: envía los items actuales al endpoint de Stripe y redirige */}
+                  <CheckoutButton
+                    items={products.filter(item => item.quantity > 0).map(item => ({
+                      id: item.id,
+                      name: item.name,
+                      price: Number((item.price * (1 - (item.discount ?? 0) / 100)).toFixed(2)),
+                      quantity: item.quantity,
+                      currency: 'eur',
+                      image: item.image ? (item.image.startsWith('/') ? `${window.location.origin}${item.image}` : item.image) : undefined
+                    }))}
+                    clerkId={clerkUser?.id}
+                    label={isSignedIn ? (loading ? 'Procesando...' : 'Ir a pagar') : 'Inicia sesión para pagar'}
+                    className="w-full flex items-center justify-center py-3 px-4 rounded-md text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                  />
                 </div>
               </div>
             )}

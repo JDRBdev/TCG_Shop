@@ -122,6 +122,19 @@
       "placeholder": "votre@email.com",
       "subscribe": "S'abonner"
     },
-    "copyright": "© 2025 Boutique TCG. Tous droits réservés."
+    "copyright": "© 2025 TCG Store. Tous droits réservés."
+  },
+  "thankYou": {
+    "title": "Merci pour votre achat",
+    "noSession": "Aucun identifiant de session reçu. Si vous venez de payer, attendez quelques secondes et vérifiez votre e-mail.",
+    "noStripe": "Achat terminé. (Aucune clé Stripe sur le serveur pour afficher les détails.)",
+    "paymentStatus": "Statut du paiement:",
+    "paid": "Payé",
+    "total": "Total:",
+    "method": "Méthode:",
+    "card": "Carte",
+    "items": "Articles",
+    "backHome": "Retour à l'accueil",
+    "sessionId": "ID de session:"
   }
 }
