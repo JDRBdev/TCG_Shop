@@ -8,8 +8,10 @@ import { fetchBaseProducts } from "../../data/products";
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY || "";
 
-export default async function ThankYouPage({ params, searchParams }: { params: { lang: string }, searchParams?: any }) {
-  const locale = (params?.lang || "en") as "en" | "es" | "fr" | "de";
+export default async function ThankYouPage({ params, searchParams }: { params: any, searchParams?: any }) {
+  // `params` can be a Promise in Next.js app router; await it before accessing properties
+  const p = await params
+  const locale = (p?.lang || "en") as "en" | "es" | "fr" | "de";
   const dict = await getDictionary(locale)
   // `searchParams` is an async dynamic API in Next.js — await it before reading properties
   const sp = await searchParams;
@@ -31,7 +33,7 @@ export default async function ThankYouPage({ params, searchParams }: { params: {
       <CardWrapper>
         <h1 className="text-3xl font-bold mb-4">{dict.thankYou.title}</h1>
         <p className="mb-6">{dict.thankYou.noSession}</p>
-        <Link href="/" className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
+  <Link href={`/${locale}`} className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
       </CardWrapper>
     );
   }
@@ -41,7 +43,7 @@ export default async function ThankYouPage({ params, searchParams }: { params: {
       <CardWrapper>
         <h1 className="text-3xl font-bold mb-4">{dict.thankYou.title}</h1>
         <p className="mb-6">{dict.thankYou.noStripe}</p>
-        <Link href="/" className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
+  <Link href={`/${locale}`} className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
       </CardWrapper>
     );
   }
@@ -92,7 +94,11 @@ export default async function ThankYouPage({ params, searchParams }: { params: {
       <CardWrapper>
   {/* Cart clearing is handled server-side by the Stripe webhook; no client component needed. */}
         <h1 className="text-3xl font-bold mb-2 text-slate-900">{dict.thankYou.title}</h1>
-        <p className="text-sm text-slate-700 mb-6">{dict.thankYou.sessionId} {session.id}</p>
+        <p className="text-sm text-wrap text-slate-700 mb-6">
+          {dict.thankYou.sessionId}
+          {/* Always show session id, but make it small, monospace and allow word-break so it never overflows on mobile */}
+          <span className="ml-2 font-mono text-xs text-slate-600 break-words break-all whitespace-normal">{session.id}</span>
+        </p>
 
         <div className="mb-6 p-4 bg-slate-50 rounded">
           <p className="mb-2 text-slate-700"><strong>{dict.thankYou.paymentStatus}</strong> {session.payment_status === 'paid' ? dict.thankYou.paid : session.payment_status}</p>
@@ -123,7 +129,7 @@ export default async function ThankYouPage({ params, searchParams }: { params: {
           </div>
         </section>
 
-        <Link href="/" className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
+  <Link href={`/${locale}`} className="inline-block bg-blue-600 text-white px-4 py-2 rounded">{dict.thankYou.backHome}</Link>
       </CardWrapper>
     );
   } catch (err) {
