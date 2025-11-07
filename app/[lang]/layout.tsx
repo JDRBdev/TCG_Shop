@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { ReactNode } from "react"
+import React, { ReactNode, Suspense } from "react"
 import "./../globals.css"
 
 import { getDictionary } from "../[lang]/dictionaries"
@@ -46,9 +46,21 @@ export default async function Layout({
           </head>
           <body className={`h-full min-h-screen ${className}`}>
             <ProductUpdatesProvider>
-              <Header dict={dict}/>
+              {/* Header is a client component that uses next/navigation hooks
+                  (useSearchParams/usePathname). Wrap it in Suspense so that
+                  during server rendering Next.js can fallback while the
+                  client-only router state hydrates. This prevents the
+                  "useSearchParams() should be wrapped in a suspense boundary"
+                  prerender/build error. */}
+              <Suspense fallback={<header aria-hidden className="h-16" />}> 
+                <Header dict={dict} />
+              </Suspense>
+
               {children}
-              <Footer dict={dict} />
+
+              <Suspense fallback={<footer aria-hidden className="h-16" />}> 
+                <Footer dict={dict} />
+              </Suspense>
             </ProductUpdatesProvider>
           </body>
         </html>

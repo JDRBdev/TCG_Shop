@@ -1,5 +1,6 @@
 // app/productos/page.tsx (Server Component)
 import { cookies } from 'next/headers'
+import React, { Suspense } from 'react'
 import ProductosClientPage from './client-side'
 import { fetchAllProducts } from '@/app/data/products'
 import { getDictionary } from '../dictionaries' // Importar getDictionary
@@ -41,11 +42,13 @@ export default async function ProductosPage({
   }
 
   return (
-    <ProductosClientPage 
-      initialProducts={initialProducts}
-      initialFilters={filters}
-      dict={dict} // Pasar el diccionario como prop
-      lang={safeLang || "es"} // Pasar el idioma actual como prop
-    />
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">{/* loading */}</div>}>
+      <ProductosClientPage 
+        initialProducts={initialProducts}
+        initialFilters={filters}
+        dict={dict} // Pasar el diccionario como prop
+        lang={safeLang || "es"} // Pasar el idioma actual como prop
+      />
+    </Suspense>
   )
 }

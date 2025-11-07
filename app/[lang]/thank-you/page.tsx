@@ -8,10 +8,12 @@ import { fetchBaseProducts } from "../../data/products";
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY || "";
 
-export default async function ThankYouPage({ params, searchParams }: { params: { lang: string }, searchParams?: { session_id?: string } }) {
+export default async function ThankYouPage({ params, searchParams }: { params: { lang: string }, searchParams?: any }) {
   const locale = (params?.lang || "en") as "en" | "es" | "fr" | "de";
   const dict = await getDictionary(locale)
-  const sessionId = searchParams?.session_id;
+  // `searchParams` is an async dynamic API in Next.js — await it before reading properties
+  const sp = await searchParams;
+  const sessionId = sp?.session_id;
 
   // Shared wrapper to match site styles: gradient background and centered card.
   // Add `text-slate-800` so text inside the card is dark and readable even if a parent
