@@ -4,7 +4,7 @@ import ProductRealtimeInfo from '@/app/components/molecules/product-realtime-inf
 import Spanish from '@/app/components/atoms/flags/spanish';
 import English from '@/app/components/atoms/flags/english';
 import { JSX } from 'react';
-import { getDictionary } from '../../dictionaries'; // Importar getDictionary
+import { getDictionary } from '../../../hooks/dictionaries'; // Importar getDictionary
 import Japanese from '@/app/components/atoms/flags/japanese';
 
 interface Props {

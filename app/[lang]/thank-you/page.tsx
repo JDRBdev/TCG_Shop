@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-import { getDictionary } from "../dictionaries";
+import { getDictionary } from "../../hooks/dictionaries";
 import { fetchBaseProducts } from "../../data/products";
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY || "";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ProductCard from "../components/molecules/product-card";
 import { fetchNewProducts } from "../data/products";
-import { getDictionary } from "./dictionaries";
+import { getDictionary } from "../hooks/dictionaries";
 
 export default async function Page({
   params,

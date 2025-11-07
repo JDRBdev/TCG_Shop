@@ -1,4 +1,4 @@
-import { getDictionary } from "./../dictionaries";
+import { getDictionary } from "../../hooks/dictionaries";
 import { fetchSpecialOffers } from "@/app/data/products";
 import ProductCard from "@/app/components/molecules/product-card";
 

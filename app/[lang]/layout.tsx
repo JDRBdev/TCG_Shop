@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import React, { ReactNode, Suspense } from "react"
 import "./../globals.css"
 
-import { getDictionary } from "../[lang]/dictionaries"
+import { getDictionary } from "../hooks/dictionaries"
 import Header from "../components/organisms/header"
 import Footer from "../components/organisms/footer"
 import { ProductUpdatesProvider } from "../components/atoms/provider/product-updates-context"

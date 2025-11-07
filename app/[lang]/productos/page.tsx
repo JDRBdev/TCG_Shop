@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import React, { Suspense } from 'react'
 import ProductosClientPage from './client-side'
 import { fetchAllProducts } from '@/app/data/products'
-import { getDictionary } from '../dictionaries' // Importar getDictionary
+import { getDictionary } from '../../hooks/dictionaries' // Importar getDictionary
 
 export const revalidate = 60
 
