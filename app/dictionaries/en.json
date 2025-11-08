@@ -15,7 +15,7 @@
   },
   "hero": {
     "title": "The Best Trading Cards",
-    "subtitle": "Descubre cartas exclusivas, sets limitados y accesorios para coleccionistas y jugadores competitivos",
+    "subtitle": "Discover exclusive cards, limited sets and accessories for collectors and competitive players",
     "exploreCatalog": "Explore Catalog",
     "viewOffers": "View Offers"
   },
@@ -25,111 +25,354 @@
     "new": "New",
     "add": "Add",
     "items": {
-      "boosterPack": "Booster Pack Premium",
-      "competitiveDeck": "Deck Competitivo",
-      "holographicCard": "Carta Holográfica Rara",
-      "collectorSet": "Set Coleccionista"
+      "boosterPack": "Premium Booster Pack",
+      "competitiveDeck": "Competitive Deck",
+      "holographicCard": "Rare Holographic Card",
+      "collectorSet": "Collector Set"
     },
     "filters": {
-      "title": "Filtros",
-      "availability": "Disponibilidad",
-      "onlyInStock": "Solo productos disponibles",
-      "language": "Idioma",
-      "allLanguages": "Todos los idiomas",
-      "spanish": "Español",
-      "english": "Inglés",
-      "japanese": "Japonés",
-      "category": "Categoría",
-      "allCategories": "Todas las Categorías",
+      "title": "Filters",
+      "availability": "Availability",
+      "onlyInStock": "Only available products",
+      "language": "Language",
+      "allLanguages": "All languages",
+      "spanish": "Spanish",
+      "english": "English",
+      "japanese": "Japanese",
+      "category": "Category",
+      "allCategories": "All Categories",
       "boosterPacks": "Booster Packs",
-      "constructedDecks": "Decks Construidos",
+      "constructedDecks": "Constructed Decks",
       "boosterBox": "Booster Box",
-      "collectorSet": "Sets Coleccionista",
-      "brand": "Marca",
-      "allBrands": "Todas las Marcas",
-      "sortName": "Nombre A-Z",
-      "sortPriceLow": "Precio: Menor a Mayor",
-      "sortPriceHigh": "Precio: Mayor a Menor",
-      "sortDiscount": "Descuento: Mayor a Menor",
-      "openFilters": "Abrir filtros",
-      "closeFilters": "Cerrar filtros",
-      "applyFilters": "Aplicar filtros"
+      "collectorSet": "Collector Sets",
+      "brand": "Brand",
+      "allBrands": "All Brands",
+      "sortName": "Name A-Z",
+      "sortPriceLow": "Price: Low to High",
+      "sortPriceHigh": "Price: High to Low",
+      "sortDiscount": "Discount: High to Low",
+      "openFilters": "Open filters",
+      "closeFilters": "Close filters",
+      "applyFilters": "Apply filters"
     },
     "search": {
-      "placeholder": "Buscar productos..."
+      "placeholder": "Search products..."
     },
     "results": {
-      "showing": "Mostrando",
-      "products": "productos",
-      "noProducts": "No se encontraron productos",
-      "tryAdjusting": "Intenta ajustar los filtros o términos de búsqueda"
+      "showing": "Showing",
+      "products": "products",
+      "noProducts": "No products found",
+      "tryAdjusting": "Try adjusting filters or search terms"
     },
-    "inStock": "En stock",
-    "outOfStock": "Agotado",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
     "description": "Description"
   },
   "categories": {
-    "title": "Categorías Populares",
+    "title": "Popular Categories",
     "boosterPacks": {
       "title": "Booster Packs",
-      "description": "Sobres con cartas aleatorias para expandir tu colección",
-      "count": "150+ productos"
+      "description": "Packs with random cards to expand your collection",
+      "count": "150+ products"
     },
     "constructedDecks": {
-      "title": "Decks Construidos",
-      "description": "Mazos listos para jugar en torneos competitivos",
-      "count": "80+ productos"
+      "title": "Constructed Decks",
+      "description": "Ready-to-play decks for competitive tournaments",
+      "count": "80+ products"
     },
     "accessories": {
       "title": "Accessories",
-      "description": "Protectores, carpetas y accesorios para cuidar tus cartas",
-      "count": "200+ productos"
+      "description": "Sleeves, binders and accessories to protect your cards",
+      "count": "200+ products"
     }
   },
   "offers": {
-    "title": "Ofertas Especiales",
-    "subtitle": "Aprovecha estos descuentos por tiempo limitado",
+    "title": "Special Offers",
+    "subtitle": "Take advantage of these limited time discounts",
     "megaBundle": {
-      "title": "Bundle Mega Coleccionista",
-      "description": "3 Booster Boxes + Accesorios Premium",
-      "getOffer": "Obtener Oferta"
+      "title": "Mega Collector Bundle",
+      "description": "3 Booster Boxes + Premium Accessories",
+      "getOffer": "Get Offer"
     },
     "tournament": {
-      "title": "Torneo Semanal",
-      "description": "Participa y gana cartas exclusivas",
-      "players_community": "Únete a la comunidad y al resto de competidores",
-      "register": "Sign Up"
+      "title": "Weekly Tournament",
+      "description": "Participate and win exclusive cards",
+      "players_community": "Join the community and other competitors",
+      "register": "Register"
     }
   },
   "footer": {
-    "description": "Tu tienda de confianza para Trading Card Games. Calidad garantizada y envíos rápidos.",
+    "description": "Your trusted store for Trading Card Games. Guaranteed quality and fast shipping.",
     "products": {
       "title": "Products",
       "boosterPacks": "Booster Packs",
       "decks": "Decks",
-      "singleCards": "Cartas Individuales",
-      "accessories": "Sets Coleccionista"
+      "singleCards": "Single Cards",
+      "accessories": "Collector Sets"
     },
-    "support": {
-      "title": "Soporte",
-      "helpCenter": "Centro de Ayuda",
-      "shipping": "Envíos y Devoluciones",
-      "contact": "Contacto",
-      "faq": "FAQ"
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies Policy",
+      "legalNotice": "Legal Notice"
     },
-    "copyright": "© 2025 TCG Store. Todos los derechos reservados."
+    "copyright": "© 2025 TCG Store. All rights reserved."
   },
   "thankYou": {
     "title": "Thank you for your purchase",
-    "noSession": "No se recibió un identificador de sesión. Si acabas de pagar, espera unos segundos y revisa tu email.",
-    "noStripe": "Se completó la compra. (No hay clave de Stripe en el servidor para mostrar detalles.)",
-    "paymentStatus": "Estado de pago:",
-    "paid": "Pagado",
+    "noSession": "No session ID received. If you just paid, wait a few seconds and check your email.",
+    "noStripe": "Purchase completed. (No Stripe key on server to show details.)",
+    "paymentStatus": "Payment status:",
+    "paid": "Paid",
     "total": "Total:",
-    "method": "Método:",
-    "card": "Tarjeta",
-    "items": "Artículos",
+    "method": "Method:",
+    "card": "Card",
+    "items": "Items",
     "backHome": "Back to home",
-    "sessionId": "ID de sesión:"
+    "sessionId": "Session ID:"
+  },
+  "legal": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: November 8, 2025",
+      "intro": "At TCG Store, we are committed to protecting your privacy. This policy describes how we collect, use and protect your personal information.",
+      "sections": {
+        "dataCollection": {
+          "title": "1. Information We Collect",
+          "personal": {
+            "title": "Personal Data",
+            "content": "We collect information you provide when creating an account, making a purchase or contacting us: name, email, shipping address, phone number and payment details."
+          },
+          "usage": {
+            "title": "Usage Data",
+            "content": "We automatically collect information about how you interact with our site: IP address, browser type, pages visited, time spent and products viewed."
+          },
+          "cookies": {
+            "title": "Cookies and Similar Technologies",
+            "content": "We use cookies to improve your experience, remember your preferences and analyze site traffic. See our Cookies Policy for more information."
+          }
+        },
+        "dataUse": {
+          "title": "2. How We Use Your Information",
+          "purposes": "We use your information to:",
+          "list": [
+            "Process your orders and manage deliveries",
+            "Manage your account and authentication via Clerk",
+            "Process payments securely through Stripe",
+            "Send you order confirmations and shipping updates",
+            "Improve our products and services",
+            "Personalize your shopping experience",
+            "Comply with legal and tax obligations",
+            "Prevent fraud and ensure site security"
+          ]
+        },
+        "dataSharing": {
+          "title": "3. Sharing Information",
+          "intro": "We do not sell your personal information. We only share your data with:",
+          "list": [
+            "Service providers: Clerk (authentication), Stripe (payments), shipping companies",
+            "Legal authorities when required by law",
+            "Business partners with your explicit consent"
+          ]
+        },
+        "dataSecurity": {
+          "title": "4. Data Security",
+          "content": "We implement technical and organizational security measures to protect your information: SSL/TLS encryption, secure storage in Supabase, and PCI DSS compliance for payments. However, no internet transmission method is 100% secure."
+        },
+        "yourRights": {
+          "title": "5. Your Rights (GDPR)",
+          "intro": "You have the right to:",
+          "list": [
+            "Access your personal data",
+            "Rectify inaccurate or incomplete data",
+            "Request deletion of your data",
+            "Object to the processing of your data",
+            "Request data portability",
+            "Withdraw your consent at any time"
+          ],
+          "contact": "To exercise these rights, contact us at: privacy@tcgstore.com"
+        },
+        "dataRetention": {
+          "title": "6. Data Retention",
+          "content": "We retain your personal information for as long as necessary to fulfill the purposes described, generally while your account is active or as required by law (minimum 6 years for tax data)."
+        },
+        "international": {
+          "title": "7. International Transfers",
+          "content": "Your data may be transferred and processed on servers located outside your country of residence. We ensure these transfers comply with applicable data protection laws."
+        },
+        "minors": {
+          "title": "8. Minors",
+          "content": "Our services are aimed at people over 16 years of age. We do not knowingly collect information from minors without parental consent."
+        },
+        "changes": {
+          "title": "9. Changes to this Policy",
+          "content": "We may update this policy periodically. We will notify you of significant changes by email or through a prominent notice on the site."
+        },
+        "contact": {
+          "title": "10. Contact",
+          "content": "If you have questions about this policy, contact us at:",
+          "email": "Email: privacy@tcgstore.com",
+          "address": "Address: TCG Store, [Your address], [City, Country]"
+        }
+      }
+    },
+    "cookies": {
+      "title": "Cookies Policy",
+      "lastUpdated": "Last updated: November 8, 2025",
+      "intro": "This website uses cookies and similar technologies to improve your browsing experience, personalize content and analyze our traffic.",
+      "sections": {
+        "whatAreCookies": {
+          "title": "1. What are Cookies?",
+          "content": "Cookies are small text files that are stored on your device when you visit a website. They allow the site to remember your actions and preferences over a period of time."
+        },
+        "typesOfCookies": {
+          "title": "2. Types of Cookies We Use",
+          "essential": {
+            "title": "Essential Cookies (Necessary)",
+            "description": "Essential for the basic functioning of the site. Cannot be disabled.",
+            "examples": [
+              "User session (Clerk): Keeps your session active",
+              "Shopping cart: Remembers products in your cart",
+              "Security: Protects against CSRF attacks and ensures secure connections"
+            ]
+          },
+          "functional": {
+            "title": "Functional Cookies",
+            "description": "Allow remembering your preferences and improving your experience.",
+            "examples": [
+              "Language preference: Remembers your selected language (es, en, fr, de)",
+              "Preferred currency: Saves your currency selection",
+              "Visual theme: Remembers if you prefer light or dark mode"
+            ]
+          },
+          "analytics": {
+            "title": "Analytics Cookies",
+            "description": "Help us understand how visitors interact with our site.",
+            "examples": [
+              "Google Analytics: Analyzes traffic and user behavior",
+              "Performance metrics: Load time, errors, feature usage"
+            ]
+          },
+          "marketing": {
+            "title": "Marketing Cookies",
+            "description": "Used to display relevant ads and measure campaign effectiveness.",
+            "examples": [
+              "Facebook Pixel: Advertising conversion tracking",
+              "Google Ads: Remarketing and campaign measurement"
+            ]
+          }
+        },
+        "thirdParty": {
+          "title": "3. Third-Party Cookies",
+          "intro": "Some external services may set their own cookies:",
+          "list": [
+            "Clerk: User authentication and session management",
+            "Stripe: Secure payment processing",
+            "Google Analytics: Web traffic analysis",
+            "Social Networks: Share buttons (Facebook, Twitter, Discord)"
+          ]
+        },
+        "manageCookies": {
+          "title": "4. Manage Your Cookie Preferences",
+          "browser": {
+            "title": "Browser Settings",
+            "content": "You can configure your browser to reject cookies or alert you when they are set. However, some site functions may not work properly."
+          },
+          "links": {
+            "title": "Browser Help Links:",
+            "chrome": "Chrome: Settings > Privacy and security > Cookies",
+            "firefox": "Firefox: Options > Privacy and security",
+            "safari": "Safari: Preferences > Privacy",
+            "edge": "Edge: Settings > Cookies and site permissions"
+          }
+        },
+        "consent": {
+          "title": "5. Your Consent",
+          "content": "By using our website, you accept the use of cookies according to this policy. You can withdraw your consent at any time by adjusting cookie settings in the banner that appears on your first visit."
+        },
+        "updates": {
+          "title": "6. Updates to this Policy",
+          "content": "We may update this cookies policy. The date of the last update is indicated at the beginning of this document."
+        }
+      }
+    },
+    "legalNotice": {
+      "title": "Legal Notice",
+      "lastUpdated": "Last updated: November 8, 2025",
+      "sections": {
+        "identification": {
+          "title": "1. Owner Identification",
+          "intro": "In compliance with Law 34/2002, on Information Society Services and Electronic Commerce (LSSI-CE), the following data is provided:",
+          "company": "Company Name: TCG Store S.L.",
+          "cif": "CIF: B-12345678",
+          "address": "Address: [Your complete address], [Postal Code], [City], [Country]",
+          "email": "Email: info@tcgstore.com",
+          "phone": "Phone: +34 XXX XXX XXX",
+          "registry": "Commercial Registry: [Registration data]"
+        },
+        "object": {
+          "title": "2. Purpose",
+          "content": "TCG Store is an e-commerce platform dedicated to the sale of Trading Card Games (TCG), including single cards, booster packs, constructed decks, collector sets and related accessories."
+        },
+        "termsOfUse": {
+          "title": "3. Terms of Use",
+          "intro": "Access and use of this website implies acceptance of these conditions:",
+          "list": [
+            "The user agrees to make appropriate use of the site in accordance with the law",
+            "Use of the site for illegal purposes or that harms third parties is prohibited",
+            "The user is responsible for maintaining the confidentiality of their credentials",
+            "TCG Store reserves the right to suspend accounts that violate these conditions"
+          ]
+        },
+        "intellectualProperty": {
+          "title": "4. Intellectual and Industrial Property",
+          "content": "All content on the website (texts, images, design, logos, source code) is owned by TCG Store or third parties who have authorized its use. They are protected by intellectual property laws. Card game trademarks and logos (Pokémon, Magic: The Gathering, Yu-Gi-Oh!, etc.) are property of their respective owners.",
+          "restrictions": "Reproduction, distribution or modification of any content without express authorization is prohibited."
+        },
+        "purchaseConditions": {
+          "title": "5. Purchase Conditions",
+          "prices": {
+            "title": "Prices",
+            "content": "Prices include VAT. Shipping costs are calculated at checkout. We reserve the right to modify prices without prior notice."
+          },
+          "payment": {
+            "title": "Payment Methods",
+            "content": "We accept credit/debit card payments securely processed by Stripe. We do not store banking data on our servers."
+          },
+          "orders": {
+            "title": "Order Processing",
+            "content": "Orders are subject to stock availability. We confirm each order by email. Estimated delivery time is 3-7 business days."
+          },
+          "returns": {
+            "title": "Returns",
+            "content": "You have 14 days from receipt to return products (right of withdrawal, Consumer Law). Products must be unopened and in original packaging. Single cards and customized products cannot be returned except for factory defects."
+          }
+        },
+        "liability": {
+          "title": "6. Liability Limitation",
+          "content": "TCG Store is not responsible for service interruptions, technical errors or inaccuracies in content. We make reasonable efforts to ensure site availability but do not guarantee uninterrupted access.",
+          "products": "Product images are for reference only. Card condition is accurately described (Mint, Near Mint, etc.), but minor variations may exist."
+        },
+        "links": {
+          "title": "7. External Links",
+          "content": "This site may contain links to third-party websites. TCG Store is not responsible for the content or privacy policies of such sites."
+        },
+        "protection": {
+          "title": "8. Data Protection",
+          "content": "The processing of personal data is governed by our Privacy Policy, in compliance with GDPR (EU Regulation 2016/679) and LOPDGDD."
+        },
+        "jurisdiction": {
+          "title": "9. Applicable Law and Jurisdiction",
+          "content": "These conditions are governed by Spanish law. For any dispute, the parties submit to the courts and tribunals of [City], expressly waiving any other jurisdiction that may correspond to them."
+        },
+        "contact": {
+          "title": "10. Contact",
+          "content": "For inquiries, complaints or exercise of rights:",
+          "email": "Email: legal@tcgstore.com",
+          "phone": "Phone: +34 XXX XXX XXX",
+          "address": "Postal address: [Complete address]"
+        }
+      }
+    }
   }
 }

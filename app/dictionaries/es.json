@@ -110,12 +110,11 @@
       "singleCards": "Cartas Individuales",
       "accessories": "Sets Coleccionista"
     },
-    "support": {
-      "title": "Soporte",
-      "helpCenter": "Centro de Ayuda",
-      "shipping": "Envíos y Devoluciones",
-      "contact": "Contacto",
-      "faq": "FAQ"
+    "legal": {
+      "title": "Legales",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies",
+      "legalNotice": "Aviso Legal"
     },
     "copyright": "© 2025 TCG Store. Todos los derechos reservados."
   }
@@ -132,5 +131,249 @@
     "items": "Artículos",
     "backHome": "Volver al inicio",
     "sessionId": "ID de sesión:"
+  },
+  "legal": {
+    "privacy": {
+      "title": "Política de Privacidad",
+      "lastUpdated": "Última actualización: 8 de noviembre de 2025",
+      "intro": "En TCG Store, nos comprometemos a proteger tu privacidad. Esta política describe cómo recopilamos, usamos y protegemos tu información personal.",
+      "sections": {
+        "dataCollection": {
+          "title": "1. Información que Recopilamos",
+          "personal": {
+            "title": "Datos Personales",
+            "content": "Recopilamos información que nos proporcionas al crear una cuenta, realizar una compra o contactarnos: nombre, correo electrónico, dirección de envío, número de teléfono y detalles de pago."
+          },
+          "usage": {
+            "title": "Datos de Uso",
+            "content": "Recopilamos automáticamente información sobre cómo interactúas con nuestro sitio: dirección IP, tipo de navegador, páginas visitadas, tiempo de permanencia y productos visualizados."
+          },
+          "cookies": {
+            "title": "Cookies y Tecnologías Similares",
+            "content": "Utilizamos cookies para mejorar tu experiencia, recordar tus preferencias y analizar el tráfico del sitio. Consulta nuestra Política de Cookies para más información."
+          }
+        },
+        "dataUse": {
+          "title": "2. Cómo Utilizamos tu Información",
+          "purposes": "Utilizamos tu información para:",
+          "list": [
+            "Procesar tus pedidos y gestionar entregas",
+            "Gestionar tu cuenta y autenticación mediante Clerk",
+            "Procesar pagos de forma segura a través de Stripe",
+            "Enviarte confirmaciones de pedidos y actualizaciones de envío",
+            "Mejorar nuestros productos y servicios",
+            "Personalizar tu experiencia de compra",
+            "Cumplir con obligaciones legales y fiscales",
+            "Prevenir fraudes y garantizar la seguridad del sitio"
+          ]
+        },
+        "dataSharing": {
+          "title": "3. Compartir Información",
+          "intro": "No vendemos tu información personal. Compartimos tus datos únicamente con:",
+          "list": [
+            "Proveedores de servicios: Clerk (autenticación), Stripe (pagos), empresas de mensajería (envíos)",
+            "Autoridades legales cuando sea requerido por ley",
+            "Socios comerciales con tu consentimiento explícito"
+          ]
+        },
+        "dataSecurity": {
+          "title": "4. Seguridad de los Datos",
+          "content": "Implementamos medidas de seguridad técnicas y organizativas para proteger tu información: cifrado SSL/TLS, almacenamiento seguro en Supabase, y cumplimiento de estándares PCI DSS para pagos. Sin embargo, ningún método de transmisión por internet es 100% seguro."
+        },
+        "yourRights": {
+          "title": "5. Tus Derechos (RGPD)",
+          "intro": "Tienes derecho a:",
+          "list": [
+            "Acceder a tus datos personales",
+            "Rectificar datos inexactos o incompletos",
+            "Solicitar la eliminación de tus datos",
+            "Oponerte al procesamiento de tus datos",
+            "Solicitar la portabilidad de tus datos",
+            "Retirar tu consentimiento en cualquier momento"
+          ],
+          "contact": "Para ejercer estos derechos, contáctanos en: privacy@tcgstore.com"
+        },
+        "dataRetention": {
+          "title": "6. Retención de Datos",
+          "content": "Conservamos tu información personal durante el tiempo necesario para cumplir con los fines descritos, generalmente mientras tu cuenta esté activa o según lo requiera la ley (mínimo 6 años para datos fiscales)."
+        },
+        "international": {
+          "title": "7. Transferencias Internacionales",
+          "content": "Tus datos pueden ser transferidos y procesados en servidores ubicados fuera de tu país de residencia. Garantizamos que estas transferencias cumplen con las leyes aplicables de protección de datos."
+        },
+        "minors": {
+          "title": "8. Menores de Edad",
+          "content": "Nuestros servicios están dirigidos a mayores de 16 años. No recopilamos intencionadamente información de menores sin consentimiento parental."
+        },
+        "changes": {
+          "title": "9. Cambios en esta Política",
+          "content": "Podemos actualizar esta política periódicamente. Te notificaremos de cambios significativos por email o mediante un aviso destacado en el sitio."
+        },
+        "contact": {
+          "title": "10. Contacto",
+          "content": "Si tienes preguntas sobre esta política, contáctanos en:",
+          "email": "Email: privacy@tcgstore.com",
+          "address": "Dirección: TCG Store, [Tu dirección], [Ciudad, País]"
+        }
+      }
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "lastUpdated": "Última actualización: 8 de noviembre de 2025",
+      "intro": "Este sitio web utiliza cookies y tecnologías similares para mejorar tu experiencia de navegación, personalizar contenido y analizar nuestro tráfico.",
+      "sections": {
+        "whatAreCookies": {
+          "title": "1. ¿Qué son las Cookies?",
+          "content": "Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Permiten que el sitio recuerde tus acciones y preferencias durante un período de tiempo."
+        },
+        "typesOfCookies": {
+          "title": "2. Tipos de Cookies que Utilizamos",
+          "essential": {
+            "title": "Cookies Esenciales (Necesarias)",
+            "description": "Imprescindibles para el funcionamiento básico del sitio. No se pueden desactivar.",
+            "examples": [
+              "Sesión de usuario (Clerk): Mantiene tu sesión activa",
+              "Carrito de compra: Recuerda los productos en tu carrito",
+              "Seguridad: Protege contra ataques CSRF y garantiza conexiones seguras"
+            ]
+          },
+          "functional": {
+            "title": "Cookies Funcionales",
+            "description": "Permiten recordar tus preferencias y mejorar tu experiencia.",
+            "examples": [
+              "Preferencia de idioma: Recuerda tu idioma seleccionado (es, en, fr, de)",
+              "Moneda preferida: Guarda tu selección de divisa",
+              "Tema visual: Recuerda si prefieres modo claro u oscuro"
+            ]
+          },
+          "analytics": {
+            "title": "Cookies Analíticas",
+            "description": "Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio.",
+            "examples": [
+              "Google Analytics: Analiza el tráfico y comportamiento de usuarios",
+              "Métricas de rendimiento: Tiempo de carga, errores, uso de funciones"
+            ]
+          },
+          "marketing": {
+            "title": "Cookies de Marketing",
+            "description": "Utilizadas para mostrar anuncios relevantes y medir la efectividad de campañas.",
+            "examples": [
+              "Facebook Pixel: Seguimiento de conversiones publicitarias",
+              "Google Ads: Remarketing y medición de campañas"
+            ]
+          }
+        },
+        "thirdParty": {
+          "title": "3. Cookies de Terceros",
+          "intro": "Algunos servicios externos pueden establecer sus propias cookies:",
+          "list": [
+            "Clerk: Gestión de autenticación y sesiones de usuario",
+            "Stripe: Procesamiento seguro de pagos",
+            "Google Analytics: Análisis de tráfico web",
+            "Redes Sociales: Botones de compartir (Facebook, Twitter, Discord)"
+          ]
+        },
+        "manageCookies": {
+          "title": "4. Gestionar tus Preferencias de Cookies",
+          "browser": {
+            "title": "Configuración del Navegador",
+            "content": "Puedes configurar tu navegador para rechazar cookies o alertarte cuando se establezcan. Sin embargo, algunas funciones del sitio pueden no funcionar correctamente."
+          },
+          "links": {
+            "title": "Enlaces de Ayuda por Navegador:",
+            "chrome": "Chrome: Configuración > Privacidad y seguridad > Cookies",
+            "firefox": "Firefox: Opciones > Privacidad y seguridad",
+            "safari": "Safari: Preferencias > Privacidad",
+            "edge": "Edge: Configuración > Cookies y permisos del sitio"
+          }
+        },
+        "consent": {
+          "title": "5. Tu Consentimiento",
+          "content": "Al utilizar nuestro sitio web, aceptas el uso de cookies según esta política. Puedes retirar tu consentimiento en cualquier momento ajustando la configuración de cookies en el banner que aparece en tu primera visita."
+        },
+        "updates": {
+          "title": "6. Actualizaciones de esta Política",
+          "content": "Podemos actualizar esta política de cookies. La fecha de la última actualización se indica al inicio de este documento."
+        }
+      }
+    },
+    "legalNotice": {
+      "title": "Aviso Legal",
+      "lastUpdated": "Última actualización: 8 de noviembre de 2025",
+      "sections": {
+        "identification": {
+          "title": "1. Identificación del Titular",
+          "intro": "En cumplimiento de la Ley 34/2002, de Servicios de la Sociedad de la Información y del Comercio Electrónico (LSSI-CE), se informa de los siguientes datos:",
+          "company": "Razón Social: TCG Store S.L.",
+          "cif": "CIF: B-12345678",
+          "address": "Domicilio: [Tu dirección completa], [Código Postal], [Ciudad], [País]",
+          "email": "Email: info@tcgstore.com",
+          "phone": "Teléfono: +34 XXX XXX XXX",
+          "registry": "Registro Mercantil: [Datos de inscripción]"
+        },
+        "object": {
+          "title": "2. Objeto",
+          "content": "TCG Store es una plataforma de comercio electrónico dedicada a la venta de Trading Card Games (TCG), incluyendo cartas individuales, booster packs, decks construidos, sets de coleccionista y accesorios relacionados."
+        },
+        "termsOfUse": {
+          "title": "3. Condiciones de Uso",
+          "intro": "El acceso y uso de este sitio web implica la aceptación de estas condiciones:",
+          "list": [
+            "El usuario se compromete a hacer un uso adecuado del sitio conforme a la ley",
+            "Queda prohibido el uso del sitio con fines ilícitos o que perjudiquen a terceros",
+            "El usuario es responsable de mantener la confidencialidad de sus credenciales",
+            "TCG Store se reserva el derecho de suspender cuentas que incumplan estas condiciones"
+          ]
+        },
+        "intellectualProperty": {
+          "title": "4. Propiedad Intelectual e Industrial",
+          "content": "Todos los contenidos del sitio web (textos, imágenes, diseño, logos, código fuente) son propiedad de TCG Store o de terceros que han autorizado su uso. Quedan protegidos por las leyes de propiedad intelectual. Las marcas y logos de juegos de cartas (Pokémon, Magic: The Gathering, Yu-Gi-Oh!, etc.) son propiedad de sus respectivos titulares.",
+          "restrictions": "Está prohibida la reproducción, distribución o modificación de cualquier contenido sin autorización expresa."
+        },
+        "purchaseConditions": {
+          "title": "5. Condiciones de Compra",
+          "prices": {
+            "title": "Precios",
+            "content": "Los precios incluyen IVA. Los gastos de envío se calculan al finalizar la compra. Nos reservamos el derecho de modificar precios sin previo aviso."
+          },
+          "payment": {
+            "title": "Métodos de Pago",
+            "content": "Aceptamos pagos mediante tarjeta de crédito/débito procesados de forma segura por Stripe. No almacenamos datos bancarios en nuestros servidores."
+          },
+          "orders": {
+            "title": "Procesamiento de Pedidos",
+            "content": "Los pedidos están sujetos a disponibilidad de stock. Confirmamos cada pedido por email. El tiempo de entrega estimado es de 3-7 días laborables."
+          },
+          "returns": {
+            "title": "Devoluciones",
+            "content": "Tienes 14 días desde la recepción para devolver productos (derecho de desistimiento, Ley de Consumidores). Los productos deben estar sin abrir y en su embalaje original. Cartas individuales y productos personalizados no admiten devolución salvo defecto de fábrica."
+          }
+        },
+        "liability": {
+          "title": "6. Limitación de Responsabilidad",
+          "content": "TCG Store no se responsabiliza de interrupciones del servicio, errores técnicos o inexactitudes en el contenido. Hacemos esfuerzos razonables para garantizar la disponibilidad del sitio, pero no garantizamos acceso ininterrumpido.",
+          "products": "Las imágenes de productos son orientativas. El estado de las cartas se describe con precisión (Mint, Near Mint, etc.), pero pueden existir variaciones menores."
+        },
+        "links": {
+          "title": "7. Enlaces Externos",
+          "content": "Este sitio puede contener enlaces a sitios web de terceros. TCG Store no se responsabiliza del contenido o políticas de privacidad de dichos sitios."
+        },
+        "protection": {
+          "title": "8. Protección de Datos",
+          "content": "El tratamiento de datos personales se rige por nuestra Política de Privacidad, en cumplimiento del RGPD (Reglamento UE 2016/679) y la LOPDGDD."
+        },
+        "jurisdiction": {
+          "title": "9. Legislación Aplicable y Jurisdicción",
+          "content": "Estas condiciones se rigen por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales de [Ciudad], renunciando expresamente a cualquier otro fuero que pudiera corresponderles."
+        },
+        "contact": {
+          "title": "10. Contacto",
+          "content": "Para consultas, reclamaciones o ejercicio de derechos:",
+          "email": "Email: legal@tcgstore.com",
+          "phone": "Teléfono: +34 XXX XXX XXX",
+          "address": "Dirección postal: [Dirección completa]"
+        }
+      }
+    }
   }
 }

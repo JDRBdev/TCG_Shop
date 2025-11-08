@@ -91,7 +91,7 @@ export default async function Layout({
             {children}
 
             <Suspense fallback={<footer aria-hidden className="h-16" />}> 
-              <Footer dict={dict} />
+              <Footer dict={dict} lang={safeLang} />
             </Suspense>
           </ProductUpdatesProvider>
         </CartProvider>

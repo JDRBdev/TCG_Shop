@@ -1,8 +1,11 @@
+import Link from "next/link"
+
 interface FooterProps {
   dict: any
+  lang?: string
 }
 
-export default function Footer({ dict }: FooterProps) {
+export default function Footer({ dict, lang = "es" }: FooterProps) {
   return (
     <footer className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 border-t border-slate-200 text-slate-700 pt-16 pb-10">
       <div className="container mx-auto px-4">
@@ -45,17 +48,25 @@ export default function Footer({ dict }: FooterProps) {
               </ul>
             </div>
 
-            {/* Soporte */}
+            {/* Legales */}
             <div className="w-fit">
-              <h6 className="font-semibold text-slate-800 mb-4">{dict.footer.support.title}</h6>
+              <h6 className="font-semibold text-slate-800 mb-4">{dict.footer.legal.title}</h6>
               <ul className="space-y-2 text-sm">
-                {Object.entries(dict.footer.support)
-                  .filter(([key]) => key !== "title")
-                  .map(([key, label]) => (
-                    <li key={key}>
-                      <a href="#" className="hover:text-blue-600 transition-colors">{label as string}</a>
-                    </li>
-                ))}
+                <li>
+                  <Link href={`/${lang}/politica-de-privacidad`} className="hover:text-blue-600 transition-colors">
+                    {dict.footer.legal.privacy}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${lang}/politica-de-cookies`} className="hover:text-blue-600 transition-colors">
+                    {dict.footer.legal.cookies}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${lang}/aviso-legal`} className="hover:text-blue-600 transition-colors">
+                    {dict.footer.legal.legalNotice}
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
