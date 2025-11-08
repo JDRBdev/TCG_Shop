@@ -34,7 +34,7 @@ export async function generateMetadata({
     title: "TCG Store",
     description: "Online trading card game shop",
     openGraph: {
-      url: `${site}/${safeLang}`,
+      url: `${site}`,
       title: "TCG Store",
       description: "Online trading card game shop",
       images: [
