@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
-import { fetchProductVariants } from '@/app/data/products';
+import { fetchProductVariants, fetchBaseProducts, supabase } from '@/app/data/products';
 import ProductRealtimeInfo from '@/app/components/molecules/product-realtime-info';
 import Spanish from '@/app/components/atoms/flags/spanish';
 import English from '@/app/components/atoms/flags/english';
@@ -28,86 +27,9 @@ function getPublicImageUrl(imagePath?: string): string {
 
 // Función para obtener producto traducido
 async function getTranslatedProduct(slug: string, locale: string) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        }
-      },
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    }
-  );
-
-  try {
-    console.log('Buscando producto traducido:', slug, 'para lang:', locale);
-    
-    // 1️⃣ Obtener el producto por slug
-    const { data: product, error: productError } = await supabase
-      .from('products')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (productError || !product) {
-      console.error('Error al obtener producto:', productError);
-      return null;
-    }
-
-    // 2️⃣ Obtener las relaciones de traducciones para este producto
-    const { data: mappings, error: mappingsError } = await supabase
-      .from('products_product_translations')
-      .select('product_translations_id')
-      .eq('products_id', product.id);
-
-    if (mappingsError) {
-      console.error('Error al obtener relaciones de traducciones:', mappingsError);
-      return null;
-    }
-
-    const translationIds = mappings.map((m: any) => m.product_translations_id);
-
-    // 3️⃣ Obtener la traducción específica para el locale
-    const { data: translation, error: translationError } = await supabase
-      .from('product_translations')
-      .select('*')
-      .in('id', translationIds)
-      .eq('lang', locale)
-      .single();
-
-    if (translationError) {
-      console.log('No se encontró traducción para', locale, 'usando datos originales');
-    }
-
-    // 4️⃣ Combinar producto con traducción
-    return {
-      id: product.id,
-      name: translation?.name ?? product.name,
-      description: translation?.description ?? product.description,
-      price: Number(product.price) || 0,
-      discount: Number(product.discount) || 0,
-      inStock: product.in_stock,
-      image: product.image,
-      language: product.language,
-      category: product.category,
-      brand: product.brand,
-      slug: product.slug,
-      createdAt: product.created_at,
-      updatedAt: product.updated_at,
-      // Devuelve también los translationIds para buscar otras variantes/slugs
-      translationIds
-    };
-
-  } catch (err) {
-    console.error('Error inesperado al obtener producto traducido:', err);
-    return null;
-  }
+  // Reuse fetchBaseProducts which already resolves translations for a locale.
+  const list = await fetchBaseProducts({ locale, modifyQuery: (q: any) => q.eq('slug', slug).limit(1) });
+  return list[0] ?? null;
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -155,7 +77,9 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
   }
 
   // Use centralized helper that reuses the same Supabase client logic
-  const relatedProducts = await fetchProductVariants(product.id);
+  // Pass translationIds from getTranslatedProduct to avoid re-querying mappings
+  const translationIds = (product as any).translationIds ?? [];
+  const relatedProducts = await fetchProductVariants(product.id, translationIds);
 
   // Debug
   console.log('Producto traducido:', product.name, 'para lang:', lang);
@@ -169,9 +93,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
   };
 
-  const finalPrice = product.discount > 0 
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+  const discountVal = Number(product.discount) || 0;
+  const finalPrice = discountVal > 0 ? product.price * (1 - discountVal / 100) : product.price;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12">
@@ -195,7 +118,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
             <div className="relative rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
               <img
-                src={`${getPublicImageUrl(product.image)}.avif`}
+                src={getPublicImageUrl(product.image)}
                 alt={product.name}
                 width={600}
                 height={400}
@@ -245,8 +168,8 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
                           return (
                             <li key={r.id}>
                               <Link
-                                // Keep the current UI language in the path (safeLang) but request the variant language via query
-                                href={`/${safeLang}/productos/${r.slug}?variant=${langCode}`}
+                                // Keep the current UI language in the path (safeLang) and compute the slug for the target language
+                                href={`/${safeLang}/productos/${computeVariantSlug(product.slug, langCode, r.slug)}`}
                                 className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors bg-white border border-slate-100 shadow-sm"
                               >
                                 <span className="w-6 h-6 flex-shrink-0">{Flag}</span>
@@ -314,27 +237,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 }
 
 export async function generateStaticParams() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      global: {
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        }
-      },
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    }
-  );
-
-  const { data } = await supabase
-    .from('products')
-    .select('slug')
-    .not('slug', 'is', null);
+  const { data } = await supabase.from('products').select('slug').not('slug', 'is', null);
 
   const products = data || [];
   
@@ -352,4 +255,20 @@ export async function generateStaticParams() {
   }
 
   return params;
+}
+
+// Construye un slug variante reemplazando el sufijo de idioma si existe
+function computeVariantSlug(currentSlug: string | undefined, targetLang: string, fallbackSlug?: string) {
+  if (!currentSlug && fallbackSlug) return `${fallbackSlug}-${targetLang}`;
+  if (!currentSlug) return fallbackSlug || `product-${targetLang}`;
+
+  // Detecta sufijo -en, -es, -fr, -de, -jp, -ja u otros de 2-3 letras
+  const m = currentSlug.match(/^(.*?)-([a-z]{2,3})$/i);
+  if (m) {
+    const base = m[1];
+    return `${base}-${targetLang}`;
+  }
+
+  // Si no hay sufijo, simplemente agregar el sufijo del idioma
+  return `${currentSlug}-${targetLang}`;
 }

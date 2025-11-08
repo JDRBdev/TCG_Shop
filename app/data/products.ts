@@ -20,7 +20,7 @@ export interface Product {
 // Inicializa Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey!);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey!);
 
 const BUCKET_NAME = "directus_files";
 
@@ -202,23 +202,26 @@ export async function fetchSpecialOffers(locale: string, limit = 6): Promise<Pro
  * Retorna array de { id, slug, language, name } donde name intenta usar la traducción
  * correspondiente al idioma del producto cuando existe, o bien el nombre del producto.
  */
-export async function fetchProductVariants(productId: number | string): Promise<Array<{ id: number | string; slug?: string; language?: string; name?: string }>> {
+export async function fetchProductVariants(productId: number | string, translationIds?: Array<number | string>): Promise<Array<{ id: number | string; slug?: string; language?: string; name?: string }>> {
   try {
-    // 1) obtener translationIds vinculados al producto original
-    const { data: mappingsForProduct, error: mErr } = await supabase
-      .from('products_product_translations')
-      .select('product_translations_id')
-      .eq('products_id', productId as any);
+    // 1) obtener translationIds vinculados al producto original (si no se pasan)
+    let translationIdsLocal = translationIds;
+    if (!translationIdsLocal || !translationIdsLocal.length) {
+      const { data: mappingsForProduct, error: mErr } = await supabase
+        .from('products_product_translations')
+        .select('product_translations_id')
+        .eq('products_id', productId as any);
 
-    if (mErr || !mappingsForProduct || mappingsForProduct.length === 0) return [];
+      if (mErr || !mappingsForProduct || mappingsForProduct.length === 0) return [];
 
-    const translationIds = mappingsForProduct.map((m: any) => m.product_translations_id);
+      translationIdsLocal = mappingsForProduct.map((m: any) => m.product_translations_id);
+    }
 
     // 2) obtener todas las mappings que comparten esos translationIds (incluye el original)
     const { data: allMappings, error: allMapErr } = await supabase
       .from('products_product_translations')
       .select('products_id, product_translations_id')
-      .in('product_translations_id', translationIds as any[]);
+      .in('product_translations_id', translationIdsLocal as any[]);
 
     if (allMapErr || !allMappings || allMappings.length === 0) return [];
 
