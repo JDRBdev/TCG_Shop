@@ -377,7 +377,7 @@ export default function ProductosClientPage({
             <button
               onClick={() => fetchPage(Math.max(1, page - 1))}
               disabled={page <= 1 || isLoading}
-              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm disabled:opacity-50 cursor-pointer"
             >
               { "Anterior"}
             </button>
@@ -389,7 +389,7 @@ export default function ProductosClientPage({
             <button
               onClick={() => fetchPage(page + 1)}
               disabled={!hasMore || isLoading}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {"Siguiente"}
             </button>

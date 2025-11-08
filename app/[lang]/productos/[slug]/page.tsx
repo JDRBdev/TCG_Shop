@@ -93,8 +93,20 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
 
   };
 
-  const discountVal = Number(product.discount) || 0;
-  const finalPrice = discountVal > 0 ? product.price * (1 - discountVal / 100) : product.price;
+  
+
+  // Productos recomendados: tomar hasta 50 candidatos traducidos y seleccionar 4 aleatorios (excluyendo el actual)
+  function shuffle<T>(arr: T[]) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  const candidates = await fetchBaseProducts({ locale: safeLang, limit: 50 });
+  const filtered = (candidates || []).filter((p) => String(p.id) !== String(product.id));
+  const recommended = shuffle(filtered).slice(0, 4);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12">
@@ -228,9 +240,39 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
               )}
             </div>
 
-
           </div>
         </div>
+          {/* Productos recomendados */}
+            {recommended && recommended.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-xl font-bold mb-4 text-slate-900">{dict.products.reccommend || 'Productos Recomendados'}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {recommended.map((p) => {
+                    const pDiscount = Number((p as any).discount) || 0;
+                    const pPrice = Number((p as any).price) || 0;
+                    const pFinal = pDiscount > 0 ? pPrice * (1 - pDiscount / 100) : pPrice;
+                    return (
+                      <Link key={p.id} href={`/${safeLang}/productos/${p.slug}`} className="flex flex-col justify-between bg-white rounded-xl p-3 border border-slate-100 shadow-sm hover:shadow-md">
+                        <div className="w-full h-36 overflow-hidden rounded-md mb-3 bg-slate-50">
+                          <img src={getPublicImageUrl((p as any).image)} alt={p.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="text-sm font-medium text-slate-900">{p.name}</div>
+                        <div className="text-sm text-slate-600">{p.category}</div>
+                        <div className="mt-2 text-sm font-semibold text-slate-900">
+                          {pDiscount > 0 ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-blue-600">€{pFinal.toFixed(2)}</span>
+                            </div>
+                          ) : (
+                            <span className='text-sm font-bold text-blue-600'>€{pPrice.toFixed(2)}</span>
+                          )}
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
       </div>
     </div>
   );
