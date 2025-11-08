@@ -30,13 +30,18 @@ export default function Footer({ dict }: FooterProps) {
             <div className="w-fit">
               <h6 className="font-semibold text-slate-800 mb-4">{dict.footer.products.title}</h6>
               <ul className="space-y-2 text-sm">
-                {Object.entries(dict.footer.products)
-                  .filter(([key]) => key !== "title")
-                  .map(([key, label]) => (
-                    <li key={key}>
-                      <a href="#" className="hover:text-blue-600 transition-colors">{label as string}</a>
-                    </li>
-                ))}
+              {[
+                { value: "booster-packs", label: dict.products.filters.boosterPacks || "Booster Packs" },
+                { value: "preconstructed-deck", label: dict.products.filters.constructedDecks || "Decks Construidos" },
+                { value: "booster-box", label: dict.products.filters.boosterBox || "Booster Box" },
+                { value: "collector-set", label: dict.products.filters.collectorSet || "Sets Coleccionista" },
+              ].map(item => (
+                <li key={item.value}>
+                  <a href={`?category=${encodeURIComponent(item.value)}`} className="hover:text-blue-600 transition-colors">
+                    {item.label}
+                  </a>
+                </li>
+              ))}
               </ul>
             </div>
 
