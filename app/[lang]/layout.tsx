@@ -39,7 +39,7 @@ export async function generateMetadata({
       description: "Online trading card game shop",
       images: [
         {
-          url: "/opengraph.avif",
+          url: "/opengraph.png",
           alt: "TCG Store — trading card game shop",
         },
       ],
