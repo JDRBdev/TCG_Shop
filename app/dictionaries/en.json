@@ -15,127 +15,121 @@
   },
   "hero": {
     "title": "The Best Trading Cards",
-    "subtitle": "Discover exclusive cards, limited sets and accessories for collectors and competitive players",
+    "subtitle": "Descubre cartas exclusivas, sets limitados y accesorios para coleccionistas y jugadores competitivos",
     "exploreCatalog": "Explore Catalog",
     "viewOffers": "View Offers"
   },
   "products": {
-    "title": "Featured Products",
+    "title": "New Products",
+    "recommend": "Recommended Products",
     "new": "New",
     "add": "Add",
     "items": {
-      "boosterPack": "Premium Booster Pack",
-      "competitiveDeck": "Competitive Deck",
-      "holographicCard": "Holographic Rare Card",
-      "collectorSet": "Collector Set"
+      "boosterPack": "Booster Pack Premium",
+      "competitiveDeck": "Deck Competitivo",
+      "holographicCard": "Carta Holográfica Rara",
+      "collectorSet": "Set Coleccionista"
     },
     "filters": {
-      "title": "Filters",
-      "availability": "Availability",
-      "onlyInStock": "Only available products",
-      "language": "Language",
-      "allLanguages": "All languages",
-      "spanish": "Spanish",
-      "english": "English",
-      "japanese": "Japanese",
-      "category": "Category",
-      "allCategories": "All Categories",
+      "title": "Filtros",
+      "availability": "Disponibilidad",
+      "onlyInStock": "Solo productos disponibles",
+      "language": "Idioma",
+      "allLanguages": "Todos los idiomas",
+      "spanish": "Español",
+      "english": "Inglés",
+      "japanese": "Japonés",
+      "category": "Categoría",
+      "allCategories": "Todas las Categorías",
       "boosterPacks": "Booster Packs",
-      "constructedDecks": "Constructed Decks",
+      "constructedDecks": "Decks Construidos",
       "boosterBox": "Booster Box",
-      "collectorSet": "Collector Sets",
-      "brand": "Brand",
-      "allBrands": "All Brands",
-      "sortName": "Name A-Z",
-      "sortPriceLow": "Price: Low to High",
-      "sortPriceHigh": "Price: High to Low",
-      "sortDiscount": "Discount: High to Low",
-      "openFilters": "Open filters",
-      "closeFilters": "Close filters",
-      "applyFilters": "Apply filters"
+      "collectorSet": "Sets Coleccionista",
+      "brand": "Marca",
+      "allBrands": "Todas las Marcas",
+      "sortName": "Nombre A-Z",
+      "sortPriceLow": "Precio: Menor a Mayor",
+      "sortPriceHigh": "Precio: Mayor a Menor",
+      "sortDiscount": "Descuento: Mayor a Menor",
+      "openFilters": "Abrir filtros",
+      "closeFilters": "Cerrar filtros",
+      "applyFilters": "Aplicar filtros"
     },
     "search": {
-      "placeholder": "Search products..."
+      "placeholder": "Buscar productos..."
     },
     "results": {
-      "showing": "Showing",
-      "products": "products",
-      "noProducts": "No products found",
-      "tryAdjusting": "Try adjusting filters or search terms"
+      "showing": "Mostrando",
+      "products": "productos",
+      "noProducts": "No se encontraron productos",
+      "tryAdjusting": "Intenta ajustar los filtros o términos de búsqueda"
     },
-    "inStock": "In stock",
-    "outOfStock": "Out of stock",
+    "inStock": "En stock",
+    "outOfStock": "Agotado",
     "description": "Description"
   },
   "categories": {
-    "title": "Popular Categories",
+    "title": "Categorías Populares",
     "boosterPacks": {
       "title": "Booster Packs",
-      "description": "Packs with random cards to expand your collection",
-      "count": "150+ products"
+      "description": "Sobres con cartas aleatorias para expandir tu colección",
+      "count": "150+ productos"
     },
     "constructedDecks": {
-      "title": "Constructed Decks",
-      "description": "Ready-to-play decks for competitive tournaments",
-      "count": "80+ products"
+      "title": "Decks Construidos",
+      "description": "Mazos listos para jugar en torneos competitivos",
+      "count": "80+ productos"
     },
     "accessories": {
       "title": "Accessories",
-      "description": "Sleeves, binders and accessories to protect your cards",
-      "count": "200+ products"
+      "description": "Protectores, carpetas y accesorios para cuidar tus cartas",
+      "count": "200+ productos"
     }
   },
   "offers": {
-    "title": "Special Offers",
-    "subtitle": "Take advantage of these limited time discounts",
+    "title": "Ofertas Especiales",
+    "subtitle": "Aprovecha estos descuentos por tiempo limitado",
     "megaBundle": {
-      "title": "Mega Collector Bundle",
-      "description": "3 Booster Boxes + Premium Accessories",
-      "getOffer": "Get Offer"
+      "title": "Bundle Mega Coleccionista",
+      "description": "3 Booster Boxes + Accesorios Premium",
+      "getOffer": "Obtener Oferta"
     },
     "tournament": {
-      "title": "Weekly Tournament",
-      "description": "Participate and win exclusive cards",
-      "playersRegistered": "players registered",
-      "register": "Register"
+      "title": "Torneo Semanal",
+      "description": "Participa y gana cartas exclusivas",
+      "players_community": "Únete a la comunidad y al resto de competidores",
+      "register": "Sign Up"
     }
   },
   "footer": {
-    "description": "Your trusted store for Trading Card Games. Guaranteed quality and fast shipping.",
+    "description": "Tu tienda de confianza para Trading Card Games. Calidad garantizada y envíos rápidos.",
     "products": {
       "title": "Products",
       "boosterPacks": "Booster Packs",
       "decks": "Decks",
-      "singleCards": "Single Cards",
-      "accessories": "Accessories"
+      "singleCards": "Cartas Individuales",
+      "accessories": "Sets Coleccionista"
     },
     "support": {
-      "title": "Support",
-      "helpCenter": "Help Center",
-      "shipping": "Shipping & Returns",
-      "contact": "Contact",
+      "title": "Soporte",
+      "helpCenter": "Centro de Ayuda",
+      "shipping": "Envíos y Devoluciones",
+      "contact": "Contacto",
       "faq": "FAQ"
     },
-    "newsletter": {
-      "title": "Newsletter",
-      "description": "Receive exclusive offers and news",
-      "placeholder": "your@email.com",
-      "subscribe": "Subscribe"
-    },
-    "copyright": "© 2025 TCG Store. All rights reserved."
-  }
-  ,
+    "copyright": "© 2025 TCG Store. Todos los derechos reservados."
+  },
   "thankYou": {
     "title": "Thank you for your purchase",
-    "noSession": "No session identifier was received. If you just paid, wait a few seconds and check your email.",
-    "noStripe": "Purchase completed. (No Stripe key on the server to show details.)",
-    "paymentStatus": "Payment status:",
-    "paid": "Paid",
+    "noSession": "No se recibió un identificador de sesión. Si acabas de pagar, espera unos segundos y revisa tu email.",
+    "noStripe": "Se completó la compra. (No hay clave de Stripe en el servidor para mostrar detalles.)",
+    "paymentStatus": "Estado de pago:",
+    "paid": "Pagado",
     "total": "Total:",
-    "method": "Method:",
-    "card": "Card",
-    "items": "Items",
+    "method": "Método:",
+    "card": "Tarjeta",
+    "items": "Artículos",
     "backHome": "Back to home",
-    "sessionId": "Session ID:"
+    "sessionId": "ID de sesión:"
   }
 }

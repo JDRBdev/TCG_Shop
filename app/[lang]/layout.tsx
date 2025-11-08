@@ -18,6 +18,7 @@ interface RootLayoutProps {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tcg-shop-iota.vercel.app'),
   title: "TCG Store - Your Online Trading Card Game Shop",
   description: "Portfolio website",
   openGraph: {
@@ -33,11 +34,6 @@ export const metadata: Metadata = {
     ],
   }
 }
-
-// Use metadataBase so Next resolves relative image paths to absolute URLs in production.
-// Set NEXT_PUBLIC_SITE_URL in your environment to the canonical site URL (e.g. https://example.com)
-// Use the production Vercel domain you provided so OG image resolves to an absolute URL.
-export const metadataBase = new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tcg-shop-iota.vercel.app')
 
 export default async function Layout({
   children,

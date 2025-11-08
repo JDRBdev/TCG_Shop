@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "Boutique TCG",
+    "title": "TCG Store",
     "nav": {
       "home": "Accueil",
       "tournaments": "Tournois",
@@ -8,133 +8,128 @@
       "offers": "Offres",
       "accessories": "Accessoires"
     },
-    "sign_in": "Connexion",
-    "sign_up": "Inscription",
+    "sign_in": "Se connecter",
+    "sign_up": "S'inscrire",
     "search": "Rechercher des cartes...",
     "cart": "Panier"
   },
   "hero": {
-    "title": "Les Meilleures Cartes à Collectionner",
-    "subtitle": "Découvrez des cartes exclusives, des séries limitées et des accessoires pour collectionneurs et joueurs compétitifs",
-    "exploreCatalog": "Explorer le Catalogue",
-    "viewOffers": "Voir les Offres"
+    "title": "Les meilleures cartes à échanger",
+    "subtitle": "Descubre cartas exclusivas, sets limitados y accesorios para coleccionistas y jugadores competitivos",
+    "exploreCatalog": "Explorer le catalogue",
+    "viewOffers": "Voir les offres"
   },
   "products": {
-    "title": "Produits en Vedette",
+    "title": "Nouveaux produits",
+    "recommend": "Produits recommandés",
     "new": "Nouveau",
     "add": "Ajouter",
     "items": {
-      "boosterPack": "Pack Booster Premium",
-      "competitiveDeck": "Deck Compétitif",
-      "holographicCard": "Carte Holographique Rare",
-      "collectorSet": "Set Collectionneur"
+      "boosterPack": "Booster Pack Premium",
+      "competitiveDeck": "Deck Competitivo",
+      "holographicCard": "Carta Holográfica Rara",
+      "collectorSet": "Set Coleccionista"
     },
     "filters": {
-      "title": "Filtres",
-      "availability": "Disponibilité",
-      "onlyInStock": "Seuls les produits disponibles",
-      "language": "Langue",
-      "allLanguages": "Toutes les langues",
-      "spanish": "Espagnol",
-      "english": "Anglais",
-      "japanese": "Japonais",
-      "category": "Catégorie",
-      "allCategories": "Toutes les Catégories",
-      "boosterPacks": "Packs Booster",
-      "constructedDeccks": "Decks Construits",
-      "boosterBox": "Boîte Booster",
-      "collectorSet": "Sets Collectionneurs",
-      "brand": "Marque",
-      "allBrands": "Toutes les Marques",
-      "sortName": "Nom A-Z",
-      "sortPriceLow": "Prix: Croissant",
-      "sortPriceHigh": "Prix: Décroissant",
-      "sortDiscount": "Remise: Décroissant",
-      "openFilters": "Ouvrir les filtres",
-      "closeFilters": "Fermer les filtres",
-      "applyFilters": "Appliquer les filtres"
+      "title": "Filtros",
+      "availability": "Disponibilidad",
+      "onlyInStock": "Solo productos disponibles",
+      "language": "Idioma",
+      "allLanguages": "Todos los idiomas",
+      "spanish": "Español",
+      "english": "Inglés",
+      "japanese": "Japonés",
+      "category": "Categoría",
+      "allCategories": "Todas las Categorías",
+      "boosterPacks": "Booster Packs",
+      "constructedDecks": "Decks Construidos",
+      "boosterBox": "Booster Box",
+      "collectorSet": "Sets Coleccionista",
+      "brand": "Marca",
+      "allBrands": "Todas las Marcas",
+      "sortName": "Nombre A-Z",
+      "sortPriceLow": "Precio: Menor a Mayor",
+      "sortPriceHigh": "Precio: Mayor a Menor",
+      "sortDiscount": "Descuento: Mayor a Menor",
+      "openFilters": "Abrir filtros",
+      "closeFilters": "Cerrar filtros",
+      "applyFilters": "Aplicar filtros"
     },
     "search": {
-      "placeholder": "Rechercher des produits..."
+      "placeholder": "Buscar productos..."
     },
     "results": {
-      "showing": "Affichage de",
-      "products": "produits",
-      "noProducts": "Aucun produit trouvé",
-      "tryAdjusting": "Essayez d'ajuster les filtres ou les termes de recherche"
+      "showing": "Mostrando",
+      "products": "productos",
+      "noProducts": "No se encontraron productos",
+      "tryAdjusting": "Intenta ajustar los filtros o términos de búsqueda"
     },
     "inStock": "En stock",
-    "outOfStock": "Rupture de stock",
+    "outOfStock": "Agotado",
     "description": "Description"
   },
   "categories": {
-    "title": "Catégories Populaires",
+    "title": "Categorías Populares",
     "boosterPacks": {
-      "title": "Packs Booster",
-      "description": "Sachets avec des cartes aléatoires pour agrandir votre collection",
-      "count": "150+ produits"
+      "title": "Booster Packs",
+      "description": "Sobres con cartas aleatorias para expandir tu colección",
+      "count": "150+ productos"
     },
     "constructedDecks": {
-      "title": "Decks Construits",
-      "description": "Decks prêts à jouer pour les tournois compétitifs",
-      "count": "80+ produits"
+      "title": "Decks Construidos",
+      "description": "Mazos listos para jugar en torneos competitivos",
+      "count": "80+ productos"
     },
     "accessories": {
       "title": "Accessoires",
-      "description": "Protège-cartes, classeurs et accessoires pour protéger vos cartes",
-      "count": "200+ produits"
+      "description": "Protectores, carpetas y accesorios para cuidar tus cartas",
+      "count": "200+ productos"
     }
   },
   "offers": {
-    "title": "Offres Spéciales",
-    "subtitle": "Profitez de ces remises limitées dans le temps",
+    "title": "Ofertas Especiales",
+    "subtitle": "Aprovecha estos descuentos por tiempo limitado",
     "megaBundle": {
-      "title": "Bundle Mega Collectionneur",
-      "description": "3 Boîtes Booster + Accessoires Premium",
-      "getOffer": "Obtenir l'Offre"
+      "title": "Bundle Mega Coleccionista",
+      "description": "3 Booster Boxes + Accesorios Premium",
+      "getOffer": "Obtener Oferta"
     },
     "tournament": {
-      "title": "Tournoi Hebdomadaire",
-      "description": "Participez et gagnez des cartes exclusives",
-      "playersRegistered": "joueurs inscrits",
+      "title": "Torneo Semanal",
+      "description": "Participa y gana cartas exclusivas",
+      "players_community": "Únete a la comunidad y al resto de competidores",
       "register": "S'inscrire"
     }
   },
   "footer": {
-    "description": "Votre boutique de confiance pour les Jeux de Cartes à Collectionner. Qualité garantie et livraison rapide.",
+    "description": "Tu tienda de confianza para Trading Card Games. Calidad garantizada y envíos rápidos.",
     "products": {
       "title": "Produits",
-      "boosterPacks": "Packs Booster",
+      "boosterPacks": "Booster Packs",
       "decks": "Decks",
-      "singleCards": "Cartes Individuelles",
-      "accessories": "Accessoires"
+      "singleCards": "Cartas Individuales",
+      "accessories": "Sets Coleccionista"
     },
     "support": {
-      "title": "Support",
-      "helpCenter": "Centre d'Aide",
-      "shipping": "Livraison & Retours",
-      "contact": "Contact",
+      "title": "Soporte",
+      "helpCenter": "Centro de Ayuda",
+      "shipping": "Envíos y Devoluciones",
+      "contact": "Contacto",
       "faq": "FAQ"
     },
-    "newsletter": {
-      "title": "Newsletter",
-      "description": "Recevez des offres exclusives et des nouvelles",
-      "placeholder": "votre@email.com",
-      "subscribe": "S'abonner"
-    },
-    "copyright": "© 2025 TCG Store. Tous droits réservés."
+    "copyright": "© 2025 TCG Store. Todos los derechos reservados."
   },
   "thankYou": {
     "title": "Merci pour votre achat",
-    "noSession": "Aucun identifiant de session reçu. Si vous venez de payer, attendez quelques secondes et vérifiez votre e-mail.",
-    "noStripe": "Achat terminé. (Aucune clé Stripe sur le serveur pour afficher les détails.)",
-    "paymentStatus": "Statut du paiement:",
-    "paid": "Payé",
+    "noSession": "No se recibió un identificador de sesión. Si acabas de pagar, espera unos segundos y revisa tu email.",
+    "noStripe": "Se completó la compra. (No hay clave de Stripe en el servidor para mostrar detalles.)",
+    "paymentStatus": "Estado de pago:",
+    "paid": "Pagado",
     "total": "Total:",
-    "method": "Méthode:",
-    "card": "Carte",
-    "items": "Articles",
+    "method": "Método:",
+    "card": "Tarjeta",
+    "items": "Artículos",
     "backHome": "Retour à l'accueil",
-    "sessionId": "ID de session:"
+    "sessionId": "ID de sesión:"
   }
 }
