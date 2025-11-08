@@ -196,3 +196,73 @@ export async function fetchSpecialOffers(locale: string, limit = 6): Promise<Pro
       query.not("discount", "is", null).gt("discount", 0).order("discount", { ascending: false }),
   });
 }
+
+/**
+ * Devuelve variantes (otros productos) enlazados a las mismas traducciones
+ * Retorna array de { id, slug, language, name } donde name intenta usar la traducción
+ * correspondiente al idioma del producto cuando existe, o bien el nombre del producto.
+ */
+export async function fetchProductVariants(productId: number | string): Promise<Array<{ id: number | string; slug?: string; language?: string; name?: string }>> {
+  try {
+    // 1) obtener translationIds vinculados al producto original
+    const { data: mappingsForProduct, error: mErr } = await supabase
+      .from('products_product_translations')
+      .select('product_translations_id')
+      .eq('products_id', productId as any);
+
+    if (mErr || !mappingsForProduct || mappingsForProduct.length === 0) return [];
+
+    const translationIds = mappingsForProduct.map((m: any) => m.product_translations_id);
+
+    // 2) obtener todas las mappings que comparten esos translationIds (incluye el original)
+    const { data: allMappings, error: allMapErr } = await supabase
+      .from('products_product_translations')
+      .select('products_id, product_translations_id')
+      .in('product_translations_id', translationIds as any[]);
+
+    if (allMapErr || !allMappings || allMappings.length === 0) return [];
+
+    const productIds = Array.from(new Set(allMappings.map((m: any) => m.products_id))).filter((id) => id != productId);
+    if (productIds.length === 0) return [];
+
+    // 3) traer productos relacionados
+    const { data: products, error: prodErr } = await supabase
+      .from('products')
+      .select('id, slug, language, name')
+      .in('id', productIds as any[]);
+
+    if (prodErr || !products) return [];
+
+    // 4) traer traducciones por id
+    const { data: translations, error: transErr } = await supabase
+      .from('product_translations')
+      .select('id, name, lang')
+      .in('id', translationIds as any[]);
+
+    if (transErr || !translations) return products.map((p: any) => ({ id: p.id, slug: p.slug, language: p.language, name: p.name }));
+
+    const translationsById = new Map(translations.map((t: any) => [t.id, t]));
+    const productsById = new Map(products.map((p: any) => [p.id, p]));
+
+    // 5) construir resultado guardando el nombre traducido cuando exista en la traducción ligada
+    const resultMap = new Map<string | number, { id: any; slug?: string; language?: string; name?: string }>();
+    for (const m of allMappings) {
+      const pid = m.products_id;
+      if (pid == productId) continue; // omitir original
+      const prod = productsById.get(pid);
+      if (!prod) continue;
+      if (resultMap.has(pid)) continue; // ya procesado
+
+      const trans = translationsById.get(m.product_translations_id);
+      let displayName = prod.name;
+      if (trans && prod.language && trans.lang === prod.language) displayName = trans.name || prod.name;
+
+      resultMap.set(pid, { id: prod.id, slug: prod.slug, language: prod.language, name: displayName });
+    }
+
+    return Array.from(resultMap.values());
+  } catch (err) {
+    console.error('Error en fetchProductVariants:', err);
+    return [];
+  }
+}

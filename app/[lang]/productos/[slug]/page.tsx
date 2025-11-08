@@ -1,14 +1,19 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
+import { fetchProductVariants } from '@/app/data/products';
 import ProductRealtimeInfo from '@/app/components/molecules/product-realtime-info';
 import Spanish from '@/app/components/atoms/flags/spanish';
 import English from '@/app/components/atoms/flags/english';
+import French from '@/app/components/atoms/flags/french';
+import Deutsch from '@/app/components/atoms/flags/deutsch';
+import Link from 'next/link';
 import { JSX } from 'react';
 import { getDictionary } from '../../../hooks/dictionaries'; // Importar getDictionary
 import Japanese from '@/app/components/atoms/flags/japanese';
 
 interface Props {
   params: { slug: string; lang: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // 🧩 Generador de URLs públicas desde Supabase Storage
@@ -94,7 +99,9 @@ async function getTranslatedProduct(slug: string, locale: string) {
       brand: product.brand,
       slug: product.slug,
       createdAt: product.created_at,
-      updatedAt: product.updated_at
+      updatedAt: product.updated_at,
+      // Devuelve también los translationIds para buscar otras variantes/slugs
+      translationIds
     };
 
   } catch (err) {
@@ -114,10 +121,23 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params, searchParams }: Props) {
   // `params` may be a promise — await it before using its properties
   const { slug, lang } = await params as any;
-  const product = await getTranslatedProduct(slug, lang);
+
+  // `searchParams` may be a promise in Next.js dynamic APIs — await it before use
+  const resolvedSearchParams = searchParams ? (searchParams instanceof Promise ? await searchParams : searchParams) : {};
+
+  // If a query param 'variant' or 'variant_lang' is present, use it to fetch the product translation
+  const variantParam = Array.isArray(resolvedSearchParams.variant)
+    ? resolvedSearchParams.variant[0]
+    : (resolvedSearchParams.variant as string | undefined) ||
+      (Array.isArray(resolvedSearchParams.variant_lang) ? resolvedSearchParams.variant_lang[0] : (resolvedSearchParams.variant_lang as string | undefined));
+
+  // Determine which locale to use when fetching the translated product
+  const translationLocale = variantParam || lang;
+
+  const product = await getTranslatedProduct(slug, translationLocale);
   // Define un array constante con los idiomas soportados
   const supportedLangs = ["en", "es", "fr", "de"] as const;
 
@@ -134,12 +154,17 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Use centralized helper that reuses the same Supabase client logic
+  const relatedProducts = await fetchProductVariants(product.id);
+
   // Debug
   console.log('Producto traducido:', product.name, 'para lang:', lang);
 
   const LanguageFlag: Record<string, JSX.Element> = {
     es: <Spanish className="w-5 h-5 rounded-full border" />,
     en: <English className="w-5 h-5 rounded-full border" />,
+    fr: <French className="w-5 h-5 rounded-full border" />,
+    de: <Deutsch className="w-5 h-5 rounded-full border" />,
     jp: <Japanese className="w-5 h-5 rounded-full border" />,
 
   };
@@ -194,6 +219,50 @@ export default async function ProductDetailPage({ params }: Props) {
                   </span>
                 </div>
               )}
+
+ 
+                {relatedProducts && relatedProducts.length > 0 && (
+                  <div className="mb-4">
+                    <details className="bg-white rounded-lg p-2 border border-slate-200 shadow-sm">
+                      <summary className="font-medium cursor-pointer px-3 py-2 rounded-md flex items-center justify-between hover:bg-slate-50 transition">
+                        <span className='text-slate-900'>Ver en otros idiomas</span>
+                        <svg className="w-4 h-4 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                        </svg>
+                      </summary>
+                      <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 list-none">
+                        {(relatedProducts || []).map((r) => {
+                          const langCode = (r.language || 'es') as string;
+                          const languageNames: Record<string, string> = {
+                            es: 'Español',
+                            en: 'English',
+                            fr: 'Français',
+                            de: 'Deutsch',
+                            jp: '日本語'
+                          };
+                          const label = languageNames[langCode] || langCode;
+                          const Flag = (LanguageFlag[langCode] as any) || <span className="w-6 h-6 inline-block" />;
+                          return (
+                            <li key={r.id}>
+                              <Link
+                                // Keep the current UI language in the path (safeLang) but request the variant language via query
+                                href={`/${safeLang}/productos/${r.slug}?variant=${langCode}`}
+                                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 transition-colors bg-white border border-slate-100 shadow-sm"
+                              >
+                                <span className="w-6 h-6 flex-shrink-0">{Flag}</span>
+                                <div className="flex-1 text-left">
+                                  <div className="text-sm font-medium text-slate-900">{label}</div>
+                                  <div className="text-xs text-slate-500">{r.slug}</div>
+                                </div>
+                                <div className="text-xs text-slate-400">Abrir</div>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </details>
+                  </div>
+                )}
 
               {/* Precio, stock y CTA dinámicos con contexto global */}
               <ProductRealtimeInfo
