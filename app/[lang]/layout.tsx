@@ -30,7 +30,7 @@ export async function generateMetadata({
     : "es"
 
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tcg-shop-iota.vercel.app"
-  const metadataBase = new URL(`/${safeLang}`, site)
+  const metadataBase = new URL(site, `/${safeLang}`)
 
   return {
     metadataBase,
