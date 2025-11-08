@@ -17,21 +17,36 @@ interface RootLayoutProps {
   className?: string
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://tcg-shop-iota.vercel.app'),
-  title: "TCG Store - Your Online Trading Card Game Shop",
-  description: "Portfolio website",
-  openGraph: {
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: string }
+}): Promise<Metadata> {
+  const supportedLangs = ["en", "es", "fr", "de"] as const
+  const safeLang: typeof supportedLangs[number] = supportedLangs.includes(
+    params.lang as any
+  )
+    ? (params.lang as typeof supportedLangs[number])
+    : "es"
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://tcg-shop-iota.vercel.app"
+  const metadataBase = new URL(`/${safeLang}`, site)
+
+  return {
+    metadataBase,
     title: "TCG Store - Your Online Trading Card Game Shop",
     description: "Portfolio website",
-    siteName: "TCG Store",
-    images: [
-      // Open Graph image placed under /public as `opengraph.avif`
-      {
-        url: '/opengraph.avif',
-        alt: 'TCG Store — trading card game shop',
-      },
-    ],
+    openGraph: {
+      title: "TCG Store - Your Online Trading Card Game Shop",
+      description: "Portfolio website",
+      siteName: "TCG Store",
+      images: [
+        {
+          url: "/opengraph.avif",
+          alt: "TCG Store — trading card game shop",
+        },
+      ],
+    },
   }
 }
 
