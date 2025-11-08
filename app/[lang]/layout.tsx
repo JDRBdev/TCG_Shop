@@ -17,6 +17,45 @@ interface RootLayoutProps {
   className?: string
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>
+}): Promise<Metadata> {
+  const { lang } = await params
+  const supportedLangs = ["en", "es", "fr", "de"] as const
+  const safeLang = supportedLangs.includes(lang as any)
+    ? (lang as typeof supportedLangs[number])
+    : "es"
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tcg-shop-iota.vercel.app'
+
+  return {
+    openGraph: {
+      title: "TCG Store",
+      description: "Online trading card game shop",
+      siteName: "TCG Store",
+      locale: safeLang,
+      images: [
+        {
+          url: `${siteUrl}/opengraph.png`,
+          width: 1200,
+          height: 630,
+          alt: "TCG Store — trading card game shop",
+        },
+      ],
+      type: "website",
+      url: `${siteUrl}/${safeLang}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "TCG Store",
+      description: "Online trading card game shop",
+      images: [`${siteUrl}/opengraph.png`],
+    },
+  }
+}
+
 export default async function Layout({
   children,
   className = "",
@@ -31,35 +70,32 @@ export default async function Layout({
   const dict = await getDictionary(safeLang)
 
   return (
-    <ClerkProvider>
-      <CartProvider>
-        <html lang={safeLang}>
-          <head>
-            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          </head>
-          <body className={`h-full min-h-screen ${className}`}>
-            <ProductUpdatesProvider>
-              {/* Header is a client component that uses next/navigation hooks
-                  (useSearchParams/usePathname). Wrap it in Suspense so that
-                  during server rendering Next.js can fallback while the
-                  client-only router state hydrates. This prevents the
-                  "useSearchParams() should be wrapped in a suspense boundary"
-                  prerender/build error. */}
-              <Suspense fallback={<header aria-hidden className="h-16" />}> 
-                <Header dict={dict} />
-              </Suspense>
+    <>
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      
+      <ClerkProvider>
+        <CartProvider>
+          <ProductUpdatesProvider>
+            {/* Header is a client component that uses next/navigation hooks
+                (useSearchParams/usePathname). Wrap it in Suspense so that
+                during server rendering Next.js can fallback while the
+                client-only router state hydrates. This prevents the
+                "useSearchParams() should be wrapped in a suspense boundary"
+                prerender/build error. */}
+            <Suspense fallback={<header aria-hidden className="h-16" />}> 
+              <Header dict={dict} />
+            </Suspense>
 
-              {children}
+            {children}
 
-              <Suspense fallback={<footer aria-hidden className="h-16" />}> 
-                <Footer dict={dict} />
-              </Suspense>
-            </ProductUpdatesProvider>
-          </body>
-        </html>
-      </CartProvider>
-    </ClerkProvider>
+            <Suspense fallback={<footer aria-hidden className="h-16" />}> 
+              <Footer dict={dict} />
+            </Suspense>
+          </ProductUpdatesProvider>
+        </CartProvider>
+      </ClerkProvider>
+    </>
   )
 }
