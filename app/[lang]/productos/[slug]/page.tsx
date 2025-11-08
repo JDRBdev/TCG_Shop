@@ -37,9 +37,27 @@ export async function generateMetadata({ params }: Props) {
   const { slug, lang } = await params as any;
   const product = await getTranslatedProduct(slug, lang);
 
+  // If product has an image, make an absolute URL to include in OG metadata.
+  const imageUrl = product ? getPublicImageUrl((product as any).image) : undefined;
+
   return {
     title: product ? `${product.name} - TCG Shop` : 'Producto no encontrado',
     description: product?.description || 'Detalles del producto',
+    openGraph: product
+      ? {
+          title: `${product.name} — TCG Shop`,
+          description: product.description || undefined,
+          images: imageUrl ? [{ url: imageUrl, alt: product.name }] : undefined,
+        }
+      : undefined,
+    twitter: product
+      ? {
+          card: 'summary_large_image',
+          title: product.name,
+          description: product.description || undefined,
+          images: imageUrl ? [imageUrl] : undefined,
+        }
+      : undefined,
   };
 }
 
@@ -245,7 +263,7 @@ export default async function ProductDetailPage({ params, searchParams }: Props)
           {/* Productos recomendados */}
             {recommended && recommended.length > 0 && (
               <div className="mt-8">
-                <h3 className="text-xl font-bold mb-4 text-slate-900">{dict.products.reccommend || 'Productos Recomendados'}</h3>
+                <h3 className="text-xl font-bold mb-4 text-slate-900">{dict.products.recommend || 'Productos Recomendados'}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {recommended.map((p) => {
                     const pDiscount = Number((p as any).discount) || 0;

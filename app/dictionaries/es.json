@@ -21,7 +21,7 @@
   },
   "products": {
     "title": "Productos Nuevos",
-    "reccommend": "Productos Recomendados",
+    "recommend": "Productos Recomendados",
     "new": "Nuevo",
     "add": "Agregar",
     "items": {
