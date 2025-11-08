@@ -107,7 +107,7 @@
       "boosterPacks": "Booster Packs",
       "decks": "Decks",
       "singleCards": "Cartas Individuales",
-      "accessories": "Accesorios"
+      "accessories": "Sets Coleccionista"
     },
     "support": {
       "title": "Soporte",
@@ -115,12 +115,6 @@
       "shipping": "Envíos y Devoluciones",
       "contact": "Contacto",
       "faq": "FAQ"
-    },
-    "newsletter": {
-      "title": "Newsletter",
-      "description": "Recibe ofertas exclusivas y novedades",
-      "placeholder": "tu@email.com",
-      "subscribe": "Suscribir"
     },
     "copyright": "© 2025 TCG Store. Todos los derechos reservados."
   }
