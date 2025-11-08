@@ -5,6 +5,7 @@ import "./../globals.css"
 import { getDictionary } from "../hooks/dictionaries"
 import Header from "../components/organisms/header"
 import Footer from "../components/organisms/footer"
+import PopUpCookies from "../components/molecules/pop-up-cookies"
 import { ProductUpdatesProvider } from "../components/atoms/provider/product-updates-context"
 
 import {
@@ -93,6 +94,7 @@ export default async function Layout({
             <Suspense fallback={<footer aria-hidden className="h-16" />}> 
               <Footer dict={dict} lang={safeLang} />
             </Suspense>
+            <PopUpCookies dict={dict} />
           </ProductUpdatesProvider>
         </CartProvider>
       </ClerkProvider>

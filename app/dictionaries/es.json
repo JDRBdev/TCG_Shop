@@ -132,6 +132,11 @@
     "backHome": "Volver al inicio",
     "sessionId": "ID de sesión:"
   },
+  "cookieBanner": {
+    "text": "Usamos cookies para mejorar tu experiencia de navegación, analizar el tráfico del sitio y personalizar el contenido. Al hacer clic en \"Aceptar\", consientes el uso de todas las cookies.",
+    "accept": "Aceptar",
+    "reject": "Rechazar"
+  },
   "legal": {
     "privacy": {
       "title": "Política de Privacidad",

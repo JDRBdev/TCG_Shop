@@ -119,17 +119,22 @@
     "copyright": "© 2025 TCG Store. Alle Rechte vorbehalten."
   },
   "thankYou": {
-    "title": "Vielen Dank für Ihren Einkauf",
-    "noSession": "Keine Sitzungs-ID erhalten. Wenn Sie gerade bezahlt haben, warten Sie einige Sekunden und überprüfen Sie Ihre E-Mail.",
-    "noStripe": "Kauf abgeschlossen. (Kein Stripe-Schlüssel auf dem Server, um Details anzuzeigen.)",
-    "paymentStatus": "Zahlungsstatus:",
-    "paid": "Bezahlt",
-    "total": "Gesamt:",
-    "method": "Methode:",
-    "card": "Karte",
-    "items": "Artikel",
+    "title": "Danke für Ihren Kauf",
+    "noSession": "No se recibió un identificador de sesión. Si acabas de pagar, espera unos segundos y revisa tu email.",
+    "noStripe": "Se completó la compra. (No hay clave de Stripe en el servidor para mostrar detalles.)",
+    "paymentStatus": "Estado de pago:",
+    "paid": "Pagado",
+    "total": "Total:",
+    "method": "Método:",
+    "card": "Tarjeta",
+    "items": "Artículos",
     "backHome": "Zurück zur Startseite",
-    "sessionId": "Sitzungs-ID:"
+    "sessionId": "ID de sesión:"
+  },
+  "cookieBanner": {
+    "text": "Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern, den Website-Traffic zu analysieren und Inhalte zu personalisieren. Durch Klicken auf \"Akzeptieren\" stimmen Sie der Verwendung aller Cookies zu.",
+    "accept": "Akzeptieren",
+    "reject": "Ablehnen"
   },
   "legal": {
     "privacy": {

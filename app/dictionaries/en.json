@@ -120,16 +120,21 @@
   },
   "thankYou": {
     "title": "Thank you for your purchase",
-    "noSession": "No session ID received. If you just paid, wait a few seconds and check your email.",
-    "noStripe": "Purchase completed. (No Stripe key on server to show details.)",
-    "paymentStatus": "Payment status:",
-    "paid": "Paid",
+    "noSession": "No se recibió un identificador de sesión. Si acabas de pagar, espera unos segundos y revisa tu email.",
+    "noStripe": "Se completó la compra. (No hay clave de Stripe en el servidor para mostrar detalles.)",
+    "paymentStatus": "Estado de pago:",
+    "paid": "Pagado",
     "total": "Total:",
-    "method": "Method:",
-    "card": "Card",
-    "items": "Items",
+    "method": "Método:",
+    "card": "Tarjeta",
+    "items": "Artículos",
     "backHome": "Back to home",
-    "sessionId": "Session ID:"
+    "sessionId": "ID de sesión:"
+  },
+  "cookieBanner": {
+    "text": "We use cookies to improve your browsing experience, analyze site traffic, and personalize content. By clicking \"Accept\", you consent to the use of all cookies.",
+    "accept": "Accept",
+    "reject": "Reject"
   },
   "legal": {
     "privacy": {
