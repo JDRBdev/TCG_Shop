@@ -17,28 +17,6 @@ interface RootLayoutProps {
   className?: string
 }
 
-export const metadata: Metadata = {
-  title: "TCG Store",
-  description: "Online trading card game shop",
-  openGraph: {
-    title: "TCG Store",
-    description: "Online trading card game shop",
-    images: [
-      {
-        url: "/opengraph.png",
-        alt: "TCG Store — trading card game shop",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TCG Store",
-    description: "Online trading card game shop",
-    images: ["/opengraph.png"],
-  },
-}
-
-
 export default async function Layout({
   children,
   className = "",
