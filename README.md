@@ -53,23 +53,21 @@ yarn install
 Create a `.env.local` file in the project root and add the following variables:
 
 ```env
-# Site Configuration
+# Site configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
-# Clerk Authentication
+# Clerk authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # Stripe
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 ```
 
 4. **Set up Clerk**
@@ -144,8 +142,8 @@ TCG_Shop/
 - 🇩🇪 German (`de`)
 
 ## 🛠️ Technologies Used
-
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **UI Library:** [React](https://reactjs.org/)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Authentication:** [Clerk](https://clerk.com/)
@@ -173,14 +171,14 @@ npm run lint
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | Your site URL |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key |
-| `CLERK_SECRET_KEY` | Clerk secret key |
+| `NEXT_PUBLIC_SITE_URL` | Public URL of your site (e.g. http://localhost:3000) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable (public) key |
+| `CLERK_SECRET_KEY` | Clerk secret key (private) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe public key |
-| `STRIPE_SECRET_KEY` | Stripe secret key |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon (public) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side, keep secret) |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable (public) key |
+| `STRIPE_SECRET_KEY` | Stripe secret key (private) |
 
 ## 🤝 Contributing
 
@@ -273,17 +271,15 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # Autenticación Clerk
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=tu_clave_publica_clerk
 CLERK_SECRET_KEY=tu_clave_secreta_clerk
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=tu_url_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_supabase
+SUPABASE_SERVICE_ROLE_KEY=tu_clave_service_role
 
 # Stripe
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=tu_clave_publica_stripe
 STRIPE_SECRET_KEY=tu_clave_secreta_stripe
-STRIPE_WEBHOOK_SECRET=tu_secreto_webhook_stripe
 ```
 
 4. **Configura Clerk**
@@ -360,6 +356,7 @@ TCG_Shop/
 ## 🛠️ Tecnologías Utilizadas
 
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Librería UI:** [React](https://reactjs.org/)
 - **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
 - **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
 - **Autenticación:** [Clerk](https://clerk.com/)
@@ -387,14 +384,14 @@ npm run lint
 
 | Variable | Descripción |
 |----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | URL de tu sitio |
+| `NEXT_PUBLIC_SITE_URL` | URL pública de tu sitio (p. ej. http://localhost:3000) |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clave pública de Clerk |
 | `CLERK_SECRET_KEY` | Clave secreta de Clerk |
 | `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave anónima de Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave Service Role de Supabase (privada) |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe |
 | `STRIPE_SECRET_KEY` | Clave secreta de Stripe |
-| `STRIPE_WEBHOOK_SECRET` | Secreto del webhook de Stripe |
 
 ## 🤝 Contribuir
 
